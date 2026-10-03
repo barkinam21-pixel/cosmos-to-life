@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>מהמפץ הגדול לחיים</title>
+<meta name="description" content="מסע לימוד כרונולוגי מהמפץ הגדול ועד החיים" />
+<style>
+:root{--bg:#07111f;--card:#101d30;--text:#f5f8fc;--muted:#9fb2c9;--line:#263954;--accent:#70c1ff;--chip:#172941}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:linear-gradient(#07111f,#0a1424);color:var(--text);font-family:Arial,system-ui,sans-serif}.wrap{max-width:1040px;margin:auto}header{padding:30px 16px 20px;border-bottom:1px solid var(--line);background:rgba(7,17,31,.96)}h1{font-size:clamp(32px,6vw,52px);margin:0 0 8px}.sub{color:var(--muted);line-height:1.55;margin:0 0 14px}.status{display:inline-block;background:#113453;color:#bde1ff;padding:6px 10px;border-radius:999px;font-size:13px;margin-bottom:12px}nav{display:flex;gap:8px;overflow:auto;padding-bottom:4px}nav a{white-space:nowrap;color:#d4ebff;background:var(--chip);padding:8px 11px;border-radius:999px;text-decoration:none;font-size:14px}main{padding:12px 16px 60px}.chapter{padding-top:24px}.chapter h2{font-size:28px;margin:0 0 6px}.intro{color:var(--muted);line-height:1.6;margin:0 0 15px}.grid{display:grid;gap:13px}.card{background:rgba(16,29,48,.96);border:1px solid var(--line);border-radius:18px;padding:17px}.top{display:flex;gap:12px}.num{min-width:43px;height:43px;display:grid;place-items:center;border-radius:12px;background:#0c2a47;color:#a8d7ff;font-weight:700}.title{font-size:20px;margin:0}.meta{font-size:13px;color:var(--muted);margin-top:4px}.why{margin:14px 0 8px;line-height:1.55}.q{margin:8px 0;padding-right:20px;line-height:1.6}.chips{display:flex;gap:6px;flex-wrap:wrap}.chip{font-size:12px;padding:5px 9px;border-radius:999px;background:var(--chip);border:1px solid #2a4464;color:#d1e1f1}.watch{display:inline-block;margin-top:12px;color:#9ed5ff;font-weight:700;text-decoration:none}.slot{margin-top:12px;color:#f0c77a;font-size:13px}.bridge{margin:18px 0;padding:14px 16px;background:#0d1b2e;border-right:4px solid var(--accent);border-radius:12px;color:#dceaf7;line-height:1.5}footer{text-align:center;padding:30px 16px 45px;color:var(--muted);border-top:1px solid var(--line)}@media(max-width:600px){.card{padding:15px}.chapter h2{font-size:24px}}
+</style>
+</head>
+<body>
+<header><div class="wrap"><div class="status">גרסת שלד · ללא הטמעות</div><h1>מהמפץ הגדול לחיים</h1><p class="sub">מסע לימוד כרונולוגי: קוסמולוגיה → חלקיקים → אטומים → כוכבים → כימיה → כדור הארץ → מקור החיים → אבולוציה.</p><nav id="nav"></nav></div></header>
+<main class="wrap" id="app"></main>
+<footer>אתר סטטי חינמי המיועד לפריסה קבועה ב‑Vercel · ללא Lovable וללא TinyFish</footer>
+<script>
+const chapters = [
+{t:'היקום וההתחלה',intro:'אין צורך בידע מוקדם. מתחילים בתמונה הגדולה ואז מייצבים את מושגי האנרגיה, המרחב והזמן.',bridge:'היקום החם מתקרר, ומתוך האנרגיה מתחיל להופיע סיפור החומר.',items:[
+['The Beginning of Everything: The Big Bang','Kurzgesagt · סרטון','נקודת הפתיחה: תמונה כוללת ופשוטה של היקום הצעיר.',['איך יודעים שהיקום התחיל?','למה היקום מתפשט?','ממה היה עשוי היקום בראשיתו?'],['קוסמולוגיה','פיזיקה'],'מבוא','https://www.youtube.com/watch?v=wNDGgL73ihY'],
+['Decoding the Universe: Cosmos','NOVA PBS · סרט','אחרי התמונה הכללית — איך המדע בפועל מודד ומסיק את הסיפור.',['איך מודדים את גיל היקום?','כמה ממנו איננו מבינים?','לאן היקום הולך?'],['קוסמולוגיה','חלל'],'העמקה','https://www.youtube.com/watch?v=5BNPeFHU7QQ'],
+['מה פירוש בכלל אנרגיה, מרחב וזמן?','סלוט למחקר','לפני חלקיקים צריך לייצב את מושגי היסוד.',['מה זו אנרגיה בעצם?','איך מרחב יכול להתפשט?','למה זמן ומרחב קשורים?'],['פיזיקה'],'גשר',null],
+['מהיקום החם לחלקיקים','סלוט למחקר','מחבר את המפץ לפרק הבא: איך אנרגיה הופכת לחומר כשהיקום מתקרר.',['איך אנרגיה הופכת למסה?','למה טמפרטורה קובעת אילו חלקיקים קיימים?'],['קוסמולוגיה','חלקיקים'],'גשר',null]
+]},
+{t:'חלקיקים, חומר והאטומים הראשונים',intro:'אחרי שהיקום התפשט והתקרר, עוברים לשאלה ממה הכול עשוי.',bridge:'יש כבר מימן, הליום ואור קדום; עכשיו הכבידה תתחיל לבנות כוכבים.',items:[
+['מהם החלקיקים היסודיים?','סלוט למחקר','אחרי שהבנו שחלקיקים נוצרו — צריך להכיר אותם בשמם.',['ממה הכול עשוי?','כמה סוגי חלקיקים יש?','למה יש מסה?'],['חלקיקים','פיזיקה'],'מבוא',null],
+['The Higgs Field, explained','TED‑Ed · Don Lincoln','אחרי מפת החלקיקים נכנסים לשאלה מדוע לחלקיקים מסוימים יש מסה.',['מהו שדה היגס?','מה ההבדל בין השדה לבוזון?','האם כל המסה מגיעה מהיגס?'],['היגס','מסה','חלקיקים'],'בינוני','https://www.youtube.com/watch?v=joTKd5j3mzk'],
+['איך קווארקים יוצרים פרוטונים ונייטרונים?','סלוט למחקר','מהחלקיקים היסודיים לאבני הבניין של הגרעין.',['למה אי אפשר לראות קווארק בודד?','מאיפה מגיעה רוב מסת הפרוטון?'],['חלקיקים'],'העמקה',null],
+['Why Didn’t Antimatter Destroy The Universe After The Big Bang?','PBS Space Time','לפני אטומים צריך להסביר למה בכלל נשאר חומר ביקום.',['למה היה עודף זעיר של חומר?','מהי הפרת CP?','מה עדיין לא פתור?'],['אנטי־חומר','קוסמולוגיה','חלקיקים'],'עמוק','https://www.youtube.com/watch?v=negiPvWHaMc'],
+['איך נוצרו האטומים הראשונים?','סלוט למחקר','גרעינים קיימים — עכשיו הם לוכדים אלקטרונים.',['למה בעיקר מימן והליום?','כמה זמן לקח עד שנוצר אטום יציב?'],['אטומים','קוסמולוגיה'],'מבוא',null],
+['למה היקום הפך שקוף ונוצר האור הקדום?','סלוט למחקר','קרינת הרקע סוגרת את הפרק ומספקת עדות ישירה לעולם הקדום.',['איך אור נלכד ואז השתחרר?','איך אנחנו רואים אותו היום?'],['קוסמולוגיה','פיזיקה'],'גשר',null]
+]},
+{t:'כוכבים ומפעל היסודות',intro:'היקום הקדום הכיל בעיקר מימן והליום; עכשיו הכבידה וההיתוך מתחילים לבנות יסודות כבדים.',bridge:'כוכבים מפזרים פחמן, חמצן, ברזל וזהב; מכאן עוברים להתנהגות האטומים והכימיה.',items:[
+['איך כוח הכבידה יוצר כוכב?','סלוט למחקר','יש גז — עכשיו הכבידה אוספת אותו.',['למה גז מתכווץ?','כמה חומר צריך לכוכב?'],['חלל','פיזיקה'],'מבוא',null],
+['היתוך גרעיני: למה כוכבים זוהרים?','סלוט למחקר','הכוכב נוצר — מה מדליק אותו?',['איך מימן הופך להליום?','למה זה משחרר אנרגיה?','כמה זמן כוכב חי?'],['פיזיקה','חלל'],'העמקה',null],
+['איך כוכבים מייצרים יסודות כבדים יותר?','סלוט למחקר','ההיתוך לא עוצר בהליום — כאן נוצרים פחמן וחמצן.',['למה ברזל הוא נקודת מפנה?','מאיפה הפחמן שבגופנו?'],['אטומים','חלל'],'העמקה',null],
+['סופרנובות ומיזוגי כוכבי נייטרונים: מאיפה הגיע הזהב?','סלוט למחקר','מה שמעבר לברזל דורש אירועים קיצוניים.',['איך נוצר זהב?','איך היסודות מתפזרים בחלל?'],['חלל','אטומים'],'העמקה',null],
+['איך חומר מכוכבים הופך לענן שממנו נולדת מערכת שמש?','סלוט למחקר','מחבר בין מות כוכבים ללידת מערכות חדשות.',['ממה עשוי ענן מולד?','איך חומר כוכבי ממוחזר?'],['חלל'],'גשר',null]
+]},
+{t:'האטום מבפנים והכימיה מתחילה',intro:'עוברים מ“מאיפה היסודות באו” ל“מה הם ואיך הם מתנהגים”.',bridge:'אחרי האטום והטבלה המחזורית אפשר להבין קשרים, מולקולות וחומרים.',items:[
+['Out of Thin Air','The Mystery of Matter (PBS)','איך בני אדם גילו שהיסודות קיימים.',['איך מגלים יסוד חדש?','למה אוויר אינו יסוד?'],['כימיה','אטומים'],'מבוא','https://www.youtube.com/watch?v=z3Gt5IOjAuc'],
+['Unruly Elements','The Mystery of Matter (PBS)','אחרי גילוי היסודות — איך עושים בהם סדר.',['למה יסודות מתנהגים במשפחות?','איך מנדלייב חזה יסודות?'],['כימיה','אטומים'],'העמקה','https://www.youtube.com/watch?v=wbuDmY5gpXQ'],
+['Into the Atom','The Mystery of Matter (PBS)','הטבלה מסודרת — אבל למה? התשובה בתוך האטום.',['ממה עשוי אטום?','איך גילו את הגרעין?'],['אטומים','פיזיקה'],'העמקה','https://www.youtube.com/watch?v=GWQZE0HPoAY'],
+['Taking Pictures of Atoms','Branch Education','אחרי התאוריה — איך רואים אטום בפועל.',['איך מצלמים משהו קטן מאורך גל האור?','כמה קטן אטום?'],['אטומים','חומרים'],'העמקה','https://www.youtube.com/watch?v=9DnnxvS6BBQ'],
+['Investigating the Periodic Table with Peter Wothers','Royal Institution','מחזק את הטבלה דרך ניסויים חיים.',['למה מתכות אלקליות מגיבות בעוצמה?','איך מיקום בטבלה צופה התנהגות?'],['כימיה'],'העמקה','https://www.youtube.com/watch?v=kqe9tEcZkno'],
+['Periodic Success: The Hidden Beauty of the Periodic Table','Royal Institution','מבט על ההיגיון הפנימי של הטבלה.',['למה הטבלה בנויה בצורה הזאת?'],['כימיה'],'העמקה','https://www.youtube.com/watch?v=bgwjnrIL08Y'],
+['The Map of Chemistry','Domain of Science','מפה כוללת לפני הצלילה לקשרים ולחומרים.',['אילו תחומים יש בכימיה?','איך הם מתחברים?'],['כימיה'],'גשר','https://www.youtube.com/watch?v=P3RXtoYCW4M']
+]},
+{t:'קשרים, מולקולות וחומרים',intro:'עכשיו השאלה היא למה אטומים נקשרים ואיך המבנה המיקרוסקופי יוצר חומר אמיתי.',bridge:'עם הבנת הכימיה חוזרים לסיפור הקוסמי: ענן אבק ויסודות יוצר מערכת שמש וכדור הארץ.',items:[
+['Air (1/3)','The Modern Alchemist (BBC)','מתחילים בגזי האוויר.',['ממה עשוי אוויר?','איך גזים מגיבים?'],['כימיה'],'מבוא','https://www.youtube.com/watch?v=YidK_19E_e4'],
+['Water (2/3)','The Modern Alchemist (BBC)','המים — הממס המרכזי של החיים.',['למה המים כל כך מיוחדים?'],['כימיה'],'מבוא',null],
+['Earth (3/3)','The Modern Alchemist (BBC)','ממולקולות למוצקים ומינרלים.',['איך מוצקים בנויים?'],['כימיה','כדור הארץ'],'מבוא',null],
+['Beyond the Elements: Reactions','NOVA','אחרי שהכרנו מולקולות — מה קורה כשהן משתנות.',['למה תגובות משחררות או בולעות אנרגיה?'],['כימיה'],'העמקה','https://www.youtube.com/watch?v=YNi6Lq6xt3g'],
+['Beyond the Elements: Indestructible','NOVA','מבנה וקשרים קובעים חוזק ועמידות.',['למה חומרים מסוימים לא מתפרקים?'],['כימיה','חומרים'],'העמקה','https://www.youtube.com/watch?v=8sa7zIWdd-Y'],
+['Beyond the Elements: Life','NOVA','הגשר הראשון מכימיה לביוכימיה.',['למה פחמן הוא בסיס החיים?'],['כימיה','מקור החיים'],'גשר','https://www.youtube.com/watch?v=HxiWrwJtjoY'],
+['Making Stuff: Stronger','NOVA','יישום הקשרים הכימיים לחומרים אמיתיים.',['איך מבנה פנימי קובע חוזק?'],['חומרים'],'העמקה','https://www.youtube.com/watch?v=L3F0nO3hN9k'],
+['Making Stuff: Smaller','NOVA','חזרה לסקאלת האטום — הפעם כמהנדסים.',['למה חומר מתנהג אחרת בננו?'],['חומרים','אטומים'],'העמקה','https://www.youtube.com/watch?v=ZPh70tKKnfw'],
+['Making Stuff: Smarter','NOVA','סוגר את פרק החומרים.',['איך חומר מגיב לסביבה?'],['חומרים'],'גשר','https://www.youtube.com/watch?v=Rp0dZ19nvbA']
+]},
+{t:'מערכת השמש וכדור הארץ',intro:'כאן מחברים כבידה, יסודות וכימיה להיווצרות הפלנטה שעליה החיים יופיעו.',bridge:'כדור הארץ מקבל מים, מינרלים ומקורות אנרגיה — הבמה מוכנה לכימיה קדם־ביוטית.',items:[
+['Bennu’s Journey','NASA Goddard','ממחיש חומר קדום, דיסקה פרוטו־פלנטרית והיווצרות גופים קטנים במערכת השמש.',['איך אבק הופך לכוכבי לכת?','מה אסטרואידים משמרים מהמערכת הצעירה?','איך חומר קדום הגיע לכדור הארץ?'],['מערכת השמש','אסטרואידים','אבק כוכבים'],'מבוא','https://science.nasa.gov/resource/bennus-journey/'],
+['How The Earth Was Made: From Molten Rock to Green Planet','HISTORY','אחרי מערכת השמש — זום על כדור הארץ.',['איך כדור הארץ התקרר?','מאיפה הגיע הירח?'],['כדור הארץ'],'העמקה','https://www.youtube.com/watch?v=WgjBaXpuSE4'],
+['איך נוצרו אוקיינוסים, אטמוספרה וכימיה יציבה?','סלוט למחקר','התנאים שבלעדיהם אין כימיה קדם־ביוטית.',['מאיפה הגיעו המים?','ממה הייתה עשויה האטמוספרה הראשונה?'],['כדור הארץ','כימיה'],'העמקה',null],
+['מינרלים, סלעים והמחזור הגאוכימי','סלוט למחקר','משטחים מינרליים ומעיינות חמים עשויים להיות חלק מסיפור מקור החיים.',['איך יסודות נעים בין סלע, מים ואוויר?'],['כדור הארץ','חומרים'],'גשר',null]
+]},
+{t:'מכימיה לחיים',intro:'מתי מערכת כימית הופכת למערכת שמעתיקה את עצמה, משתמשת באנרגיה ועוברת אבולוציה?',bridge:'ברגע שיש שכפול עם שינויים ותורשה — הברירה הטבעית נכנסת לתמונה.',items:[
+['Where Did Life Come From?','Be Smart (PBS)','השאלה הגדולה: איך כימיה דוממת יכולה להפוך לחיה.',['איך כימיה נעשית חיה?','מה זה בכלל חיים?'],['מקור החיים','כימיה'],'מבוא','https://www.youtube.com/watch?v=_uAJY1mqtw4'],
+['The Search for the Earliest Life','PBS Eons','מהתאוריה לראיות בסלעים.',['כמה מוקדם הופיעו חיים?','איך מזהים עדות לחיים קדומים?'],['מקור החיים','כדור הארץ'],'העמקה','https://www.youtube.com/watch?v=uCVnRIP3pIk'],
+['What Was the Ancestor of Everything?','PBS Eons','מהחיים הראשונים ל‑LUCA.',['ממה חי LUCA?','איך משחזרים אב קדמון?'],['מקור החיים','אבולוציה'],'העמקה','https://www.youtube.com/watch?v=pk213XSSktQ'],
+['RNA, ממברנות ומטבוליזם','סלוט למחקר','המנגנון שמחבר כימיה לאבולוציה.',['איך מולקולה משכפלת את עצמה?','למה צריך ממברנה?'],['מקור החיים','כימיה'],'גשר',null]
+]},
+{t:'אבולוציה',intro:'מכאן שינוי קטן ותורשתי מצטבר למגוון החיים ולבסוף לאדם.',bridge:'סוף המסע — אנחנו חומר כוכבי שלמד לשאול מאיפה הגיע.',items:[
+['How Evolution Works','PBS Eons','יש שכפול — עכשיו מגיע הכלל שמניע שינוי לאורך זמן.',['איך שונות אקראית יוצרת התאמה?','כמה זמן לוקח שינוי?'],['אבולוציה'],'מבוא','https://www.youtube.com/watch?v=dyiZaHIRM6w'],
+['התאים הראשונים והפוטוסינתזה','סלוט למחקר','החיים לומדים לקצור את אור השמש.',['איך תא הופך אור לאנרגיה כימית?'],['אבולוציה','מקור החיים'],'העמקה',null],
+['The Great Oxidation Event (GOE)','GEO GIRL','אחרי הפוטוסינתזה — החמצן מתחיל לשנות את האטמוספרה והאוקיינוסים.',['למה החמצן עלה רק אחרי זמן רב?','איך סלעים מספרים שזה קרה?','למה חמצן היה בתחילה איום?'],['חמצן','אטמוספרה','גיאוכימיה'],'עמוק','https://www.youtube.com/watch?v=LK6X3EGEdOY'],
+['אאוקריוטים ואנדוסימביוזה','סלוט למחקר','תאים מורכבים מופיעים ומשנים את האפשרויות האבולוציוניות.',['מאיפה הגיעה המיטוכונדריה?'],['אבולוציה'],'העמקה',null],
+['The Neoproterozoic Oxygenation Event (NOE)','GEO GIRL','גשר בין עולם האאוקריוטים לעליית החיים הרב־תאיים המורכבים.',['למה העלייה המאוחרת בחמצן הייתה שונה?','האם חמצן איפשר בעלי חיים או להפך?','מה קרה באוקיינוסים?'],['חמצן','רב־תאיות','גיאוכימיה'],'מתקדם','https://www.youtube.com/watch?v=vcCkU2qtBQU'],
+['רב־תאיות וההתפוצצות הקמברית','סלוט למחקר','תאים מורכבים מתחילים לשתף פעולה בקנה מידה חדש.',['למה הופיעו כל כך הרבה צורות גוף?'],['אבולוציה'],'העמקה',null],
+['היציאה ליבשה','סלוט למחקר','מהים אל היבשה — אתגר פיזיקלי וכימי חדש.',['איך נושמים ומתמודדים עם יובש מחוץ למים?'],['אבולוציה','כדור הארץ'],'העמקה',null],
+['יונקים, פרימטים והדרך לאדם','סלוט למחקר','סוף המסע — המין ששואל את השאלות.',['איך שרדו היונקים אחרי הכחדות גדולות?','מה הפך אותנו לאדם?'],['אבולוציה'],'גשר',null]
+]}
+];
+const nav=document.getElementById('nav');chapters.forEach((c,i)=>{const a=document.createElement('a');a.href='#ch-'+(i+1);a.textContent='פרק '+(i+1);nav.appendChild(a)});
+let n=1;const app=document.getElementById('app');chapters.forEach((c,ci)=>{const s=document.createElement('section');s.className='chapter';s.id='ch-'+(ci+1);s.innerHTML='<h2>פרק '+(ci+1)+' · '+c.t+'</h2><p class="intro">'+c.intro+'</p><div class="grid"></div>';const g=s.querySelector('.grid');c.items.forEach(x=>{const a=document.createElement('article');a.className='card';a.innerHTML='<div class="top"><div class="num">'+String(n++).padStart(2,'0')+'</div><div><h3 class="title">'+x[0]+'</h3><div class="meta">'+x[1]+' · רמת עומק: '+x[5]+'</div></div></div><div class="why"><b>למה עכשיו?</b> '+x[2]+'</div><ul class="q">'+x[3].map(q=>'<li>'+q+'</li>').join('')+'</ul><div class="chips">'+x[4].map(t=>'<span class="chip">'+t+'</span>').join('')+'</div>'+(x[6]?'<a class="watch" target="_blank" rel="noopener" href="'+x[6]+'">פתח מקור ↗</a>':'<div class="slot">◌ סלוט למחקר / קישור עדיין לא אומת</div>');g.appendChild(a)});const b=document.createElement('div');b.className='bridge';b.textContent='גשר לפרק הבא: '+c.bridge;s.appendChild(b);app.appendChild(s)});
+</script>
+</body>
+</html>
