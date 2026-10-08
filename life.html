@@ -236,6 +236,24 @@ const chapters = [
         "https://www.youtube.com/watch?v=wvTv8TqWC48"
       ],
       [
+        "The Physics of Life: How Water Folds Proteins — with Sylvia McLain",
+        "Royal Institution · ביופיזיקה · הרצאת עומק",
+        "לאחר הבנת המבנה הבסיסי של חלבון, ההרצאה מראה איך מים, אפקט הידרופובי וקשרים חלשים מאפשרים קיפול למבנה תלת־ממדי פעיל, לפני שמתקדמים לאנזימים.",
+        [
+          "מה תפקיד המים בקיפול חלבון?",
+          "איך אינטראקציות חלשות בונות מבנה?",
+          "למה צורת החלבון קובעת את פעילותו?"
+        ],
+        [
+          "חלבונים",
+          "מים",
+          "ביופיזיקה",
+          "גשר לחיים"
+        ],
+        "העמקה–ארוכה",
+        "https://www.youtube.com/watch?v=SaSntOkK-Vk"
+      ],
+      [
         "Methods for Determining Atomic Structures",
         "RCSB PDB-101 · איך ידענו",
         "אחרי שמבינים שחלבון הוא מכונה תלת־ממדית, עוצרים לראות איך בכלל יודעים מה הצורה האטומית שלו. קריסטלוגרפיית קרני X, NMR ו-cryo-EM הופכים מודלים של חלבונים למדידה ניסויית ומכינים לצפייה באנזימים ובריבוזומים.",
@@ -2975,28 +2993,39 @@ const chapters = [
   }
 ];
 const CHAPTER_OFFSET=6;const nav=document.getElementById('nav');chapters.forEach((c,i)=>{const a=document.createElement('a');a.href='#ch-'+(i+1);a.textContent='פרק '+(CHAPTER_OFFSET+i+1);nav.appendChild(a)});
-const EMBED_ORDER=["PmvLB5dIEp8","VAmVdxEksxY","cpWHgKgKxGk","xMa1BQ8z9C0","Bw_cetheReo","JwVYOYOp_tA","arVZJPkK5-8","NEvsjMvztUs","hlXc_eEtBHA","Ykhn2psFmEM","H8WJ2KENlK0","wvTv8TqWC48","gg7WjuFs8F4","d95J8yzvjbQ","yk14dOOvwMk","62cN8Z5Velo","_uAJY1mqtw4","qdvp8TYrCmg","PqPGOhXoprU","GcfLZSL7YGw","QOCaacO8wus","pbZ2MFAbGrk","K1xnYFCZ9Yg","MPzWrv6l9l0","VYQQD0KNOis","emCesU31ufE","jfq5-i8xoIU","hhJsi75Ehhg","5ohSUgs6mUw","_KgeXfCX7mg","cEijsIVwiB8","BFExaMByzYw","yTxZXkp-6sI","wbWL2wfvsM8","uCVnRIP3pIk","pk213XSSktQ","NQaZecHCCNA","8kK2zwjRV0M","itsb2SqR-R0","j6YaOqKORYY","nS1qQi3DrkU","z2sICp8E1BA","6ulXau2HyHg","NeeaP8pp9HI","dPKvHrD1eS4","8HfzUgxumVE","YnJPbphsoMY","9zwq8N4Ufd8","Y1LKHx_GrsY","H2xaFLR0V4k","ztL3hLIjv64","086N-X1Bd2o","dyiZaHIRM6w","fBOrzQP423A","i-VeKZeyHZs","4joZpdXeS4A","WAUX8dXu6aw","iWUp2kMCv6o","4mxJbgdiyIY","YM6Ekb5De2o","Aa1dGBKgGVc","9sjwlxQ_6LI","IIA-k_bBcL0","sQK3Yr4Sc_k","WzOrF5W4l3Q","ps2GlGs8oso","qERdL8uHSgI","LK6X3EGEdOY","DI6SemRT2iY","V66WBvI7Ufw","jsDxw63QqK0","lhF5G2k45vY","SfMwNBwIzQo","00jbG_cfGuQ","BO0zL03CtDs","rSPUYA3gWK8","IlSFn0gRyC4","zNpeuA4gtq0","CSrtewCJbpg","vUC5njkOq7o","skPOXcVvS5c","qsn4z7bNb14","pj1oFx42d48","p15KSbNxb28","txJTUVpVCT4","vcCkU2qtBQU","4ONwQV26L-k","gMdv3JlPizw","Jpi2VJj5PhY","PGBf4Q2XWZo","mbG8-ejz-WE","RDQa0okkpf0","ciGqnGFWqBs","rrLZPDGNr6w","mAkjETPM1s4","usKrCTtArNc","y9BLCfcUcFg","pqosCR6J2qo","9AEzixu_xZk","UrwMUQbUR30","oZtUFJAJ3lU","E1h4kgt2520","0VpPY0qGbdA","rGthtRZl8B0","7QMcXEj7IT0","c_CCmae8Wrc","SR3OOP9mImI","uwkeAS3UzB0","moxu_uTemNg","QGR5yOrChMA","1m55t3eJZa4","TJY5vWXZHgI","MoPEyQrChdg","kYivcr8PKRU","yR8cR75iKGU","C6koLzdSves","dUKV02uYEu0","TmNHk7kIxr8","RQ7VUZHwbEk","Yjr0R0jgct4","WqcoMOxGWfs","_ANNQKKwWGk","FFI50iSPWeI","lGH4MK9O2J0","jdYwMLSNHnU","GMr-Fhb5gEs","E76vqlhmBlc","YNQPQkV3nhw","JfX06NINZpk"];const EMBED_IDS=new Set(EMBED_ORDER);function ytId(u){if(!u)return null;try{const z=new URL(u);if(z.hostname.includes('youtube.com'))return z.searchParams.get('v');if(z.hostname==='youtu.be')return z.pathname.slice(1)}catch(e){}return null}function vimeoId(u){if(!u)return null;try{const z=new URL(u);if(z.hostname==='vimeo.com'||z.hostname.endsWith('.vimeo.com')){const p=z.pathname.split('/').filter(Boolean);return p.find(x=>/^[0-9]+$/.test(x))||null}}catch(e){}return null}function media(u){const directVideo=(u&&u.toLowerCase().split('?')[0].endsWith('.mp4'))?u:null;if(directVideo){return '<div class="video-wrap"><video controls preload="metadata" playsinline><source src="'+directVideo+'" type="video/mp4">הדפדפן לא הצליח לנגן את הווידאו.</video></div><div class="auto-next-note">▶ וידאו רשמי מתנגן ישירות כאן באתר</div><a class="watch" target="_blank" rel="noopener" href="'+u+'">גיבוי: פתח את הווידאו הרשמי ↗</a>'}const id=ytId(u);if(id&&EMBED_IDS.has(id)){return '<div class="video-wrap"><iframe id="yt-'+id+'" src="https://www.youtube-nocookie.com/embed/'+id+'?rel=0&enablejsapi=1&playsinline=1&origin='+encodeURIComponent(location.origin)+'" title="YouTube video player" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div><div class="auto-next-note">▶ בסיום יעבור אוטומטית לסרטון המוטמע הבא</div><button class="autoplay-fallback" id="continue-'+id+'" type="button">המשך לסרטון הבא ▶</button><a class="watch" target="_blank" rel="noopener" href="'+u+'">אם ההטמעה לא עובדת — פתח ביוטיוב ↗</a>'}const vid=vimeoId(u);if(vid){return '<div class="video-wrap"><iframe src="https://player.vimeo.com/video/'+vid+'?dnt=1&title=0&byline=0" title="Vimeo video player" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe></div><div class="auto-next-note">▶ הסרטון מתנגן כאן באתר · בסיום המשך לפריט הבא</div><a class="watch" target="_blank" rel="noopener" href="'+u+'">גיבוי: פתח ב-Vimeo ↗</a>'}try{const p=new URL(u);if(p.hostname==='player.pbs.org'&&/^\/(?:stationplayer|viralplayer)\/\d+\/?$/.test(p.pathname)){return '<div class="video-wrap"><iframe src="'+u+'" title="PBS video player" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe></div><div class="auto-next-note">▶ נגן PBS הרשמי פועל כאן באתר · בסיום המשך לפריט הבא</div><a class="watch" target="_blank" rel="noopener" href="'+u+'">גיבוי: פתח בנגן PBS הרשמי ↗</a>'}}catch(e){}return u?'<a class="watch external-watch" target="_blank" rel="noopener" href="'+u+'">כרגע אין נגן פנימי מאומת — פתח מקור זמנית ↗</a>':'<div class="slot">◌ סלוט למחקר / קישור עדיין לא אומת</div>'}const HEB_SUB=['א׳','ב׳','ג׳','ד׳','ה׳','ו׳','ז׳','ח׳','ט׳','י׳','י״א','י״ב','י״ג','י״ד','ט״ו','ט״ז','י״ז','י״ח','י״ט','כ׳','כ״א','כ״ב','כ״ג','כ״ד','כ״ה','כ״ו','כ״ז','כ״ח','כ״ט','ל׳','ל״א','ל״ב','ל״ג','ל״ד','ל״ה','ל״ו','ל״ז','ל״ח','ל״ט','מ׳','מ״א','מ״ב','מ״ג','מ״ד','מ״ה','מ״ו','מ״ז','מ״ח','מ״ט','נ׳'];function hebSub(i){return HEB_SUB[i-1]||String(i)}const app=document.getElementById('app');chapters.forEach((c,ci)=>{const s=document.createElement('section');s.className='chapter';s.id='ch-'+(ci+1);s.innerHTML='<h2>פרק '+(CHAPTER_OFFSET+ci+1)+' · '+c.t+'</h2><p class="intro">'+c.intro+'</p><div class="grid"></div>';const g=s.querySelector('.grid');c.items.forEach((x,ii)=>{const a=document.createElement('article');a.className='card';a.innerHTML='<div class="top"><div class="num">'+hebSub(ii+1)+'</div><div><h3 class="title">'+x[0]+'</h3><div class="meta">'+x[1]+' · רמת עומק: '+x[5]+'</div></div></div>'+media(x[6])+'<div class="why"><b>למה עכשיו?</b> '+x[2]+'</div><ul class="q">'+x[3].map(q=>'<li>'+q+'</li>').join('')+'</ul><div class="chips">'+x[4].map(t=>'<span class="chip">'+t+'</span>').join('')+'</div>';g.appendChild(a)});const b=document.createElement('div');b.className='bridge';b.textContent='גשר לפרק הבא: '+c.bridge;s.appendChild(b);app.appendChild(s)});
+const EMBED_ORDER=["PmvLB5dIEp8","VAmVdxEksxY","cpWHgKgKxGk","xMa1BQ8z9C0","Bw_cetheReo","JwVYOYOp_tA","arVZJPkK5-8","NEvsjMvztUs","hlXc_eEtBHA","Ykhn2psFmEM","H8WJ2KENlK0","wvTv8TqWC48","SaSntOkK-Vk","gg7WjuFs8F4","d95J8yzvjbQ","yk14dOOvwMk","62cN8Z5Velo","_uAJY1mqtw4","qdvp8TYrCmg","PqPGOhXoprU","GcfLZSL7YGw","QOCaacO8wus","pbZ2MFAbGrk","K1xnYFCZ9Yg","MPzWrv6l9l0","VYQQD0KNOis","emCesU31ufE","jfq5-i8xoIU","hhJsi75Ehhg","5ohSUgs6mUw","_KgeXfCX7mg","cEijsIVwiB8","BFExaMByzYw","yTxZXkp-6sI","wbWL2wfvsM8","uCVnRIP3pIk","pk213XSSktQ","NQaZecHCCNA","8kK2zwjRV0M","itsb2SqR-R0","j6YaOqKORYY","nS1qQi3DrkU","z2sICp8E1BA","6ulXau2HyHg","NeeaP8pp9HI","dPKvHrD1eS4","8HfzUgxumVE","YnJPbphsoMY","9zwq8N4Ufd8","Y1LKHx_GrsY","H2xaFLR0V4k","ztL3hLIjv64","086N-X1Bd2o","dyiZaHIRM6w","fBOrzQP423A","i-VeKZeyHZs","4joZpdXeS4A","WAUX8dXu6aw","iWUp2kMCv6o","4mxJbgdiyIY","YM6Ekb5De2o","Aa1dGBKgGVc","9sjwlxQ_6LI","IIA-k_bBcL0","sQK3Yr4Sc_k","WzOrF5W4l3Q","ps2GlGs8oso","qERdL8uHSgI","LK6X3EGEdOY","DI6SemRT2iY","V66WBvI7Ufw","jsDxw63QqK0","lhF5G2k45vY","SfMwNBwIzQo","00jbG_cfGuQ","BO0zL03CtDs","rSPUYA3gWK8","IlSFn0gRyC4","zNpeuA4gtq0","CSrtewCJbpg","vUC5njkOq7o","skPOXcVvS5c","qsn4z7bNb14","pj1oFx42d48","p15KSbNxb28","txJTUVpVCT4","vcCkU2qtBQU","4ONwQV26L-k","gMdv3JlPizw","Jpi2VJj5PhY","PGBf4Q2XWZo","mbG8-ejz-WE","RDQa0okkpf0","ciGqnGFWqBs","rrLZPDGNr6w","mAkjETPM1s4","usKrCTtArNc","y9BLCfcUcFg","pqosCR6J2qo","9AEzixu_xZk","UrwMUQbUR30","oZtUFJAJ3lU","E1h4kgt2520","0VpPY0qGbdA","rGthtRZl8B0","7QMcXEj7IT0","c_CCmae8Wrc","SR3OOP9mImI","uwkeAS3UzB0","moxu_uTemNg","QGR5yOrChMA","1m55t3eJZa4","TJY5vWXZHgI","MoPEyQrChdg","kYivcr8PKRU","yR8cR75iKGU","C6koLzdSves","dUKV02uYEu0","TmNHk7kIxr8","RQ7VUZHwbEk","Yjr0R0jgct4","WqcoMOxGWfs","_ANNQKKwWGk","FFI50iSPWeI","lGH4MK9O2J0","jdYwMLSNHnU","GMr-Fhb5gEs","E76vqlhmBlc","YNQPQkV3nhw","JfX06NINZpk"];const EMBED_IDS=new Set(EMBED_ORDER);function ytId(u){if(!u)return null;try{const z=new URL(u);if(z.hostname.includes('youtube.com'))return z.searchParams.get('v');if(z.hostname==='youtu.be')return z.pathname.slice(1)}catch(e){}return null}function vimeoId(u){if(!u)return null;try{const z=new URL(u);if(z.hostname==='vimeo.com'||z.hostname.endsWith('.vimeo.com')){const p=z.pathname.split('/').filter(Boolean);return p.find(x=>/^[0-9]+$/.test(x))||null}}catch(e){}return null}function media(u){const directVideo=(u&&u.toLowerCase().split('?')[0].endsWith('.mp4'))?u:null;if(directVideo){return '<div class="video-wrap"><video controls preload="metadata" playsinline><source src="'+directVideo+'" type="video/mp4">הדפדפן לא הצליח לנגן את הווידאו.</video></div><div class="auto-next-note">▶ וידאו רשמי מתנגן ישירות כאן באתר</div><a class="watch" target="_blank" rel="noopener" href="'+u+'">גיבוי: פתח את הווידאו הרשמי ↗</a>'}const id=ytId(u);if(id&&EMBED_IDS.has(id)){return '<div class="video-wrap"><iframe id="yt-'+id+'" src="https://www.youtube-nocookie.com/embed/'+id+'?rel=0&enablejsapi=1&playsinline=1&origin='+encodeURIComponent(location.origin)+'" title="YouTube video player" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div><div class="auto-next-note">▶ בסיום נתקדם לפריט הבא; הפעלה אוטומטית תלויה בדפדפן</div><button class="autoplay-fallback" id="continue-'+id+'" type="button">המשך לסרטון הבא ▶</button><a class="watch" target="_blank" rel="noopener" href="'+u+'">אם ההטמעה לא עובדת — פתח ביוטיוב ↗</a>'}const vid=vimeoId(u);if(vid){return '<div class="video-wrap"><iframe src="https://player.vimeo.com/video/'+vid+'?dnt=1&title=0&byline=0" title="Vimeo video player" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe></div><div class="auto-next-note">▶ הסרטון מתנגן כאן באתר · בסיום המשך לפריט הבא</div><a class="watch" target="_blank" rel="noopener" href="'+u+'">גיבוי: פתח ב-Vimeo ↗</a>'}try{const p=new URL(u);if(p.hostname==='player.pbs.org'&&/^\/(?:stationplayer|viralplayer)\/\d+\/?$/.test(p.pathname)){return '<div class="video-wrap"><iframe src="'+u+'" title="PBS video player" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe></div><div class="auto-next-note">▶ נגן PBS הרשמי פועל כאן באתר · בסיום המשך לפריט הבא</div><a class="watch" target="_blank" rel="noopener" href="'+u+'">גיבוי: פתח בנגן PBS הרשמי ↗</a>'}}catch(e){}return u?'<a class="watch external-watch" target="_blank" rel="noopener" href="'+u+'">כרגע אין נגן פנימי מאומת — פתח מקור זמנית ↗</a>':'<div class="slot">◌ סלוט למחקר / קישור עדיין לא אומת</div>'}const HEB_SUB=['א׳','ב׳','ג׳','ד׳','ה׳','ו׳','ז׳','ח׳','ט׳','י׳','י״א','י״ב','י״ג','י״ד','ט״ו','ט״ז','י״ז','י״ח','י״ט','כ׳','כ״א','כ״ב','כ״ג','כ״ד','כ״ה','כ״ו','כ״ז','כ״ח','כ״ט','ל׳','ל״א','ל״ב','ל״ג','ל״ד','ל״ה','ל״ו','ל״ז','ל״ח','ל״ט','מ׳','מ״א','מ״ב','מ״ג','מ״ד','מ״ה','מ״ו','מ״ז','מ״ח','מ״ט','נ׳'];function hebSub(i){return HEB_SUB[i-1]||String(i)}const app=document.getElementById('app');chapters.forEach((c,ci)=>{const s=document.createElement('section');s.className='chapter';s.id='ch-'+(ci+1);s.innerHTML='<h2>פרק '+(CHAPTER_OFFSET+ci+1)+' · '+c.t+'</h2><p class="intro">'+c.intro+'</p><div class="grid"></div>';const g=s.querySelector('.grid');c.items.forEach((x,ii)=>{const a=document.createElement('article');a.className='card';a.innerHTML='<div class="top"><div class="num">'+hebSub(ii+1)+'</div><div><h3 class="title">'+x[0]+'</h3><div class="meta">'+x[1]+' · רמת עומק: '+x[5]+'</div></div></div>'+media(x[6])+'<div class="why"><b>למה עכשיו?</b> '+x[2]+'</div><ul class="q">'+x[3].map(q=>'<li>'+q+'</li>').join('')+'</ul><div class="chips">'+x[4].map(t=>'<span class="chip">'+t+'</span>').join('')+'</div>';g.appendChild(a)});const b=document.createElement('div');b.className='bridge';b.textContent='גשר לפרק הבא: '+c.bridge;s.appendChild(b);app.appendChild(s)});
 </script>
 <script>
 const ytPlayers={};
-function nextEmbedded(currentId){
-  const i=EMBED_ORDER.indexOf(currentId);
-  if(i<0||i>=EMBED_ORDER.length-1)return;
-  const nextId=EMBED_ORDER[i+1];
-  const nextFrame=document.getElementById('yt-'+nextId);
-  if(nextFrame) nextFrame.closest('.card')?.scrollIntoView({behavior:'smooth',block:'start'});
-  setTimeout(()=>{try{ytPlayers[nextId]?.playVideo()}catch(e){}},550);
+const ytReady=new Set();
+let pendingAutoNext=null;
+function advanceAfterCard(card){
+  if(!card)return;
+  const cards=[...document.querySelectorAll('.card')];
+  const i=cards.indexOf(card);
+  if(i<0||i>=cards.length-1)return;
+  const target=cards[i+1];
+  target.scrollIntoView({behavior:'smooth',block:'start'});
+  const frame=target.querySelector('iframe[id^="yt-"]');
+  if(frame){
+    const id=frame.id.slice(3);pendingAutoNext=id;
+    if(ytReady.has(id))setTimeout(()=>{if(pendingAutoNext===id){pendingAutoNext=null;try{ytPlayers[id]?.playVideo()}catch(e){showAutoplayFallback(id)}}},550);
+    return;
+  }
+  pendingAutoNext=null;
+  const video=target.querySelector('video');
+  if(video)setTimeout(()=>{const promise=video.play();if(promise?.catch)promise.catch(()=>{video.controls=true})},550);
 }
-function showAutoplayFallback(currentId){
-  const i=EMBED_ORDER.indexOf(currentId);
-  if(i<0||i>=EMBED_ORDER.length-1)return;
-  const b=document.getElementById('continue-'+currentId);
-  if(!b)return;
-  b.style.display='inline-block';
-  b.onclick=()=>{
-    b.style.display='none';
-    nextEmbedded(currentId);
-  };
+function nextEmbedded(id){
+  const frame=document.getElementById('yt-'+id);
+  if(frame)advanceAfterCard(frame.closest('.card'));
+}
+function showAutoplayFallback(id){
+  const btn=document.getElementById('continue-'+id);
+  if(!btn)return;
+  btn.textContent='▶ הפעל את הסרטון הזה';
+  btn.style.display='inline-block';
+  btn.onclick=()=>{try{ytPlayers[id]?.playVideo()}catch(e){}};
 }
 function showEmbedFallback(id){
   const frame=document.getElementById('yt-'+id);
@@ -3004,27 +3033,29 @@ function showEmbedFallback(id){
   const wrap=frame.closest('.video-wrap');
   if(!wrap)return;
   const url='https://www.youtube.com/watch?v='+id;
-  wrap.innerHTML='<div class="embed-fallback"><div>הנגן הפנימי לא זמין לסרטון הזה.</div><a target="_blank" rel="noopener" href="'+url+'">פתח את הסרטון ▶</a></div>';
+  wrap.innerHTML='<div class="embed-fallback"><div>הנגן הזה אינו זמין כעת באתר.</div><button type="button" class="autoplay-fallback" style="display:inline-block">נסה נגן רשמי חלופי ▶</button><a target="_blank" rel="noopener" href="'+url+'">מוצא אחרון: פתח ביוטיוב ↗</a></div>';
+  wrap.querySelector('button').onclick=()=>{
+    wrap.innerHTML='<iframe src="https://www.youtube.com/embed/'+id+'?rel=0&playsinline=1" title="YouTube official alternate player" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>';
+    const note=wrap.nextElementSibling;
+    if(note?.classList.contains('auto-next-note'))note.textContent='נגן YouTube רשמי חלופי · מעבר אוטומטי אינו מובטח כאן';
+  };
   const note=wrap.nextElementSibling;
-  if(note&&note.classList.contains('auto-next-note')) note.textContent='ההטמעה לא זמינה — הסרטון עצמו עדיין נגיש בלחיצה אחת.';
+  if(note?.classList.contains('auto-next-note'))note.textContent='אפשר לנסות נגן רשמי חלופי באתר לפני מעבר חיצוני.';
 }
 window.onYouTubeIframeAPIReady=function(){
   EMBED_ORDER.forEach(id=>{
     const frame=document.getElementById('yt-'+id);
     if(!frame)return;
-    ytPlayers[id]=new YT.Player(frame,{
-      events:{
-        onStateChange:(e)=>{
-          if(e.data===YT.PlayerState.ENDED) nextEmbedded(id);
-        },
-        onError:(e)=>{
-          if([2,5,100,101,150,153].includes(e.data)) showEmbedFallback(id);
-        },
-        onAutoplayBlocked:()=>showAutoplayFallback(id)
-      }
-    });
+    ytPlayers[id]=new YT.Player(frame,{events:{
+      onReady:e=>{ytReady.add(id);if(pendingAutoNext===id){pendingAutoNext=null;setTimeout(()=>{try{e.target.playVideo()}catch(x){showAutoplayFallback(id)}},250)}},
+      onStateChange:e=>{if(e.data===YT.PlayerState.ENDED)nextEmbedded(id)},
+      onError:e=>{if([2,5,100,101,150,153].includes(e.data))showEmbedFallback(id)},
+      onAutoplayBlocked:()=>showAutoplayFallback(id)
+    }});
   });
+  document.querySelectorAll('.card video').forEach(v=>v.addEventListener('ended',()=>advanceAfterCard(v.closest('.card'))));
 };
+
 (function(){
   const s=document.createElement('script');
   s.src='https://www.youtube.com/iframe_api';
