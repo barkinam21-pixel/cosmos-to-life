@@ -171,7 +171,7 @@ async function resolveNativeMedia(){
             tryNext();
           };
           video.addEventListener('error',fail,{once:true});
-          if(/\\.m3u8(?:[?#]|$)/i.test(src)&&!video.canPlayType('application/vnd.apple.mpegurl')){
+          if(/\.m3u8(?:[?#]|$)/i.test(src)&&!video.canPlayType('application/vnd.apple.mpegurl')){
             loadHlsLibrary().then(Hls=>{
               if(failed||!video.isConnected)return;
               if(!Hls.isSupported()){fail();return}
