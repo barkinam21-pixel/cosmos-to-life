@@ -107,6 +107,10 @@ function extractEmbeddedPlayers(html, rawUrl) {
     const p = new URL(rawUrl);
     const si = p.pathname.match(/\/object\/yt_([A-Za-z0-9_-]{6,})/);
     if (si) add("youtube", si[1], null);
+    // The original PBS player URL is itself an official in-page fallback.
+    if (p.hostname === "player.pbs.org" && /^\/(?:viralplayer|stationplayer|portalplayer)\/\d+\/?$/.test(p.pathname)) {
+      add("pbs", null, p.href);
+    }
   } catch {}
 
   const ytPatterns = [
