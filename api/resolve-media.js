@@ -17,13 +17,17 @@ function cleanHtmlEscapes(s) {
     .replace(/\\u0026/g, "&")
     .replace(/\\\//g, "/")
     .replace(/&amp;/g, "&")
-    .replace(/&#0*38;/g, "&");
+    .replace(/&#0*38;/g, "&")
+    .replace(/&quot;|&#0*34;/g, '"')
+    .replace(/&#x0*22;/gi, '"');
 }
 
 function isDirectVideo(u) {
   try {
     const x = new URL(u);
-    return /\.(mp4|m4v|webm)$/i.test(x.pathname);
+    const p = x.pathname.toLowerCase();
+    if (p.includes("/favicons/") || /\/favicon[^/]*$/i.test(p) || /\/site\.webm$/i.test(p)) return false;
+    return /\.(mp4|m4v|webm)$/i.test(p);
   } catch {
     return false;
   }
