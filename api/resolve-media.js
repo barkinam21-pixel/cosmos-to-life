@@ -67,6 +67,31 @@ function extractDirectVideos(html, pageUrl) {
   return found.slice(0, 8);
 }
 
+function extractHlsStreams(html, pageUrl) {
+  const src = cleanHtmlEscapes(html);
+  const found = [];
+  const seen = new Set();
+  const add = raw => {
+    if (!raw) return;
+    const value = cleanHtmlEscapes(raw).trim().replace(/^['"]|['"]$/g, "");
+    try {
+      const abs = new URL(value, pageUrl).href;
+      if (!/\.m3u8(?:$|\?)/i.test(abs) || seen.has(abs)) return;
+      seen.add(abs);
+      found.push(abs);
+    } catch {}
+  };
+  const patterns = [
+    /https?:\\?\/\\?\/[^"'<>\s]+?\.m3u8(?:\?[^"'<>\s]*)?/gi,
+    /["'](?:url|src|file|hls|stream)["']\s*:\s*["']([^"']+\.m3u8(?:\?[^"']*)?)["']/gi
+  ];
+  for (const re of patterns) {
+    let m;
+    while ((m = re.exec(src))) add(m[1] || m[0]);
+  }
+  return found.slice(0, 8);
+}
+
 function extractEmbeddedPlayers(html, rawUrl) {
   const src = cleanHtmlEscapes(html);
   const out = [];
@@ -108,10 +133,10 @@ async function resolveOne(rawUrl) {
   try {
     page = new URL(rawUrl);
   } catch {
-    return { source: rawUrl, ok: false, reason: "invalid-url", media: [], embeds: [] };
+    return { source: rawUrl, ok: false, reason: "invalid-url", media: [], hls: [], embeds: [] };
   }
   if (page.protocol !== "https:" || !allowedHost(page.hostname)) {
-    return { source: rawUrl, ok: false, reason: "host-not-allowed", media: [], embeds: [] };
+    return { source: rawUrl, ok: false, reason: "host-not-allowed", media: [], hls: [], embeds: [] };
   }
 
   const controller = new AbortController();
@@ -125,19 +150,20 @@ async function resolveOne(rawUrl) {
         "accept": "text/html,application/xhtml+xml"
       }
     });
-    if (!r.ok) return { source: rawUrl, ok: false, reason: "source-http-" + r.status, media: [], embeds: [] };
+    if (!r.ok) return { source: rawUrl, ok: false, reason: "source-http-" + r.status, media: [], hls: [], embeds: [] };
     const type = (r.headers.get("content-type") || "").toLowerCase();
     if (!type.includes("text/html") && !type.includes("application/xhtml")) {
-      return { source: rawUrl, ok: false, reason: "not-html", media: [], embeds: [] };
+      return { source: rawUrl, ok: false, reason: "not-html", media: [], hls: [], embeds: [] };
     }
 
     const html = await r.text();
     const media = extractDirectVideos(html, r.url || page.href);
+    const hls = extractHlsStreams(html, r.url || page.href);
     const embeds = extractEmbeddedPlayers(html, rawUrl);
-    const ok = media.length > 0 || embeds.length > 0;
-    return { source: rawUrl, ok, reason: ok ? null : "no-playable-source", media, embeds };
+    const ok = media.length > 0 || hls.length > 0 || embeds.length > 0;
+    return { source: rawUrl, ok, reason: ok ? null : "no-playable-source", media, hls, embeds };
   } catch (e) {
-    return { source: rawUrl, ok: false, reason: e && e.name === "AbortError" ? "timeout" : "fetch-failed", media: [], embeds: [] };
+    return { source: rawUrl, ok: false, reason: e && e.name === "AbortError" ? "timeout" : "fetch-failed", media: [], hls: [], embeds: [] };
   } finally {
     clearTimeout(timer);
   }
