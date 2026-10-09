@@ -69,6 +69,19 @@ function showEmbedFallback(id){
   const note=wrap.nextElementSibling;
   if(note?.classList.contains('auto-next-note'))note.textContent='אפשר לנסות נגן רשמי חלופי באתר לפני מעבר חיצוני.';
 }
+let hlsLoaderPromise=null;
+function loadHlsLibrary(){
+  if(window.Hls)return Promise.resolve(window.Hls);
+  if(hlsLoaderPromise)return hlsLoaderPromise;
+  hlsLoaderPromise=new Promise((resolve,reject)=>{
+    const script=document.createElement('script');
+    script.src='https://cdn.jsdelivr.net/npm/hls.js@1.5.20/dist/hls.min.js';
+    script.onload=()=>window.Hls?resolve(window.Hls):reject(new Error('HLS library unavailable'));
+    script.onerror=()=>reject(new Error('HLS library could not load'));
+    document.head.appendChild(script);
+  });
+  return hlsLoaderPromise;
+}
 async function resolveNativeMedia(){
   const boxes=[...document.querySelectorAll('.native-resolver')];
   if(!boxes.length)return;
@@ -125,7 +138,7 @@ async function resolveNativeMedia(){
       let source='';
       try{source=decodeURIComponent(box.dataset.sourceUrl||'')}catch(e){}
       const result=bySource.get(source)||{};
-      const mediaUrls=Array.isArray(result.media)?result.media:[];
+      const mediaUrls=[...(Array.isArray(result.media)?result.media:[]),...(Array.isArray(result.hls)?result.hls:[])];
       const embeds=Array.isArray(result.embeds)?result.embeds:[];
 
       if(mediaUrls.length){
@@ -149,14 +162,33 @@ async function resolveNativeMedia(){
           video.controls=true;
           video.preload='metadata';
           video.playsInline=true;
-          video.src=src;
           video.addEventListener('ended',()=>advanceAfterCard(video.closest('.card')));
-          video.addEventListener('error',()=>{if(pos<mediaUrls.length)tryNext();else renderFallback()},{once:true});
+          let failed=false, hlsInstance=null;
+          const fail=()=>{
+            if(failed)return;
+            failed=true;
+            if(hlsInstance){hlsInstance.destroy();hlsInstance=null}
+            tryNext();
+          };
+          video.addEventListener('error',fail,{once:true});
+          if(/\.m3u8(?:[?#]|$)/i.test(src)&&!video.canPlayType('application/vnd.apple.mpegurl')){
+            loadHlsLibrary().then(Hls=>{
+              if(failed||!video.isConnected)return;
+              if(!Hls.isSupported()){fail();return}
+              hlsInstance=new Hls({enableWorker:true,maxBufferLength:20});
+              hlsInstance.on(Hls.Events.ERROR,(_,data)=>{if(data.fatal)fail()});
+              hlsInstance.loadSource(src);
+              hlsInstance.attachMedia(video);
+            }).catch(fail);
+          }else{
+            video.src=src;
+          }
           wrap.appendChild(video);
           box.appendChild(wrap);
           const note=document.createElement('div');
           note.className='auto-next-note';
-          note.textContent='▶ קובץ וידאו רשמי מתנגן ישירות כאן באתר · בלי iframe';
+          note.textContent='◌ טוען נגן וידאו רשמי בתוך האתר…';
+           video.addEventListener('loadedmetadata',()=>{note.textContent='▶ הנגן הרשמי נטען כאן באתר · בלי iframe'},{once:true});
           box.appendChild(note);
           addSourceLink(box,source);
         };
