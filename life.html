@@ -207,6 +207,12 @@ async function resolveNativeMedia(){
     });
   }catch(e){
     boxes.forEach(box=>{
+      let source='';
+      try{source=decodeURIComponent(box.dataset.sourceUrl||'')}catch(x){}
+      if(/^https:\/\/player\.pbs\.org\/(?:viralplayer|stationplayer|portalplayer)\/\d+\/?$/.test(source)){
+        renderEmbed(box,{provider:'pbs',url:source},source);
+        return;
+      }
       const status=box.querySelector('.resolver-status');
       if(status)status.textContent='◌ בדיקת הנגן הפנימי נכשלה זמנית; המקור הרשמי נשאר זמין';
     });
@@ -215,16 +221,25 @@ async function resolveNativeMedia(){
 resolveNativeMedia();
 
 window.onYouTubeIframeAPIReady=function(){
-  EMBED_ORDER.forEach(id=>{
-    const frame=document.getElementById('yt-'+id);
-    if(!frame)return;
+  const initPlayer=(frame)=>{
+    const id=frame.id.slice(3);
+    if(ytPlayers[id])return;
     ytPlayers[id]=new YT.Player(frame,{events:{
       onReady:e=>{ytReady.add(id);if(pendingAutoNext===id){pendingAutoNext=null;setTimeout(()=>{try{e.target.playVideo()}catch(x){showAutoplayFallback(id)}},250)}},
       onStateChange:e=>{if(e.data===YT.PlayerState.ENDED)nextEmbedded(id)},
       onError:e=>{if([2,5,100,101,150,153].includes(e.data))showEmbedFallback(id)},
       onAutoplayBlocked:()=>showAutoplayFallback(id)
     }});
-  });
+  };
+  const frames=EMBED_ORDER.map(id=>document.getElementById('yt-'+id)).filter(Boolean);
+  if('IntersectionObserver' in window){
+    const observer=new IntersectionObserver(entries=>{
+      entries.forEach(entry=>{
+        if(entry.isIntersecting){observer.unobserve(entry.target);initPlayer(entry.target)}
+      });
+    },{rootMargin:'700px 0px',threshold:0});
+    frames.forEach(frame=>observer.observe(frame));
+  }else frames.forEach(initPlayer);
   document.querySelectorAll('.card video').forEach(v=>v.addEventListener('ended',()=>advanceAfterCard(v.closest('.card'))));
 };
 
