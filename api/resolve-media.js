@@ -23,20 +23,19 @@ function cleanHtmlEscapes(s) {
 function isDirectVideo(u) {
   try {
     const x = new URL(u);
-    const p = x.pathname.toLowerCase();
-    return /\.(mp4|m4v|webm)$/.test(p);
+    return /\.(mp4|m4v|webm)$/i.test(x.pathname);
   } catch {
     return false;
   }
 }
 
 function extractDirectVideos(html, pageUrl) {
-  const text = cleanHtmlEscapes(html);
+  const src = cleanHtmlEscapes(html);
   const found = [];
   const seen = new Set();
   const add = raw => {
     if (!raw) return;
-    let value = cleanHtmlEscapes(raw).trim().replace(/^['"]|['"]$/g, "");
+    const value = cleanHtmlEscapes(raw).trim().replace(/^['"]|['"]$/g, "");
     try {
       const abs = new URL(value, pageUrl).href;
       if (!isDirectVideo(abs) || seen.has(abs)) return;
@@ -45,23 +44,59 @@ function extractDirectVideos(html, pageUrl) {
     } catch {}
   };
 
-  const attrs = [
+  const patterns = [
     /<(?:source|video)[^>]+\bsrc\s*=\s*["']([^"']+)["']/gi,
     /<a[^>]+\bhref\s*=\s*["']([^"']+\.(?:mp4|m4v|webm)(?:\?[^"']*)?)["']/gi,
     /<meta[^>]+(?:property|name)\s*=\s*["'](?:og:video(?::secure_url)?|twitter:player:stream)["'][^>]+content\s*=\s*["']([^"']+)["']/gi,
     /<meta[^>]+content\s*=\s*["']([^"']+)["'][^>]+(?:property|name)\s*=\s*["'](?:og:video(?::secure_url)?|twitter:player:stream)["']/gi,
     /["'](?:contentUrl|content_url|downloadUrl|download_url|fileUrl|file_url)["']\s*:\s*["']([^"']+)["']/gi
   ];
-  for (const re of attrs) {
+  for (const re of patterns) {
     let m;
-    while ((m = re.exec(text))) add(m[1]);
+    while ((m = re.exec(src))) add(m[1]);
   }
 
   const absolute = /https?:\\?\/\\?\/[^"'<>\s]+?\.(?:mp4|m4v|webm)(?:\?[^"'<>\s]*)?/gi;
   let m;
-  while ((m = absolute.exec(text))) add(m[0]);
+  while ((m = absolute.exec(src))) add(m[0]);
 
   return found.slice(0, 8);
+}
+
+function extractEmbeddedPlayers(html, rawUrl) {
+  const src = cleanHtmlEscapes(html);
+  const out = [];
+  const seen = new Set();
+  const add = (provider, id, url) => {
+    const key = provider + ":" + (id || url || "");
+    if (!id && !url || seen.has(key)) return;
+    seen.add(key);
+    out.push({ provider, id: id || null, url: url || null });
+  };
+
+  try {
+    const p = new URL(rawUrl);
+    const si = p.pathname.match(/\/object\/yt_([A-Za-z0-9_-]{6,})/);
+    if (si) add("youtube", si[1], null);
+  } catch {}
+
+  const ytPatterns = [
+    /(?:youtube(?:-nocookie)?\.com\/embed\/|youtube\.com\/watch\?[^"'<>\s]*?v=|youtu\.be\/)([A-Za-z0-9_-]{6,})/gi,
+    /["'](?:youtubeId|youtube_id|videoId|video_id)["']\s*:\s*["']([A-Za-z0-9_-]{8,})["']/gi
+  ];
+  for (const re of ytPatterns) {
+    let m;
+    while ((m = re.exec(src))) add("youtube", m[1], null);
+  }
+
+  let m;
+  const vimeo = /(?:player\.)?vimeo\.com\/(?:video\/)?(\d{6,})/gi;
+  while ((m = vimeo.exec(src))) add("vimeo", m[1], null);
+
+  const pbs = /https?:\/\/player\.pbs\.org\/(?:stationplayer|viralplayer)\/\d+\/?[^"'<>\s]*/gi;
+  while ((m = pbs.exec(src))) add("pbs", null, m[0]);
+
+  return out.slice(0, 8);
 }
 
 async function resolveOne(rawUrl) {
@@ -69,10 +104,10 @@ async function resolveOne(rawUrl) {
   try {
     page = new URL(rawUrl);
   } catch {
-    return { source: rawUrl, ok: false, reason: "invalid-url", media: [] };
+    return { source: rawUrl, ok: false, reason: "invalid-url", media: [], embeds: [] };
   }
   if (page.protocol !== "https:" || !allowedHost(page.hostname)) {
-    return { source: rawUrl, ok: false, reason: "host-not-allowed", media: [] };
+    return { source: rawUrl, ok: false, reason: "host-not-allowed", media: [], embeds: [] };
   }
 
   const controller = new AbortController();
@@ -82,20 +117,23 @@ async function resolveOne(rawUrl) {
       redirect: "follow",
       signal: controller.signal,
       headers: {
-        "user-agent": "CosmosToLife/1.0 (+https://cosmos-to-life.vercel.app/)",
+        "user-agent": "CosmosToLife/1.1 (+https://cosmos-to-life.vercel.app/)",
         "accept": "text/html,application/xhtml+xml"
       }
     });
-    if (!r.ok) return { source: rawUrl, ok: false, reason: "source-http-" + r.status, media: [] };
+    if (!r.ok) return { source: rawUrl, ok: false, reason: "source-http-" + r.status, media: [], embeds: [] };
     const type = (r.headers.get("content-type") || "").toLowerCase();
     if (!type.includes("text/html") && !type.includes("application/xhtml")) {
-      return { source: rawUrl, ok: false, reason: "not-html", media: [] };
+      return { source: rawUrl, ok: false, reason: "not-html", media: [], embeds: [] };
     }
+
     const html = await r.text();
     const media = extractDirectVideos(html, r.url || page.href);
-    return { source: rawUrl, ok: media.length > 0, reason: media.length ? null : "no-direct-video", media };
+    const embeds = extractEmbeddedPlayers(html, rawUrl);
+    const ok = media.length > 0 || embeds.length > 0;
+    return { source: rawUrl, ok, reason: ok ? null : "no-playable-source", media, embeds };
   } catch (e) {
-    return { source: rawUrl, ok: false, reason: e && e.name === "AbortError" ? "timeout" : "fetch-failed", media: [] };
+    return { source: rawUrl, ok: false, reason: e && e.name === "AbortError" ? "timeout" : "fetch-failed", media: [], embeds: [] };
   } finally {
     clearTimeout(timer);
   }
@@ -108,7 +146,9 @@ module.exports = async function handler(req, res) {
   if (req.method === "GET") {
     if (typeof req.query.url === "string") urls = [req.query.url];
   } else if (req.method === "POST") {
-    const body = typeof req.body === "string" ? (() => { try { return JSON.parse(req.body); } catch { return {}; } })() : (req.body || {});
+    const body = typeof req.body === "string"
+      ? (() => { try { return JSON.parse(req.body); } catch { return {}; } })()
+      : (req.body || {});
     if (Array.isArray(body.urls)) urls = body.urls;
   } else {
     res.status(405).json({ error: "method-not-allowed" });
