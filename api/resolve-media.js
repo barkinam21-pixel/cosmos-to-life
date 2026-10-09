@@ -216,6 +216,7 @@ async function resolveOne(rawUrl) {
   if (page.protocol !== "https:" || !allowedHost(page.hostname)) {
     return { source: rawUrl, ok: false, reason: "host-not-allowed", media: [], hls: [], embeds: [] };
   }
+  const fallbackEmbeds = extractEmbeddedPlayers("", rawUrl);
 
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), 9000);
@@ -228,10 +229,10 @@ async function resolveOne(rawUrl) {
         "accept": "text/html,application/xhtml+xml"
       }
     });
-    if (!r.ok) return { source: rawUrl, ok: false, reason: "source-http-" + r.status, media: [], hls: [], embeds: [] };
+    if (!r.ok) return { source: rawUrl, ok: fallbackEmbeds.length > 0, reason: "source-http-" + r.status, media: [], hls: [], embeds: fallbackEmbeds };
     const type = (r.headers.get("content-type") || "").toLowerCase();
     if (!type.includes("text/html") && !type.includes("application/xhtml")) {
-      return { source: rawUrl, ok: false, reason: "not-html", media: [], hls: [], embeds: [] };
+      return { source: rawUrl, ok: fallbackEmbeds.length > 0, reason: "not-html", media: [], hls: [], embeds: fallbackEmbeds };
     }
 
     const html = await r.text();
@@ -257,7 +258,7 @@ async function resolveOne(rawUrl) {
     const ok = media.length > 0 || hls.length > 0 || embeds.length > 0;
     return { source: rawUrl, ok, reason: ok ? null : "no-playable-source", media, hls, embeds };
   } catch (e) {
-    return { source: rawUrl, ok: false, reason: e && e.name === "AbortError" ? "timeout" : "fetch-failed", media: [], hls: [], embeds: [] };
+    return { source: rawUrl, ok: fallbackEmbeds.length > 0, reason: e && e.name === "AbortError" ? "timeout" : "fetch-failed", media: [], hls: [], embeds: fallbackEmbeds };
   } finally {
     clearTimeout(timer);
   }
