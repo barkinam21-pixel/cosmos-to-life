@@ -128,6 +128,80 @@ function extractEmbeddedPlayers(html, rawUrl) {
   return out.slice(0, 8);
 }
 
+
+async function resolvePbsEncodings(rawUrl) {
+  let id = null;
+  try {
+    const p = new URL(rawUrl);
+    if (p.hostname !== "player.pbs.org") return { media: [], hls: [] };
+    const m = p.pathname.match(/\/(?:viralplayer|stationplayer|portalplayer)\/(\d+)/);
+    if (!m) return { media: [], hls: [] };
+    id = m[1];
+  } catch {
+    return { media: [], hls: [] };
+  }
+
+  const portal = "https://player.pbs.org/portalplayer/" + id + "/";
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 9000);
+  try {
+    const r = await fetch(portal, {
+      redirect: "follow",
+      signal: controller.signal,
+      headers: {
+        "user-agent": "CosmosToLife/1.2 (+https://cosmos-to-life.vercel.app/)",
+        "accept": "text/html,application/xhtml+xml"
+      }
+    });
+    if (!r.ok) return { media: [], hls: [] };
+    const html = cleanHtmlEscapes(await r.text());
+    const m = html.match(/window\.videoBridge\s*=\s*(\{[\s\S]*?\})\s*;/);
+    if (!m) return { media: [], hls: [] };
+
+    let bridge;
+    try { bridge = JSON.parse(m[1]); } catch { return { media: [], hls: [] }; }
+    const encodings = Array.isArray(bridge.encodings) ? bridge.encodings : [];
+    const media = [];
+    const hls = [];
+    const seen = new Set();
+
+    for (const enc of encodings.slice(0, 6)) {
+      if (typeof enc !== "string" || !/^https:\/\//i.test(enc)) continue;
+      try {
+        let rr;
+        try {
+          rr = await fetch(enc, {
+            method: "HEAD",
+            redirect: "follow",
+            headers: { "user-agent": "CosmosToLife/1.2 (+https://cosmos-to-life.vercel.app/)" }
+          });
+        } catch {}
+        if (!rr || !rr.url) {
+          rr = await fetch(enc, {
+            method: "GET",
+            redirect: "follow",
+            headers: {
+              "user-agent": "CosmosToLife/1.2 (+https://cosmos-to-life.vercel.app/)",
+              "range": "bytes=0-0"
+            }
+          });
+        }
+        const finalUrl = rr && rr.url ? rr.url : enc;
+        const type = rr && rr.headers ? String(rr.headers.get("content-type") || "").toLowerCase() : "";
+        if (seen.has(finalUrl)) continue;
+        seen.add(finalUrl);
+        if (/\.m3u8(?:$|\?)/i.test(finalUrl) || /mpegurl/.test(type)) hls.push(finalUrl);
+        else if (/\.(?:mp4|m4v|webm)(?:$|\?)/i.test(finalUrl) || /^video\//.test(type)) media.push(finalUrl);
+      } catch {}
+    }
+    return { media, hls };
+  } catch {
+    return { media: [], hls: [] };
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 async function resolveOne(rawUrl) {
   let page;
   try {
@@ -157,9 +231,25 @@ async function resolveOne(rawUrl) {
     }
 
     const html = await r.text();
-    const media = extractDirectVideos(html, r.url || page.href);
-    const hls = extractHlsStreams(html, r.url || page.href);
+    let media = extractDirectVideos(html, r.url || page.href);
+    let hls = extractHlsStreams(html, r.url || page.href);
     const embeds = extractEmbeddedPlayers(html, rawUrl);
+
+    const pbsDirect = await resolvePbsEncodings(rawUrl);
+    media = [...new Set([...pbsDirect.media, ...media])];
+    hls = [...new Set([...pbsDirect.hls, ...hls])];
+
+    if (!media.length && !hls.length) {
+      for (const embed of embeds) {
+        if (embed.provider === "pbs" && embed.url) {
+          const nested = await resolvePbsEncodings(embed.url);
+          media = [...new Set([...nested.media, ...media])];
+          hls = [...new Set([...nested.hls, ...hls])];
+          if (media.length || hls.length) break;
+        }
+      }
+    }
+
     const ok = media.length > 0 || hls.length > 0 || embeds.length > 0;
     return { source: rawUrl, ok, reason: ok ? null : "no-playable-source", media, hls, embeds };
   } catch (e) {
