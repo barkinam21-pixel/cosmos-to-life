@@ -10,6 +10,7 @@
   let state='idle', capture=null, socket=null, captureContext=null, playbackContext=null;
   let captureNode=null, silentGain=null, inputNode=null;
   let playbackTime=0, activeSources=new Set(), deadline=0, timer=null, setupReady=false, heardAudio=false;
+  let connectionTimer=null, setupTimer=null;
   let verifiedKey=''; // RAM only: cleared when this tab closes or reloads.
   const WS_ENDPOINT='wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1beta.GenerativeService.BidiGenerateContent';
   const MODEL_ENDPOINT='https://generativelanguage.googleapis.com/v1beta/models/'+MODEL;
@@ -32,10 +33,18 @@
     return key;
   }
   function setupPayload(){
-    return {setup:{model:'models/'+MODEL,generationConfig:{
-      responseModalities:['AUDIO'],inputAudioTranscription:{},outputAudioTranscription:{},
-      translationConfig:{targetLanguageCode:'he',echoTargetLanguage:false}
-    }}};
+    // WebSocket's BidiGenerateContentSetup schema differs from the example
+    // in Google's Live Translate guide. A transcript field nested inside
+    // generationConfig makes the server close with 1007 (invalid JSON).
+    return {setup:{
+      model:'models/'+MODEL,
+      generationConfig:{
+        responseModalities:['AUDIO'],
+        translationConfig:{targetLanguageCode:'he',echoTargetLanguage:false}
+      },
+      inputAudioTranscription:{},
+      outputAudioTranscription:{}
+    }};
   }
   function explainHttp(status,body){
     const code=body?.error?.status||'';
@@ -55,6 +64,7 @@
     if(/401|api.key.invalid|unauthenticated|invalid.api.key/i.test(detail))return 'Google לא מאשרת את מפתח ה-API (401). כדאי ליצור מפתח Auth חדש ב-AI Studio.';
     if(/403|permission.denied|forbidden/i.test(detail))return 'למפתח אין הרשאה למודל (403). בדוק הרשאות או סוג פרויקט.';
     if(/404|model.*not.found/i.test(detail))return 'המודל אינו נגיש בחשבון הזה (404).';
+    if(/invalid.json.payload|unknown.name|cannot.find.field/i.test(detail))return 'Google דחתה את מבנה בקשת החיבור (1007). זו בעיית קוד ולא בעיה במפתח או בתשלום. '+detail;
     return 'חיבור Live נסגר (קוד '+code+'). '+(detail||'ייתכן חיבור רשת, הרשאת Google או מגבלת API.');
   }
   async function diagnoseLiveFailure(key,original){
@@ -131,13 +141,16 @@
     }
     return f;
   }
-  async function playTranslated(b64){
+  async function playTranslated(b64,mimeType){
     if(!b64||state==='idle'||!playbackContext)return;
+    const rateMatch=String(mimeType||'').match(/(?:^|;)\s*rate=(\d+)/i);
+    const specifiedRate=rateMatch?Number(rateMatch[1]):24000;
+    const rate=[16000,24000,32000,44100,48000].includes(specifiedRate)?specifiedRate:24000;
     const data=pcmFromBase64(b64);
     if(!data.length)return;
     if(playbackContext.state!=='running')await playbackContext.resume();
     if(state==='idle')return;
-    const buffer=playbackContext.createBuffer(1,data.length,24000);
+    const buffer=playbackContext.createBuffer(1,data.length,rate);
     buffer.getChannelData(0).set(data);
     const source=playbackContext.createBufferSource();
     source.buffer=buffer;source.connect(playbackContext.destination);
@@ -150,7 +163,7 @@
       setStatus('הדיבוב מתעכב. איפסתי את תור השמע כדי לחזור לזמן אמת.','neutral');
     }
     const at=playbackTime;
-    playbackTime+=data.length/24000;
+    playbackTime+=data.length/rate;
     activeSources.add(source);
     source.onended=()=>activeSources.delete(source);
     source.start(at);
@@ -159,7 +172,7 @@
   function stop(reason='הדיבוב נעצר.'){
     if(state==='idle')return;
     state='idle';setupReady=false;
-    clearInterval(timer);timer=null;countdown.textContent='';
+    clearInterval(timer);timer=null;clearTimeout(connectionTimer);connectionTimer=null;clearTimeout(setupTimer);setupTimer=null;countdown.textContent='';
     if(socket){
       const ws=socket;socket=null;
       try{if(ws.readyState===WebSocket.OPEN){ws.send(JSON.stringify({realtimeInput:{audioStreamEnd:true}}))}}catch(_){}
@@ -179,13 +192,13 @@
     let msg;
     try{msg=JSON.parse(raw)}catch(_){return}
     if(msg.error){stop('שגיאה ממנוע Google: '+explainLiveFailure(msg.error.code||'API',msg.error.message||msg.error.status));return}
-    if(msg.setupComplete){setupReady=true;verifiedKey=keyInput.value.trim()||verifiedKey;keyInput.value='';setStatus('החיבור פעיל. הפעל סרטון בלשונית ששיתפת.','good');return}
+    if(msg.setupComplete){clearTimeout(setupTimer);setupTimer=null;setupReady=true;verifiedKey=keyInput.value.trim()||verifiedKey;keyInput.value='';setStatus('החיבור פעיל. הפעל סרטון בלשונית ששיתפת.','good');return}
     const c=msg.serverContent;
     if(!c)return;
     if(c.inputTranscription?.text)appendTranscript(orig,c.inputTranscription.text);
     if(c.outputTranscription?.text)appendTranscript(translated,c.outputTranscription.text);
     for(const part of c.modelTurn?.parts||[]){
-      if(part.inlineData?.data)playTranslated(part.inlineData.data).catch(()=>stop('שגיאה בהשמעת הקריינות העברית.'));
+      if(part.inlineData?.data)playTranslated(part.inlineData.data,part.inlineData.mimeType).catch(()=>stop('שגיאה בהשמעת הקריינות העברית.'));
     }
   }
   async function startCaptureProcessing(){
@@ -237,10 +250,19 @@
       socket=new WebSocket(url);
       // Keep the entered key until Google confirms setup; avoid repeat typing on failure.
       const thisSocket=socket;
+      connectionTimer=setTimeout(()=>{
+        if(state!=='idle'&&socket===thisSocket&&thisSocket.readyState!==WebSocket.OPEN)
+          stop('שגיאה: החיבור אל Google לא נפתח בתוך 15 שניות. בדוק את החיבור לרשת.');
+      },15000);
       thisSocket.onopen=()=>{
         if(state==='idle'||socket!==thisSocket)return;
+        clearTimeout(connectionTimer);connectionTimer=null;
         state='running';
         thisSocket.send(JSON.stringify(setupPayload()));
+        setupTimer=setTimeout(()=>{
+          if(state!=='idle'&&socket===thisSocket&&!setupReady)
+            stop('שגיאה: Google לא אישרה את הגדרות הדיבוב בתוך 15 שניות. בדוק מפתח וחיבור.');
+        },15000);
         deadline=Date.now()+LIMIT_MS;
         countdown.textContent='נותרו 10:00 דקות לניסוי';
         timer=setInterval(()=>{
@@ -252,7 +274,8 @@
       };
       thisSocket.onmessage=event=>onMessage(event.data);
       thisSocket.onerror=()=>{
-        if(state!=='idle')stop('שגיאה בחיבור Google. בדוק מפתח, מכסה וזמינות המודל.');
+        // onclose usually follows onerror and carries the real 1007/401 reason.
+        // Do not stop here, or we would hide the actionable error message.
       };
       thisSocket.onclose=event=>{
         if(state!=='idle')stop('שגיאה: '+explainLiveFailure(event.code,event.reason));
