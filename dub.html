@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' wss://generativelanguage.googleapis.com; media-src 'self' blob:; object-src 'none'; base-uri 'none'; form-action 'none'">
+<title>דיבוב חי לעברית · מהמפץ הגדול לחיים</title>
+<style>
+:root{color-scheme:dark;--bg:#081322;--card:#132339;--line:#34506e;--text:#f2f8ff;--muted:#b5c7da;--blue:#9bd5ff}*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:linear-gradient(180deg,#081322,#111e30);color:var(--text);font:16px/1.6 Arial,system-ui,sans-serif}
+main{max-width:760px;margin:auto;padding:24px 16px 70px}h1{font-size:clamp(26px,5vw,34px);margin:12px 0 5px}h2{font-size:19px;margin:0 0 8px}
+p{margin:5px 0 12px}.muted,small{color:var(--muted)}.back{color:var(--blue);text-decoration:none;font-weight:700}.panel{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;margin-top:16px}.notice{border-right:4px solid #70c1ff}.pill{font-size:12px;color:#cceaff;background:#1a3854;border-radius:99px;padding:4px 10px;display:inline-block}
+label{display:block;font-weight:700;margin:6px 0}input[type=password]{width:100%;background:#06111d;color:#fff;border:1px solid #55799b;border-radius:10px;padding:13px;font:15px/1.3 monospace;direction:ltr;text-align:left}input:focus-visible,button:focus-visible,a:focus-visible{outline:2px solid #b4e1ff;outline-offset:3px}
+.controls{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-top:15px}button,.action{border:1px solid #5887ae;border-radius:11px;background:#17466c;color:#fff;font:700 16px Arial,system-ui,sans-serif;padding:11px 17px;cursor:pointer}button:disabled{opacity:.48;cursor:not-allowed}button.secondary{background:#344252}.option{display:flex;align-items:center;gap:8px;margin-top:14px;font-size:14px;font-weight:400}.option input{width:18px;height:18px}#status{font-weight:700}#status[data-kind=bad]{color:#ffc49f}#status[data-kind=good]{color:#a9f7cf}
+#countdown{font-variant-numeric:tabular-nums;color:#cee7f8}.transcripts{display:grid;gap:12px}.transcript{min-height:58px;max-height:115px;overflow:auto;border-radius:10px;background:#081727;border:1px solid #253d57;padding:9px 12px;white-space:pre-wrap;word-break:break-word}.instructions{padding-right:23px}.instructions li{margin:7px 0}a{color:#9bd5ff}details{margin-top:16px;color:var(--muted)}details summary{cursor:pointer;font-weight:700;color:var(--text)}@media(max-width:480px){main{padding-top:14px}.panel{padding:14px}}
+</style>
+</head>
+<body>
+<main>
+<a class="back" href="/" target="_blank" rel="noopener noreferrer">↗ פתח את מסלול הסרטונים</a>
+<h1>🎧 דיבוב חי לעברית</h1>
+<p class="muted">ניסוי למחשב Chrome / Edge. שומעים את הסרטון באתר הרגיל, עם קול עברי שמופק בזמן אמת בחלון העזר הזה.</p>
+<section class="panel notice" aria-label="מידע לפני התחלה">
+<span class="pill">גרסת ניסיון • לא דיבוב קבוע</span>
+<h2>לפני שמתחילים</h2>
+<ol class="instructions">
+<li>פתח את <a href="/" target="_blank" rel="noopener noreferrer">הסרטונים באתר</a> בלשונית נפרדת.</li>
+<li>הכנס מפתח Gemini API אישי <strong>מפרויקט בלי חיוב פעיל</strong> לצורך הניסוי. <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer">יצירת מפתח ב־Google AI Studio</a>.</li>
+<li>לחץ על <strong>הפעל דיבוב</strong>, בחר בלשונית <strong>מהמפץ הגדול לחיים</strong> וסמן <strong>שיתוף שמע מהלשונית</strong> (Share tab audio).</li>
+<li>חזור לסרטון והפעל אותו. השאר את חלון הדיבוב פתוח.</li>
+</ol>
+<p class="muted">הדיבוב מיועד לניסוי של עד 10 דקות בכל הפעלה. Google מקבלת רק את שמע הלשונית שנבחרה, לא את התמונה. אין הורדה או העלאה מחדש של הסרטונים. השימוש ב־API עשוי להיות מוגבל במכסות ולעיתים כרוך בעלות לפי החשבון שלך. </p>
+</section>
+<section class="panel" aria-label="הגדרות דיבוב">
+<label for="apiKey">מפתח Gemini API (נשאר בדפדפן בזמן ההפעלה בלבד)</label>
+<input id="apiKey" type="password" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="AIza…" aria-describedby="privacy">
+<small id="privacy">המפתח אינו נשמר בשרת או בדפדפן ואינו נשלח לאתר שלנו; החיבור ממנו נעשה ישירות ל־Google. לא להשתמש במפתח עם חיוב בלתי מוגבל.</small>
+<label class="option" for="suppress"><input type="checkbox" id="suppress" checked> נסה להשתיק את הקול המקורי בזמן שהעברית מתנגנת (תלוי ב־Chrome)</label>
+<div class="controls">
+<button id="start" type="button">▶ הפעל דיבוב</button>
+<button id="stop" type="button" class="secondary" disabled>■ עצור דיבוב</button>
+<span id="countdown" aria-live="off"></span>
+</div>
+<p id="status" role="status" aria-live="polite" data-kind="neutral">מוכן לבדיקה. שום שירות לא פועל כרגע.</p>
+</section>
+<section class="panel transcripts" aria-label="בדיקת איכות התרגום">
+<div><h2>מה שמענו בשפת המקור</h2><div id="original" class="transcript muted" aria-live="off">התמלול יופיע כאן כשהשמע יתחיל.</div></div>
+<div><h2>התרגום לעברית</h2><div id="translated" class="transcript" aria-live="off">התרגום יופיע כאן כשהמודל יחזיר אודיו.</div></div>
+</section>
+<details><summary>מה עובד ומה עדיין לא הוכח?</summary><p>המנוע הרשמי של Google תומך בתרגום דיבור חי לעברית. הכלי הזה משתמש בשיתוף שמע של לשונית, ולכן הוא לא תלוי בשאלה אם הסרטון מוטמע מ־YouTube, Vimeo או PBS. עם זאת, חלק מהדפדפנים לא מאפשרים שיתוף שמע, השתקת הקול המקורי אינה מובטחת, ואיכות/סנכרון הדיבוב נדרשים לבדיקה אישית. בטלפון Android הפתרון הזה אינו נתמך באופן אמין.</p><p>שיתוף הלשונית אינו כולל את חלון הדיבוב, כך שלא נוצרת לולאת שמע חוזר. אם נותק שיתוף הלשונית, יש להפעיל שוב. לבדיקת איכות יש להשתמש תחילה בקטע קצר לפני ניסוי ממושך.</p></details>
+</main>
+<script src="/dub.js" defer></script>
+</body>
+</html>
