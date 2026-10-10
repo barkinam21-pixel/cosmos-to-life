@@ -1,0 +1,37 @@
+name: Offline dubbing and video checks
+on:
+  push:
+    branches:
+      - main
+      - 'maintenance/**'
+    paths:
+      - 'dub.js'
+      - 'dub-worklet.js'
+      - 'dub.html'
+      - 'index.html'
+      - 'life.html'
+      - 'tests/**'
+      - '.github/workflows/offline-checks.yml'
+  pull_request:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  offline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Syntax and regressions (no key or network calls)
+        run: |
+          node --version
+          node --check dub.js
+          node --check dub-worklet.js
+          node --check tests/dub-schema.test.cjs
+          node --check tests/dub-frames.test.cjs
+          node --check tests/dub-runtime.test.cjs
+          node tests/dub-frames.test.cjs
+          node tests/dub-schema.test.cjs
+          node tests/dub-runtime.test.cjs

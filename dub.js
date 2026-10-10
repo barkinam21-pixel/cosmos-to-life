@@ -10,7 +10,7 @@
   let state='idle', capture=null, socket=null, captureContext=null, playbackContext=null;
   let captureNode=null, silentGain=null, inputNode=null;
   let playbackTime=0, activeSources=new Set(), deadline=0, timer=null, setupReady=false, heardAudio=false;
-  let connectionTimer=null, setupTimer=null;
+  let connectionTimer=null, setupTimer=null, runId=0;
   let verifiedKey=''; // RAM only: cleared when this tab closes or reloads.
   const WS_ENDPOINT='wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1beta.GenerativeService.BidiGenerateContent';
   const MODEL_ENDPOINT='https://generativelanguage.googleapis.com/v1beta/models/'+MODEL;
@@ -172,20 +172,21 @@
     }
     return f;
   }
-  async function playTranslated(b64,mimeType){
-    if(!b64||state==='idle'||!playbackContext)return;
+  async function playTranslated(b64,mimeType,thisRun){
+    if(!b64||state==='idle'||runId!==thisRun||!playbackContext)return;
+    const outputContext=playbackContext;
     const rateMatch=String(mimeType||'').match(/(?:^|;)\s*rate=(\d+)/i);
     const specifiedRate=rateMatch?Number(rateMatch[1]):24000;
     const rate=[16000,24000,32000,44100,48000].includes(specifiedRate)?specifiedRate:24000;
     const data=pcmFromBase64(b64);
     if(!data.length)return;
-    if(playbackContext.state!=='running')await playbackContext.resume();
-    if(state==='idle')return;
-    const buffer=playbackContext.createBuffer(1,data.length,rate);
+    if(outputContext.state!=='running')await outputContext.resume();
+    if(state==='idle'||runId!==thisRun||playbackContext!==outputContext)return;
+    const buffer=outputContext.createBuffer(1,data.length,rate);
     buffer.getChannelData(0).set(data);
-    const source=playbackContext.createBufferSource();
-    source.buffer=buffer;source.connect(playbackContext.destination);
-    const now=playbackContext.currentTime;
+    const source=outputContext.createBufferSource();
+    source.buffer=buffer;source.connect(outputContext.destination);
+    const now=outputContext.currentTime;
     if(playbackTime<now)playbackTime=now+0.045;
     // Avoid an ever-growing backlog when the translation falls behind.
     if(playbackTime-now>8){
@@ -202,6 +203,7 @@
   }
   function stop(reason='הדיבוב נעצר.'){
     if(state==='idle')return;
+    ++runId; // Invalidates promises and late WebSocket events from the old run.
     state='idle';setupReady=false;
     clearInterval(timer);timer=null;clearTimeout(connectionTimer);connectionTimer=null;clearTimeout(setupTimer);setupTimer=null;countdown.textContent='';
     if(socket){
@@ -218,10 +220,11 @@
     if(playbackContext){const a=playbackContext;playbackContext=null;a.close().catch(()=>{})}
     switchControls(false);setStatus(reason,reason.startsWith('שגיאה')?'bad':'neutral');
   }
-  async function onMessage(raw){
-    if(state==='idle')return;
+  async function onMessage(raw,originSocket,thisRun,diagnostics){
+    if(state==='idle'||runId!==thisRun||socket!==originSocket)return;
     const msg=await parseLiveFrame(raw);
-    if(state==='idle')return;
+    if(state==='idle'||runId!==thisRun||socket!==originSocket)return;
+    if(msg)diagnostics.decoded++;
     if(!msg){
       if(!setupReady)stop('שגיאה: Google החזירה הודעה בפורמט לא צפוי. לא משמע שהמפתח שגוי.');
       return;
@@ -233,12 +236,15 @@
     if(c.inputTranscription?.text)appendTranscript(orig,c.inputTranscription.text);
     if(c.outputTranscription?.text)appendTranscript(translated,c.outputTranscription.text);
     for(const part of c.modelTurn?.parts||[]){
-      if(part.inlineData?.data)playTranslated(part.inlineData.data,part.inlineData.mimeType).catch(()=>stop('שגיאה בהשמעת הקריינות העברית.'));
+      if(part.inlineData?.data)playTranslated(part.inlineData.data,part.inlineData.mimeType,thisRun).catch(()=>{
+        if(state!=='idle'&&runId===thisRun&&socket===originSocket)stop('שגיאה בהשמעת הקריינות העברית.');
+      });
     }
   }
-  async function startCaptureProcessing(){
-    captureContext=new AudioContext({latencyHint:'interactive'});
-    await captureContext.audioWorklet.addModule('/dub-worklet.js');
+  async function startCaptureProcessing(thisRun){
+    const context=captureContext=new AudioContext({latencyHint:'interactive'});
+    await context.audioWorklet.addModule('/dub-worklet.js');
+    if(state!=='starting'||runId!==thisRun||captureContext!==context)return;
     inputNode=captureContext.createMediaStreamSource(capture);
     captureNode=new AudioWorkletNode(captureContext,'hebrew-dub-capture');
     silentGain=captureContext.createGain();silentGain.gain.value=0;
@@ -250,7 +256,7 @@
       const packet=new Uint8Array(e.data);
       socket.send(JSON.stringify({realtimeInput:{audio:{data:toB64(packet),mimeType:'audio/pcm;rate=16000'}}}));
     };
-    await captureContext.resume();
+    await context.resume();
   }
   async function begin(){
     if(state!=='idle')return;
@@ -259,46 +265,62 @@
     if(!navigator.mediaDevices?.getDisplayMedia||!window.AudioWorkletNode||!window.AudioContext){
       setStatus('שגיאה: הדפדפן אינו תומך בלכידת שמע מהלשונית. נסה Chrome/Edge במחשב.','bad');return;
     }
+    const thisRun=++runId;
     state='starting';setupReady=false;heardAudio=false;switchControls(true);
     orig.dataset.hasTranscript='0';translated.dataset.hasTranscript='0';
     orig.textContent='מחכה לדיבור בשפת המקור…';translated.textContent='מחכה לתרגום לעברית…';
     setStatus('בחר את לשונית הסרטונים והפעל שיתוף שמע (Share tab audio).');
     try{
       // Must be triggered directly by a user click. No video is sent to Google.
-      capture=await navigator.mediaDevices.getDisplayMedia({
+      const stream=await navigator.mediaDevices.getDisplayMedia({
         video:{displaySurface:'browser',frameRate:1},
         audio:{suppressLocalAudioPlayback:$('suppress').checked},
         selfBrowserSurface:'exclude',preferCurrentTab:false,
         systemAudio:'exclude',monitorTypeSurfaces:'exclude',surfaceSwitching:'include'
       });
+      // The user may press Stop while the browser's share picker is open.
+      // A late permission grant must not leak a live capture into a new run.
+      if(state!=='starting'||runId!==thisRun){
+        for(const track of stream.getTracks()){try{track.stop()}catch(_){}}
+        return;
+      }
+      capture=stream;
       const audio=capture.getAudioTracks()[0];
       if(!audio){stop('שגיאה: הלשונית נבחרה בלי שמע. יש להפעיל מחדש ולסמן Share tab audio.');return}
       for(const track of capture.getTracks())track.addEventListener('ended',()=>{
-        if(state!=='idle')stop('שיתוף הלשונית הסתיים. להפעלה חוזרת יש ללחוץ על הפעל דיבוב.');
+        if(state!=='idle'&&runId===thisRun)stop('שיתוף הלשונית הסתיים. להפעלה חוזרת יש ללחוץ על הפעל דיבוב.');
       });
-      playbackContext=new AudioContext({latencyHint:'interactive'});
-      await playbackContext.resume();
-      await startCaptureProcessing();
-      if(state==='idle')return;
+      const outputContext=playbackContext=new AudioContext({latencyHint:'interactive'});
+      await outputContext.resume();
+      if(state!=='starting'||runId!==thisRun)return;
+      await startCaptureProcessing(thisRun);
+      if(state!=='starting'||runId!==thisRun)return;
       setStatus('השיתוף פעיל. מתחבר למנוע התרגום של Google…');
       const url=WS_ENDPOINT+'?key='+encodeURIComponent(apiKey);
       socket=new WebSocket(url);
       // Keep the entered key until Google confirms setup; avoid repeat typing on failure.
       const thisSocket=socket;
+      const diagnostics={frames:0,decoded:0};
+      let messageQueue=Promise.resolve(); // Preserve server frame order, including async Blob.text().
       thisSocket.binaryType='arraybuffer';
       connectionTimer=setTimeout(()=>{
-        if(state!=='idle'&&socket===thisSocket&&thisSocket.readyState!==WebSocket.OPEN)
-          stop('שגיאה: החיבור אל Google לא נפתח בתוך 15 שניות. בדוק את החיבור לרשת.');
-      },15000);
+        if(state!=='idle'&&runId===thisRun&&socket===thisSocket&&thisSocket.readyState!==WebSocket.OPEN)
+          stop('שגיאה: החיבור אל Google לא נפתח בתוך 20 שניות. בדוק את החיבור לרשת.');
+      },20000);
       thisSocket.onopen=()=>{
-        if(state==='idle'||socket!==thisSocket)return;
+        if(state==='idle'||runId!==thisRun||socket!==thisSocket)return;
         clearTimeout(connectionTimer);connectionTimer=null;
         state='running';
         thisSocket.send(JSON.stringify(setupPayload()));
         setupTimer=setTimeout(()=>{
-          if(state!=='idle'&&socket===thisSocket&&!setupReady)
-            stop('שגיאה: Google לא אישרה את הגדרות הדיבוב בתוך 15 שניות. בדוק מפתח וחיבור.');
-        },15000);
+          if(state==='idle'||runId!==thisRun||socket!==thisSocket||setupReady)return;
+          const reason=diagnostics.frames===0
+            ? 'WebSocket נפתח, אך Google לא החזירה הודעות.'
+            : diagnostics.decoded===0
+              ? 'Google החזירה הודעות בינאריות שלא פוענחו.'
+              : 'הודעות Google פוענחו, אך לא התקבל setupComplete.';
+          stop('שגיאה: החיבור לא אושר בתוך 25 שניות. '+reason);
+        },25000);
         deadline=Date.now()+LIMIT_MS;
         countdown.textContent='נותרו 10:00 דקות לניסוי';
         timer=setInterval(()=>{
@@ -309,8 +331,11 @@
         setStatus('החיבור נפתח. מחכה לאישור תחילת תרגום…');
       };
       thisSocket.onmessage=event=>{
-        onMessage(event.data).catch(()=>{
-          if(state!=='idle')stop('שגיאה: נכשל פענוח הודעת Google.');
+        if(state==='idle'||runId!==thisRun||socket!==thisSocket)return;
+        diagnostics.frames++;
+        const payload=event.data;
+        messageQueue=messageQueue.then(()=>onMessage(payload,thisSocket,thisRun,diagnostics)).catch(()=>{
+          if(state!=='idle'&&runId===thisRun&&socket===thisSocket)stop('שגיאה: נכשל פענוח הודעת Google.');
         });
       };
       thisSocket.onerror=()=>{
@@ -318,10 +343,11 @@
         // Do not stop here, or we would hide the actionable error message.
       };
       thisSocket.onclose=event=>{
-        if(state!=='idle')stop('שגיאה: '+explainLiveFailure(event.code,event.reason));
+        if(state!=='idle'&&runId===thisRun&&socket===thisSocket)
+          stop('שגיאה: '+explainLiveFailure(event.code,event.reason));
       };
     }catch(e){
-      if(state==='idle')return;
+      if(state==='idle'||runId!==thisRun)return;
       let error='שגיאה בהפעלת הדיבוב.';
       if(e?.name==='NotAllowedError')error='שגיאה: שיתוף הלשונית לא אושר.';
       else if(e?.name==='NotSupportedError')error='שגיאה: הדפדפן לא תומך בהקלטת שמע מהלשונית.';
