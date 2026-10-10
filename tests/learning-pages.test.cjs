@@ -15,6 +15,25 @@ for(const path of ['index.html','life.html']){
  assert.match(html,/pageYtObserver/);
  assert.match(html,/learningPages\?\.hasNext\(\)/);
  for(const m of html.matchAll(/<script>([\s\S]*?)<\/script>/g))new vm.Script(m[1],{filename:path});
+ // Auto-next must also reach Vimeo and native media resolved after pagination.
+ assert.match(html,/queueAutoplay\(target\)/,path+' in-page media auto-next');
+ assert.match(html,/if\(autoPlay&&first\)queueAutoplay\(first\)/,path+' cross-page media auto-next');
+ const queueBody=html.match(/function queueAutoplay\(card\)\{([\s\S]*?)\n\}/);
+ assert(queueBody,path+' native/Vimeo autoplay helper');
+ let vimeoCalls=0;
+ const native={dataset:{}},vimeo={};
+ const queue=new Function('playVimeoWhenReady','return function(card){'+queueBody[1]+'\n}')(frame=>{if(frame===vimeo)vimeoCalls++});
+ queue({querySelector:selector=>selector==='.native-resolver'?native:selector.startsWith('iframe[src^=')?vimeo:null});
+ assert.equal(native.dataset.autoplay,'1',path+' deferred video autoplay');
+ assert.equal(vimeoCalls,1,path+' Vimeo autoplay');
+ const metadata=html.match(/video\.addEventListener\('loadedmetadata',\(\)=>\{([\s\S]*?)\},\{once:true\}\);/);
+ assert(metadata,path+' resolved media must trigger autoplay');
+ let played=0;
+ const box={dataset:{autoplay:'1'}},video={isConnected:true,controls:true,play(){played++;return Promise.resolve()}},note={textContent:''};
+ const ready=new Function('box','video','note',metadata[1]);
+ ready(box,video,note);ready(box,video,note);
+ assert.equal(played,1,path+' play after metadata only once');
+ assert.equal(box.dataset.autoplay,'0',path+' clear autoplay marker');
  const chapters=JSON.parse(html.match(/const chapters = (.*);/)[1]);
  const order=JSON.parse(html.match(/const EMBED_ORDER=(\[[^\n]*?\]);/)[1]);
  const urls=chapters.flatMap(c=>c.items.map(item=>item[6]));

@@ -40,6 +40,22 @@ let pageYtObserver=null;
 const activeHlsPlayers=new Set();
 const ytReady=new Set();
 let pendingAutoNext=null;
+function playVimeoWhenReady(frame){
+  watchVimeoFrame(frame);
+  if(!vimeoSdkPromise)return;
+  vimeoSdkPromise.then(()=>setTimeout(()=>{
+    if(!frame.isConnected)return;
+    const player=vimeoPlayers.get(frame);
+    if(!player)return;
+    try{const p=player.play();if(p?.catch)p.catch(()=>{})}catch(e){}
+  },550)).catch(()=>{});
+}
+function queueAutoplay(card){
+  const native=card.querySelector('.native-resolver');
+  if(native)native.dataset.autoplay='1';
+  const vimeo=card.querySelector('iframe[src^="https://player.vimeo.com/video/"]');
+  if(vimeo)playVimeoWhenReady(vimeo);
+}
 function advanceAfterCard(card){
   if(!card)return;
   const cards=[...document.querySelectorAll('.card')];
@@ -55,6 +71,7 @@ function advanceAfterCard(card){
     return;
   }
   pendingAutoNext=null;
+  queueAutoplay(target);
   const video=target.querySelector('video');
   if(video)setTimeout(()=>{const promise=video.play();if(promise?.catch)promise.catch(()=>{video.controls=true})},550);
 }
@@ -135,7 +152,10 @@ async function resolveNativeMedia(){
     }
     wrap.appendChild(frame);
     box.appendChild(wrap);
-    if(embed.provider==='vimeo')watchVimeoFrame(frame);
+    if(embed.provider==='vimeo'){
+      watchVimeoFrame(frame);
+      if(box.dataset.autoplay==='1'){box.dataset.autoplay='0';playVimeoWhenReady(frame)}
+    }
     const note=document.createElement('div');
     note.className='auto-next-note';
     note.textContent='▶ נמצא נגן רשמי בתוך דף המקור — הסרטון מתנגן כאן באתר';
@@ -206,7 +226,13 @@ async function resolveNativeMedia(){
           const note=document.createElement('div');
           note.className='auto-next-note';
           note.textContent='◌ טוען נגן וידאו רשמי בתוך האתר…';
-           video.addEventListener('loadedmetadata',()=>{note.textContent='▶ הנגן הרשמי נטען כאן באתר · בלי iframe'},{once:true});
+          video.addEventListener('loadedmetadata',()=>{
+            note.textContent='▶ הנגן הרשמי נטען כאן באתר · בלי iframe';
+            if(box.dataset.autoplay==='1'&&video.isConnected){
+              box.dataset.autoplay='0';
+              const p=video.play();if(p?.catch)p.catch(()=>{video.controls=true});
+            }
+          },{once:true});
           box.appendChild(note);
           addSourceLink(box,source);
         };
@@ -320,8 +346,9 @@ window.refreshLearningPageMedia=function(options){
   setupNextButtons();
   setupVideoEndHandlers();
   observeVimeoPage();
-  resolveNativeMedia();
   const first=document.querySelector('.card');
+  if(autoPlay&&first)queueAutoplay(first);
+  resolveNativeMedia();
   const frame=autoPlay?first?.querySelector('iframe[id^="yt-"]'):null;
   if(frame)pendingAutoNext=frame.id.slice(3);
   if(window.YT?.Player)window.onYouTubeIframeAPIReady();
