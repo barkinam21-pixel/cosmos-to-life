@@ -112,10 +112,7 @@ function stream(){
   assert.equal(newer.compressors[0].ratio.value,2.2);
   assert.equal(newer.elements.systemVoiceOption.disabled,false,'Installed Hebrew voice should be offered');
   assert.equal(newer.elements.voiceMode.value,'system','Stable Hebrew voice is the default when available');
-  assert.equal(newer.elements.previewVoice.disabled,false,'One-click voice test must work without API key');
-  newer.elements.previewVoice.events.click();
-  assert.equal(newer.spoken.length,1,'Voice preview must speak in the browser');
-  assert.equal(newer.sockets.length,1,'Voice preview must not open extra paid API sessions');
+  assert.equal(newer.elements.previewVoice.disabled,true,'Voice preview stays disabled while a dub is active');
   newer.elements.voiceMode.value='google';newer.elements.voiceMode.events.change();
   newer.worklets[0].port.onmessage({data:{type:'soundLevels',channels:1,sourceRms:0.1,backgroundRms:0.08}});
   assert.match(newer.elements.soundReport.textContent,/מונו/);
@@ -180,6 +177,11 @@ function stream(){
   assert.equal(fixed.spoken.length,1,'Duplicate caption frames must not repeat a whole sentence');
   fixed.elements.stop.events.click();
   assert(fixed.ttsCanceled>=1,'Stop must cancel local TTS');
+  const preview=setupRig(async()=>stream());
+  assert.equal(preview.elements.previewVoice.disabled,false,'Idle voice preview should be available');
+  preview.elements.previewVoice.events.click();
+  assert.equal(preview.spoken.length,1,'Voice preview must speak in the browser');
+  assert.equal(preview.sockets.length,0,'Voice preview must not open a Google session');
   const remote=setupRig(async()=>stream(),[{name:'Remote Hebrew Voice',lang:'he-IL',localService:false,voiceURI:'browser-he-online'}]);
   assert.equal(remote.elements.voiceMode.value,'system','Remote Hebrew voice is a valid fixed-voice fallback');
   assert.match(remote.elements.voiceHint.textContent,/מקוון/,'Remote service privacy disclosure');
