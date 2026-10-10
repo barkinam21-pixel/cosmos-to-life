@@ -13,13 +13,15 @@ function deferred(){
 async function flush(){for(let i=0;i<24;i++)await Promise.resolve()}
 function setupRig(getDisplayMedia){
   const elements={};
-  for(const id of ['start','stop','checkKey','apiKey','status','countdown','original','translated','suppress']){
+  for(const id of ['start','stop','checkKey','apiKey','status','countdown','original','translated','suppress','ambience','ambienceVolume','ambienceVolumeLabel']){
     elements[id]={value:'',textContent:'',dataset:{},disabled:false,checked:true,events:{},
       addEventListener(type,fn){this.events[type]=fn},scrollTop:0,scrollHeight:0};
   }
   elements.apiKey.value='AQ.'+'x'.repeat(32);
+  elements.ambience.checked=true;
+  elements.ambienceVolume.value='60';
   elements.stop.disabled=true;
-  const streams=[],sockets=[],buffers=[],audioStarts=[],contexts=[];
+  const streams=[],sockets=[],buffers=[],audioStarts=[],contexts=[],gains=[],worklets=[];
   class MockWebSocket{
     static OPEN=1;
     constructor(url){this.url=url;this.readyState=0;this.sent=[];sockets.push(this)}
@@ -32,14 +34,21 @@ function setupRig(getDisplayMedia){
     constructor(){this.state='running';this.destination={};this.currentTime=0;this.closed=false;contexts.push(this);
       this.audioWorklet={addModule:async p=>assert.equal(p,'/dub-worklet.js')};}
     createMediaStreamSource(stream){return {connect(){},disconnect(){}}}
-    createGain(){return {gain:{value:1},connect(){},disconnect(){}}}
+    createGain(){
+      const node={gain:{value:1,setTargetAtTime(value){this.value=value}},connect(){},disconnect(){}};
+      gains.push(node);return node;
+    }
     createBuffer(channels,length,rate){buffers.push({channels,length,rate});return {getChannelData:()=>new Float32Array(length)}}
-    createBufferSource(){return {connect(){},start(at){audioStarts.push(at)},stop(){},onended:null,buffer:null}}
+    createBufferSource(){return {connect(){},playbackRate:{value:1},start(at){audioStarts.push({at,rate:this.playbackRate.value})},stop(){},onended:null,buffer:null}}
     resume(){this.state='running';return Promise.resolve()}
     close(){this.closed=true;return Promise.resolve()}
   }
   class MockAudioWorkletNode{
-    constructor(){this.port={onmessage:null};}
+    constructor(context,name,options){
+      assert.equal(name,'hebrew-dub-capture');
+      assert.deepEqual(Array.from(options.outputChannelCount),[2]);
+      this.port={onmessage:null};worklets.push(this);
+    }
     connect(){} disconnect(){}
   }
   const sandbox={document:{getElementById:id=>elements[id]},
@@ -52,7 +61,7 @@ function setupRig(getDisplayMedia){
     setTimeout:()=>123,clearTimeout:()=>{},setInterval:()=>234,clearInterval:()=>{},
     Date,console};
   vm.runInNewContext(source,sandbox,{filename:'dub.js',timeout:2000});
-  return {elements,sockets,buffers,audioStarts,contexts,streams};
+  return {elements,sockets,buffers,audioStarts,contexts,streams,gains,worklets};
 }
 function stream(){
   const tracks=[{stopped:0,listeners:[],stop(){this.stopped++},addEventListener(type,fn){this.listeners.push({type,fn})}},
@@ -79,6 +88,16 @@ function stream(){
   const newer=setupRig(async()=>fresh);
   await newer.elements.start.events.click();
   assert.equal(newer.sockets.length,1);
+  assert.equal(newer.contexts.length,1,'Capture and dub audio should reuse one AudioContext');
+  assert.equal(newer.gains.length,1,'Background audio must be controlled by a gain node');
+  assert.equal(newer.gains[0].gain.value,0.6,'Default soundtrack mix must be modest');
+  newer.elements.ambience.checked=false;
+  newer.elements.ambience.events.change();
+  assert.equal(newer.gains[0].gain.value,0,'Disable background without stopping dubbing');
+  newer.elements.ambience.checked=true;
+  newer.elements.ambienceVolume.value='25';
+  newer.elements.ambienceVolume.events.input();
+  assert.equal(newer.gains[0].gain.value,0.25,'Adjust background without reconnecting');
 
   // Active path: translation setup, Blob confirmation, binary transcripts and PCM audio.
   const ws=newer.sockets[0];
@@ -106,7 +125,7 @@ function stream(){
 
   newer.elements.stop.events.click();
   assert(fresh.tracks.every(t=>t.stopped===1),'Stop must release audio and video capture');
-  assert(newer.contexts.every(c=>c.closed),'Stop must release both AudioContexts');
+  assert(newer.contexts.every(c=>c.closed),'Stop must release the shared AudioContext');
   assert.equal(newer.elements.stop.disabled,true);
   ws.onclose?.({code:1006,reason:'late close'});
   assert.equal(newer.elements.stop.disabled,true);

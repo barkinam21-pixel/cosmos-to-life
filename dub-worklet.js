@@ -1,4 +1,6 @@
-/* Audio-only 16 kHz PCM capture, no video frames transmitted. */
+/* Low-cost stereo background recovery + audio-only 16kHz PCM capture.
+   Translation still receives mono source speech. The background is local-only.
+   Only the L-R side channel survives: mono audio and centered effects vanish. */
 class HebrewDubCapture extends AudioWorkletProcessor {
   constructor(){
     super();
@@ -10,10 +12,20 @@ class HebrewDubCapture extends AudioWorkletProcessor {
     this.inputRate=sampleRate;
   }
   process(inputs,outputs){
-    const channel=inputs[0]?.[0];
-    if(channel){
-      for(let i=0;i<channel.length;i++){
-        this.sum+=channel[i];this.samples++;
+    const channels=inputs[0]||[];
+    const left=channels[0],right=channels[1];
+    const out=outputs[0]||[];
+    const outLeft=out[0],outRight=out[1];
+    if(left){
+      for(let i=0;i<left.length;i++){
+        const l=left[i],r=right?right[i]:l;
+        // Subtract stereo channels to reduce center-panned English dialogue.
+        // Keep the recovered side signal in phase on both speakers/headphones.
+        const side=right?Math.max(-1,Math.min(1,l-r)):0;
+        if(outLeft)outLeft[i]=side;
+        if(outRight)outRight[i]=side;
+        // Downmix BOTH stereo channels for accurate translation input.
+        this.sum+=(l+r)*0.5;this.samples++;
         this.phase+=16000;
         if(this.phase>=this.inputRate){
           this.phase-=this.inputRate;
@@ -27,8 +39,10 @@ class HebrewDubCapture extends AudioWorkletProcessor {
           }
         }
       }
+    }else{
+      if(outLeft)outLeft.fill(0);
+      if(outRight)outRight.fill(0);
     }
-    for(const out of outputs){for(const c of out)c.fill(0)}
     return true;
   }
 }

@@ -8,7 +8,7 @@
   const MODEL='gemini-3.5-live-translate-preview';
   const LIMIT_MS=10*60*1000;
   let state='idle', capture=null, socket=null, captureContext=null, playbackContext=null;
-  let captureNode=null, silentGain=null, inputNode=null;
+  let captureNode=null, backgroundGain=null, inputNode=null;
   let playbackTime=0, activeSources=new Set(), deadline=0, timer=null, setupReady=false, heardAudio=false;
   let connectionTimer=null, setupTimer=null, runId=0;
   let verifiedKey=''; // RAM only: cleared when this tab closes or reloads.
@@ -21,6 +21,21 @@
   function switchControls(running){
     startButton.disabled=running;stopButton.disabled=!running;
     keyInput.disabled=running;checkButton.disabled=running;$('suppress').disabled=running;
+  }
+  // A cheap, optional stereo side-channel mix. It cancels truly centered
+  // speech; unlike AI source separation, mono and centered effects cannot survive.
+  function updateAmbience(){
+    const enabled=$('ambience').checked;
+    const slider=$('ambienceVolume');
+    const volume=Math.max(0,Math.min(100,Number(slider.value)||0));
+    slider.disabled=!enabled;
+    $('ambienceVolumeLabel').textContent=volume+'%';
+    if(backgroundGain){
+      const target=enabled?volume/100:0;
+      if(typeof backgroundGain.gain.setTargetAtTime==='function')
+        backgroundGain.gain.setTargetAtTime(target,captureContext.currentTime,0.025);
+      else backgroundGain.gain.value=target;
+    }
   }
   function readKey(){
     const key=(keyInput.value || verifiedKey).trim();
@@ -187,15 +202,20 @@
     const source=outputContext.createBufferSource();
     source.buffer=buffer;source.connect(outputContext.destination);
     const now=outputContext.currentTime;
-    if(playbackTime<now)playbackTime=now+0.045;
+    if(playbackTime<now)playbackTime=now+0.025;
     // Avoid an ever-growing backlog when the translation falls behind.
     if(playbackTime-now>8){
       for(const s of activeSources){try{s.stop()}catch(_){}}
       activeSources.clear();playbackTime=now+0.045;
       setStatus('הדיבוב מתעכב. איפסתי את תור השמע כדי לחזור לזמן אמת.','neutral');
     }
+    // Gently drain a growing client-side queue; this cannot eliminate
+    // model/network latency. Avoid high rates that audibly change Hebrew pitch.
+    const queued=Math.max(0,playbackTime-now);
+    const speed=queued>1.25?1.08:queued>0.45?1.04:1;
+    source.playbackRate.value=speed;
     const at=playbackTime;
-    playbackTime+=data.length/rate;
+    playbackTime+=data.length/rate/speed;
     activeSources.add(source);
     source.onended=()=>activeSources.delete(source);
     source.start(at);
@@ -213,11 +233,13 @@
     }
     if(captureNode){captureNode.port.onmessage=null;try{captureNode.disconnect()}catch(_){}captureNode=null}
     if(inputNode){try{inputNode.disconnect()}catch(_){}inputNode=null}
-    if(silentGain){try{silentGain.disconnect()}catch(_){}silentGain=null}
+    if(backgroundGain){try{backgroundGain.disconnect()}catch(_){}backgroundGain=null}
     if(capture){for(const t of capture.getTracks()){try{t.stop()}catch(_){}}capture=null}
     for(const s of activeSources){try{s.stop()}catch(_){}}activeSources.clear();playbackTime=0;
-    if(captureContext){const a=captureContext;captureContext=null;a.close().catch(()=>{})}
-    if(playbackContext){const a=playbackContext;playbackContext=null;a.close().catch(()=>{})}
+    // Capture and playback share one context to reduce CPU and audio clocks.
+    const contexts=new Set([captureContext,playbackContext]);
+    captureContext=null;playbackContext=null;
+    for(const a of contexts){if(a)a.close().catch(()=>{})}
     switchControls(false);setStatus(reason,reason.startsWith('שגיאה')?'bad':'neutral');
   }
   async function onMessage(raw,originSocket,thisRun,diagnostics){
@@ -242,13 +264,16 @@
     }
   }
   async function startCaptureProcessing(thisRun){
-    const context=captureContext=new AudioContext({latencyHint:'interactive'});
+    const context=captureContext=playbackContext;
     await context.audioWorklet.addModule('/dub-worklet.js');
     if(state!=='starting'||runId!==thisRun||captureContext!==context)return;
-    inputNode=captureContext.createMediaStreamSource(capture);
-    captureNode=new AudioWorkletNode(captureContext,'hebrew-dub-capture');
-    silentGain=captureContext.createGain();silentGain.gain.value=0;
-    inputNode.connect(captureNode);captureNode.connect(silentGain);silentGain.connect(captureContext.destination);
+    inputNode=context.createMediaStreamSource(capture);
+    captureNode=new AudioWorkletNode(context,'hebrew-dub-capture',{outputChannelCount:[2]});
+    backgroundGain=context.createGain();backgroundGain.gain.value=0;
+    inputNode.connect(captureNode);
+    captureNode.connect(backgroundGain);
+    backgroundGain.connect(context.destination);
+    updateAmbience();
     captureNode.port.onmessage=e=>{
       if(state!=='running'||!setupReady||!socket||socket.readyState!==WebSocket.OPEN)return;
       // Network back-pressure: skip data rather than freeze the browser.
@@ -358,5 +383,8 @@
   checkButton.addEventListener('click',checkKey);
   startButton.addEventListener('click',begin);
   stopButton.addEventListener('click',()=>stop('הדיבוב הופסק לבקשתך.'));
+  $('ambience').addEventListener('change',updateAmbience);
+  $('ambienceVolume').addEventListener('input',updateAmbience);
+  updateAmbience();
   window.addEventListener('pagehide',()=>stop('הדיבוב הסתיים.'));
 })();

@@ -35,7 +35,9 @@ jobs:
           node --check tests/dub-schema.test.cjs
           node --check tests/dub-frames.test.cjs
           node --check tests/dub-runtime.test.cjs
+          node --check tests/dub-sound.test.cjs
           node tests/dub-frames.test.cjs
           node tests/dub-schema.test.cjs
           node tests/dub-runtime.test.cjs
+          node tests/dub-sound.test.cjs
           node tests/learning-pages.test.cjs
