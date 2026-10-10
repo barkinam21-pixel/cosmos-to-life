@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="referrer" content="no-referrer">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' wss://generativelanguage.googleapis.com; media-src 'self' blob:; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://generativelanguage.googleapis.com wss://generativelanguage.googleapis.com; media-src 'self' blob:; object-src 'none'; base-uri 'none'; form-action 'none'">
 <title>דיבוב חי לעברית · מהמפץ הגדול לחיים</title>
 <style>
 :root{color-scheme:dark;--bg:#081322;--card:#132339;--line:#34506e;--text:#f2f8ff;--muted:#b5c7da;--blue:#9bd5ff}*{box-sizing:border-box}
@@ -26,23 +26,24 @@ label{display:block;font-weight:700;margin:6px 0}input[type=password]{width:100%
 <h2>לפני שמתחילים</h2>
 <ol class="instructions">
 <li>פתח את <a href="/" target="_blank" rel="noopener noreferrer">הסרטונים באתר</a> בלשונית נפרדת.</li>
-<li>הכנס מפתח Gemini API אישי <strong>מפרויקט בלי חיוב פעיל</strong> לצורך הניסוי. <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer">יצירת מפתח ב־Google AI Studio</a>.</li>
+<li>הכנס מפתח <strong>Gemini Auth</strong> חדש מתוך Google AI Studio. זהו מפתח חינמי ליצירה, ובדרך כלל הוא מתחיל ב־<code dir="ltr">AQ.</code>. אין צורך להפעיל חיוב בשביל בדיקת המפתח. <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer">יצירת מפתח ב־Google AI Studio</a>.</li>
 <li>לחץ על <strong>הפעל דיבוב</strong>, בחר בלשונית <strong>מהמפץ הגדול לחיים</strong> וסמן <strong>שיתוף שמע מהלשונית</strong> (Share tab audio).</li>
 <li>חזור לסרטון והפעל אותו. השאר את חלון הדיבוב פתוח.</li>
 </ol>
 <p class="muted">הדיבוב מיועד לניסוי של עד 10 דקות בכל הפעלה. Google מקבלת רק את שמע הלשונית שנבחרה, לא את התמונה. אין הורדה או העלאה מחדש של הסרטונים. השימוש ב־API עשוי להיות מוגבל במכסות ולעיתים כרוך בעלות לפי החשבון שלך. </p>
 </section>
 <section class="panel" aria-label="הגדרות דיבוב">
-<label for="apiKey">מפתח Gemini API (נשאר בדפדפן בזמן ההפעלה בלבד)</label>
-<input id="apiKey" type="password" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="AIza…" aria-describedby="privacy">
-<small id="privacy">המפתח אינו נשמר בשרת או בדפדפן ואינו נשלח לאתר שלנו; החיבור ממנו נעשה ישירות ל־Google. לא להשתמש במפתח עם חיוב בלתי מוגבל.</small>
+<label for="apiKey">מפתח Gemini Auth (חדש, בדרך כלל AQ.)</label>
+<input id="apiKey" type="password" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="AQ.…" aria-describedby="privacy">
+<small id="privacy">המפתח נשלח ישירות ל־Google לצורך בדיקה והפעלה. הוא אינו נשלח לשרת האתר ואינו נשמר באחסון הדפדפן; מפתח שאושר נשאר רק בזיכרון הלשונית עד שסוגרים אותה. אין לשתף אותו או להשתמש בחיוב בלתי מוגבל.</small>
 <label class="option" for="suppress"><input type="checkbox" id="suppress" checked> נסה להשתיק את הקול המקורי בזמן שהעברית מתנגנת (תלוי ב־Chrome)</label>
 <div class="controls">
+<button id="checkKey" type="button" class="secondary">✓ בדוק מפתח וחיבור (בלי שמע)</button>
 <button id="start" type="button">▶ הפעל דיבוב</button>
 <button id="stop" type="button" class="secondary" disabled>■ עצור דיבוב</button>
 <span id="countdown" aria-live="off"></span>
 </div>
-<p id="status" role="status" aria-live="polite" data-kind="neutral">מוכן לבדיקה. שום שירות לא פועל כרגע.</p>
+<p id="status" role="status" aria-live="polite" data-kind="neutral">מוכן לבדיקה. קודם מומלץ ללחוץ ״בדוק מפתח״; רק אחרי אישור נסה דיבוב של דקה אחת.</p>
 </section>
 <section class="panel transcripts" aria-label="בדיקת איכות התרגום">
 <div><h2>מה שמענו בשפת המקור</h2><div id="original" class="transcript muted" aria-live="off">התמלול יופיע כאן כשהשמע יתחיל.</div></div>
