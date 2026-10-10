@@ -41,6 +41,7 @@
     const code=body?.error?.status||'';
     if(status===400) return 'Google דחתה את המפתח או בקשת הבדיקה (400). יש ליצור מפתח Auth חדש ב-Google AI Studio.';
     if(status===401) return 'Google לא אישרה את המפתח (401). השתמש במפתח Auth חדש מתוך AI Studio, ולא במפתח Standard ישן.';
+    if(status===402) return 'Google דורשת יתרת Prepay בחשבון בתשלום (402). זה לא אומר שהמפתח שגוי; בדוק Billing ב-AI Studio. אין להפעיל טעינה אוטומטית לפני שבודקים עלות.';
     if(status===403) return 'אין הרשאה למודל או ל-Gemini API בפרויקט (403). בדוק סוג מפתח והגבלות הפרויקט ב-AI Studio.';
     if(status===404) return 'המודל Gemini Live Translate אינו זמין כרגע למפתח או לפרויקט הזה (404).';
     if(status===429) return 'מכסת השימוש של Google נוצלה (429). זה לא אומר שהמפתח פגום.';
