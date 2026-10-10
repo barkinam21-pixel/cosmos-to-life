@@ -30,7 +30,7 @@ for(const path of ['index.html','life.html']){
 }
 assert.equal(grandTotal,394);
 assert.equal(grandYT,336);
-assert.match(fs.readFileSync('dub.html','utf8'),/src="\/dub\.js"/);
+assert.match(fs.readFileSync('dub.html','utf8'),/src="\/dub\.js(?:\?[^"]*)?"/);
 console.log('Pager syntax, ordering, dubbing link and small-page invariants: PASS');
 
 
