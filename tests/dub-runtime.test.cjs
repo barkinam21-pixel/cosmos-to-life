@@ -25,6 +25,7 @@ function setupRig(getDisplayMedia,voiceList=[{name:'Local Hebrew Test',lang:'he-
   elements.stop.disabled=true;
   const streams=[],sockets=[],buffers=[],audioStarts=[],contexts=[],gains=[],worklets=[],spoken=[],compressors=[];
   let ttsCanceled=0;
+  const scheduled=new Map();let nextTimer=0;
   const localTts={
     getVoices:()=>voiceList,
     speak:utter=>spoken.push(utter),
@@ -74,10 +75,15 @@ function setupRig(getDisplayMedia,voiceList=[{name:'Local Hebrew Test',lang:'he-
     WebSocket:MockWebSocket,Blob,ArrayBuffer,TextDecoder,Uint8Array,Float32Array,
     btoa:raw=>Buffer.from(raw,'binary').toString('base64'),
     atob:raw=>Buffer.from(raw,'base64').toString('binary'),
-    setTimeout:()=>123,clearTimeout:()=>{},setInterval:()=>234,clearInterval:()=>{},
+    setTimeout:(fn,delay)=>{const id=++nextTimer;scheduled.set(id,{fn,delay});return id},
+    clearTimeout:id=>scheduled.delete(id),setInterval:()=>234,clearInterval:()=>{},
     Date,console};
   vm.runInNewContext(source,sandbox,{filename:'dub.js',timeout:2000});
-  return {elements,sockets,buffers,audioStarts,contexts,streams,gains,worklets,spoken,compressors,get ttsCanceled(){return ttsCanceled}};
+  return {elements,sockets,buffers,audioStarts,contexts,streams,gains,worklets,spoken,compressors,
+    fireTimeouts(maxDelay){
+      for(const [id,t] of [...scheduled])if(t.delay<=maxDelay){scheduled.delete(id);t.fn()}
+    },
+    get ttsCanceled(){return ttsCanceled}};
 }
 function stream(){
   const tracks=[{stopped:0,listeners:[],stop(){this.stopped++},addEventListener(type,fn){this.listeners.push({type,fn})}},
@@ -177,6 +183,31 @@ function stream(){
   assert.equal(fixed.spoken.length,1,'Duplicate caption frames must not repeat a whole sentence');
   fixed.elements.stop.events.click();
   assert(fixed.ttsCanceled>=1,'Stop must cancel local TTS');
+  // When the provider sends PCM without any translated captions, browser TTS
+  // must not stay silent. Five-second offline timeout replays buffered PCM.
+  const missing=setupRig(async()=>stream());
+  await missing.elements.start.events.click();
+  const missingWS=missing.sockets[0];missingWS.open();
+  missingWS.message(JSON.stringify({setupComplete:{}}));await flush();
+  missingWS.message(JSON.stringify({serverContent:{
+    modelTurn:{parts:[{inlineData:{data:pcm,mimeType:'audio/pcm;rate=24000'}}]}
+  }}));await flush();
+  assert.equal(missing.buffers.length,0,'Do not double play audio before caption fallback');
+  missing.fireTimeouts(5500);await flush();
+  assert.equal(missing.elements.voiceMode.value,'google','Missing text must trigger audible Google fallback');
+  assert.equal(missing.buffers.length,1,'Fallback must play buffered Hebrew PCM');
+  missing.elements.stop.events.click();
+
+  // Final partial Hebrew phrases should be spoken even without punctuation.
+  const finalPhrase=setupRig(async()=>stream());
+  await finalPhrase.elements.start.events.click();
+  const phraseWS=finalPhrase.sockets[0];phraseWS.open();
+  phraseWS.message(JSON.stringify({setupComplete:{}}));await flush();
+  phraseWS.message(JSON.stringify({serverContent:{outputTranscription:{text:'משפט ללא סימן פיסוק'},turnComplete:true}}));
+  await flush();
+  assert.equal(finalPhrase.spoken.length,1,'End of a turn must flush an unfinished Hebrew phrase');
+  finalPhrase.elements.stop.events.click();
+
   const preview=setupRig(async()=>stream());
   assert.equal(preview.elements.previewVoice.disabled,false,'Idle voice preview should be available');
   preview.elements.previewVoice.events.click();
