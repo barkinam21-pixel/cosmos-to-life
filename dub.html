@@ -13,7 +13,7 @@ main{max-width:760px;margin:auto;padding:24px 16px 70px}h1{font-size:clamp(26px,
 p{margin:5px 0 12px}.muted,small{color:var(--muted)}.back{color:var(--blue);text-decoration:none;font-weight:700}.panel{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;margin-top:16px}.notice{border-right:4px solid #70c1ff}.pill{font-size:12px;color:#cceaff;background:#1a3854;border-radius:99px;padding:4px 10px;display:inline-block}
 label{display:block;font-weight:700;margin:6px 0}input[type=password]{width:100%;background:#06111d;color:#fff;border:1px solid #55799b;border-radius:10px;padding:13px;font:15px/1.3 monospace;direction:ltr;text-align:left}input:focus-visible,button:focus-visible,a:focus-visible{outline:2px solid #b4e1ff;outline-offset:3px}
 .controls{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-top:15px}button,.action{border:1px solid #5887ae;border-radius:11px;background:#17466c;color:#fff;font:700 16px Arial,system-ui,sans-serif;padding:11px 17px;cursor:pointer}button:disabled{opacity:.48;cursor:not-allowed}button.secondary{background:#344252}.option{display:flex;align-items:center;gap:8px;margin-top:14px;font-size:14px;font-weight:400} .option input{width:18px;height:18px}.ambience-volume{display:flex;align-items:center;flex-wrap:wrap;gap:12px;margin-top:8px;font-size:14px}.ambience-volume input{width:min(270px,100%);accent-color:#8dd2ff}#status{font-weight:700}#status[data-kind=bad]{color:#ffc49f}#status[data-kind=good]{color:#a9f7cf}
-#countdown{font-variant-numeric:tabular-nums;color:#cee7f8}.transcripts{display:grid;gap:12px}.transcript{min-height:58px;max-height:115px;overflow:auto;border-radius:10px;background:#081727;border:1px solid #253d57;padding:9px 12px;white-space:pre-wrap;word-break:break-word}.instructions{padding-right:23px}.instructions li{margin:7px 0}a{color:#9bd5ff}details{margin-top:16px;color:var(--muted)}details summary{cursor:pointer;font-weight:700;color:var(--text)}@media(max-width:480px){main{padding-top:14px}.panel{padding:14px}}
+select{width:100%;max-width:100%;padding:10px;border:1px solid #55799b;border-radius:10px;background:#091b2d;color:#fff;font:15px Arial,system-ui,sans-serif}.voice-choice{margin:15px 0}.voice-choice small{display:block;margin-top:7px}#soundReport,#latencyInfo{font-size:13px}#countdown{font-variant-numeric:tabular-nums;color:#cee7f8}.transcripts{display:grid;gap:12px}.transcript{min-height:58px;max-height:115px;overflow:auto;border-radius:10px;background:#081727;border:1px solid #253d57;padding:9px 12px;white-space:pre-wrap;word-break:break-word}.instructions{padding-right:23px}.instructions li{margin:7px 0}a{color:#9bd5ff}details{margin-top:16px;color:var(--muted)}details summary{cursor:pointer;font-weight:700;color:var(--text)}@media(max-width:480px){main{padding-top:14px}.panel{padding:14px}}
 </style>
 </head>
 <body>
@@ -22,7 +22,7 @@ label{display:block;font-weight:700;margin:6px 0}input[type=password]{width:100%
 <h1>🎧 דיבוב חי לעברית</h1>
 <p class="muted">ניסוי למחשב Chrome / Edge. שומעים את הסרטון באתר הרגיל, עם קול עברי שמופק בזמן אמת בחלון העזר הזה.</p>
 <section class="panel notice" aria-label="מידע לפני התחלה">
-<span class="pill">גרסת ניסיון • לא דיבוב קבוע</span>
+<span class="pill">גרסת ניסיון • רקע משופר 2 · 11.10.2026</span>
 <h2>לפני שמתחילים</h2>
 <ol class="instructions">
 <li>פתח את <a href="/" target="_blank" rel="noopener noreferrer">הסרטונים באתר</a> בלשונית נפרדת.</li>
@@ -39,7 +39,19 @@ label{display:block;font-weight:700;margin:6px 0}input[type=password]{width:100%
 <label class="option" for="suppress"><input type="checkbox" id="suppress" checked> השתיק את השמע המקורי בלשונית (כדי שלא ישמעו אנגלית; תלוי ב־Chrome)</label>
 <label class="option" for="ambience"><input type="checkbox" id="ambience" checked> נסה לשמור מוזיקה ואפקטים בלי קול אנגלי מרכזי (סטריאו בלבד)</label>
 <div class="ambience-volume"><label for="ambienceVolume">עוצמת הרקע: <output id="ambienceVolumeLabel" for="ambienceVolume">60%</output></label><input id="ambienceVolume" type="range" min="0" max="100" step="5" value="60" aria-label="עוצמת מוזיקה ואפקטים"></div>
-<small>ניסוי בסינון סטריאו קל: חלק מהמוזיקה והאפקטים עשויים להישמר, אך חלקם עלולים להיעלם וגם קול אנגלי עלול לדלוף. במקור מונו יישמע רק הדיבוב העברי. אפשר לכבות את הרקע בכל רגע.</small>
+<small>השיפור החדש משחזר חלק מהצלילים גם בסרטון מונו: בס ואפקטים גבוהים, ובסטריאו גם צלילי צד. האנגלית המרכזית מופחתת, אבל הפרדת דיבור ממוזיקה אינה מושלמת: המוזיקה יכולה להישמע מסוננת ולעיתים יש דליפת קול. אפשר להנמיך את הרקע.</small>
+<p id="soundReport" class="muted" aria-live="off">נתוני שחזור הרקע יופיעו לאחר הפעלת סרטון.</p>
+<details class="voice-choice">
+<summary>רוצה קול עברי קבוע במקום החלפות קול? (ניסוי)</summary>
+<label for="voiceMode">מקור הקריינות</label>
+<select id="voiceMode" aria-describedby="voiceHint">
+<option value="google" selected>Google — הקול הרגיל, לרוב טבעי ומהיר יותר</option>
+<option id="systemVoiceOption" value="system" disabled>קול עברי קבוע מהמחשב — ייתכן עיכוב נוסף</option>
+</select>
+<small id="voiceHint">בודק אם מותקן קול עברי מקומי במחשב…</small>
+<small>משתמש בתמלול Google ובקול המותקן במחשב. עשוי להיות פחות טבעי או איטי יותר. לא מופעל שירות קריינות בתשלום.</small>
+</details>
+<p id="latencyInfo" class="muted" aria-live="off">תור השמע המקומי יימדד במהלך הדיבוב.</p>
 <div class="controls">
 <button id="checkKey" type="button" class="secondary">✓ בדוק מפתח וחיבור (בלי שמע)</button>
 <button id="start" type="button">▶ הפעל דיבוב</button>
@@ -52,8 +64,8 @@ label{display:block;font-weight:700;margin:6px 0}input[type=password]{width:100%
 <div><h2>מה שמענו בשפת המקור</h2><div id="original" class="transcript muted" aria-live="off">התמלול יופיע כאן כשהשמע יתחיל.</div></div>
 <div><h2>התרגום לעברית</h2><div id="translated" class="transcript" aria-live="off">התרגום יופיע כאן כשהמודל יחזיר אודיו.</div></div>
 </section>
-<details><summary>מה עובד ומה עדיין לא הוכח?</summary><p>המנוע הרשמי של Google תומך בתרגום דיבור חי לעברית. הכלי הזה משתמש בשיתוף שמע של לשונית, ולכן הוא לא תלוי בשאלה אם הסרטון מוטמע מ־YouTube, Vimeo או PBS. עם זאת, חלק מהדפדפנים לא מאפשרים שיתוף שמע, השתקת הקול המקורי אינה מובטחת, והסנכרון אינם מושלמים. האיחור תלוי גם בזמן העיבוד של Google; האתר מצמצם רק השהיה מקומית. החלפת קול אחרי הפסקות ומבטא הם מגבלות מוכרות של מודל התרגום. סינון הרקע אינו הפרדת דיבור מקצועית. בטלפון Android הפתרון הזה אינו נתמך באופן אמין.</p><p>שיתוף הלשונית אינו כולל את חלון הדיבוב, כך שלא נוצרת לולאת שמע חוזר. אם נותק שיתוף הלשונית, יש להפעיל שוב. לבדיקת איכות יש להשתמש תחילה בקטע קצר לפני ניסוי ממושך.</p></details>
+<details><summary>מה עובד ומה עדיין לא הוכח?</summary><p>המנוע הרשמי של Google תומך בתרגום דיבור חי לעברית. הכלי הזה משתמש בשיתוף שמע של לשונית, ולכן הוא לא תלוי בשאלה אם הסרטון מוטמע מ־YouTube, Vimeo או PBS. עם זאת, חלק מהדפדפנים לא מאפשרים שיתוף שמע, השתקת הקול המקורי אינה מובטחת, והסנכרון אינם מושלמים. האיחור תלוי גם בזמן העיבוד של Google; האתר מצמצם רק השהיה מקומית. החלפת קול אחרי הפסקות ומבטא הם מגבלות מוכרות של מודל התרגום. סינון הרקע אינו הפרדת דיבור מקצועית, אך כעת תומך גם במונו. אפשר לבחור קול עברי מקומי קבוע אם מותקן כזה, במחיר השהיה נוספת. בטלפון Android הפתרון הזה אינו נתמך באופן אמין.</p><p>שיתוף הלשונית אינו כולל את חלון הדיבוב, כך שלא נוצרת לולאת שמע חוזר. אם נותק שיתוף הלשונית, יש להפעיל שוב. לבדיקת איכות יש להשתמש תחילה בקטע קצר לפני ניסוי ממושך.</p></details>
 </main>
-<script src="/dub.js" defer></script>
+<script src="/dub.js?v=2026-10-11.2" defer></script>
 </body>
 </html>

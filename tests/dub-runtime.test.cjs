@@ -13,15 +13,25 @@ function deferred(){
 async function flush(){for(let i=0;i<24;i++)await Promise.resolve()}
 function setupRig(getDisplayMedia){
   const elements={};
-  for(const id of ['start','stop','checkKey','apiKey','status','countdown','original','translated','suppress','ambience','ambienceVolume','ambienceVolumeLabel']){
+  for(const id of ['start','stop','checkKey','apiKey','status','countdown','original','translated','suppress','ambience','ambienceVolume','ambienceVolumeLabel','soundReport','latencyInfo','voiceMode','systemVoiceOption','voiceHint']){
     elements[id]={value:'',textContent:'',dataset:{},disabled:false,checked:true,events:{},
       addEventListener(type,fn){this.events[type]=fn},scrollTop:0,scrollHeight:0};
   }
   elements.apiKey.value='AQ.'+'x'.repeat(32);
   elements.ambience.checked=true;
   elements.ambienceVolume.value='60';
+  elements.voiceMode.value='google';
+  elements.systemVoiceOption.disabled=true;
   elements.stop.disabled=true;
-  const streams=[],sockets=[],buffers=[],audioStarts=[],contexts=[],gains=[],worklets=[];
+  const streams=[],sockets=[],buffers=[],audioStarts=[],contexts=[],gains=[],worklets=[],spoken=[];
+  let ttsCanceled=0;
+  const localTts={
+    getVoices:()=>[{name:'Local Hebrew Test',lang:'he-IL',localService:true}],
+    speak:utter=>spoken.push(utter),
+    cancel:()=>{ttsCanceled++},
+    addEventListener(){}
+  };
+  class SpeechSynthesisUtterance{constructor(text){this.text=text}}
   class MockWebSocket{
     static OPEN=1;
     constructor(url){this.url=url;this.readyState=0;this.sent=[];sockets.push(this)}
@@ -32,7 +42,7 @@ function setupRig(getDisplayMedia){
   }
   class MockAudioContext{
     constructor(){this.state='running';this.destination={};this.currentTime=0;this.closed=false;contexts.push(this);
-      this.audioWorklet={addModule:async p=>assert.equal(p,'/dub-worklet.js')};}
+      this.audioWorklet={addModule:async p=>assert.equal(p,'/dub-worklet.js?v=2026-10-11.2')};}
     createMediaStreamSource(stream){return {connect(){},disconnect(){}}}
     createGain(){
       const node={gain:{value:1,setTargetAtTime(value){this.value=value}},connect(){},disconnect(){}};
@@ -53,7 +63,8 @@ function setupRig(getDisplayMedia){
   }
   const sandbox={document:{getElementById:id=>elements[id]},
     navigator:{mediaDevices:{getDisplayMedia}},
-    window:{AudioWorkletNode:MockAudioWorkletNode,AudioContext:MockAudioContext,addEventListener(){}},
+    window:{AudioWorkletNode:MockAudioWorkletNode,AudioContext:MockAudioContext,speechSynthesis:localTts,addEventListener(){}},
+    SpeechSynthesisUtterance,
     AudioContext:MockAudioContext,AudioWorkletNode:MockAudioWorkletNode,
     WebSocket:MockWebSocket,Blob,ArrayBuffer,TextDecoder,Uint8Array,Float32Array,
     btoa:raw=>Buffer.from(raw,'binary').toString('base64'),
@@ -61,7 +72,7 @@ function setupRig(getDisplayMedia){
     setTimeout:()=>123,clearTimeout:()=>{},setInterval:()=>234,clearInterval:()=>{},
     Date,console};
   vm.runInNewContext(source,sandbox,{filename:'dub.js',timeout:2000});
-  return {elements,sockets,buffers,audioStarts,contexts,streams,gains,worklets};
+  return {elements,sockets,buffers,audioStarts,contexts,streams,gains,worklets,spoken,get ttsCanceled(){return ttsCanceled}};
 }
 function stream(){
   const tracks=[{stopped:0,listeners:[],stop(){this.stopped++},addEventListener(type,fn){this.listeners.push({type,fn})}},
@@ -91,6 +102,9 @@ function stream(){
   assert.equal(newer.contexts.length,1,'Capture and dub audio should reuse one AudioContext');
   assert.equal(newer.gains.length,1,'Background audio must be controlled by a gain node');
   assert.equal(newer.gains[0].gain.value,0.6,'Default soundtrack mix must be modest');
+  assert.equal(newer.elements.systemVoiceOption.disabled,false,'Installed Hebrew voice should be offered');
+  newer.worklets[0].port.onmessage({data:{type:'soundLevels',channels:1,sourceRms:0.1,backgroundRms:0.08}});
+  assert.match(newer.elements.soundReport.textContent,/מונו/);
   newer.elements.ambience.checked=false;
   newer.elements.ambience.events.change();
   assert.equal(newer.gains[0].gain.value,0,'Disable background without stopping dubbing');
@@ -132,5 +146,20 @@ function stream(){
   old.reject(new Error('old picker canceled'));
   await oldBegin;await flush();
   assert.equal(r2.sockets.length,0);
-  console.log('PASS: offline MockWebSocket Blob/binary audio+transcript, late picker cleanup and stale event guards');
+  // Optional Hebrew fixed voice uses one local speaker; native audio is not mixed twice.
+  const fixed=setupRig(async()=>stream());
+  fixed.elements.voiceMode.value='system';
+  await fixed.elements.start.events.click();
+  const fixedWS=fixed.sockets[0];fixedWS.open();
+  fixedWS.message(JSON.stringify({setupComplete:{}}));await flush();
+  fixedWS.message(JSON.stringify({serverContent:{
+    outputTranscription:{text:'שלום לכולם. זהו ניסוי בקריינות עברית קבועה.'},
+    modelTurn:{parts:[{inlineData:{data:pcm,mimeType:'audio/pcm;rate=24000'}}]}
+  }}));await flush();
+  assert.equal(fixed.spoken.length,1,'Local Hebrew TTS must speak output transcript');
+  assert.equal(fixed.spoken[0].voice.name,'Local Hebrew Test');
+  assert.equal(fixed.buffers.length,0,'No double-play with Google native PCM');
+  fixed.elements.stop.events.click();
+  assert(fixed.ttsCanceled>=1,'Stop must cancel local TTS');
+  console.log('PASS: offline MockWebSocket voice options, mono meter, Blob/transcript/audio, stop cleanup');
 })().catch(e=>{console.error(e);process.exitCode=1});

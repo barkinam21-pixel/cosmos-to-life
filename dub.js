@@ -6,12 +6,51 @@
   const status=$('status'),countdown=$('countdown');
   const orig=$('original'),translated=$('translated');
   const MODEL='gemini-3.5-live-translate-preview';
+  const DUB_BUILD='2026-10-11.2';
   const LIMIT_MS=10*60*1000;
   let state='idle', capture=null, socket=null, captureContext=null, playbackContext=null;
   let captureNode=null, backgroundGain=null, inputNode=null;
   let playbackTime=0, activeSources=new Set(), deadline=0, timer=null, setupReady=false, heardAudio=false;
   let connectionTimer=null, setupTimer=null, runId=0;
   let verifiedKey=''; // RAM only: cleared when this tab closes or reloads.
+  // Live Translate has no supported persistent speaker lock. Optional browser
+  // speech synthesis can use one installed, locally provided Hebrew voice.
+  const tts=window.speechSynthesis||null;
+  let localHebrewVoice=null,ttsText='',ttsTimer=null;
+  const usingSystemVoice=()=>Boolean(tts&&localHebrewVoice&&$('voiceMode').value==='system');
+  function refreshHebrewVoice(){
+    if(!tts)return;
+    try{
+      const voices=tts.getVoices().filter(v=>/^he(?:[-_]|$)/i.test(v.lang)&&v.localService);
+      localHebrewVoice=voices.find(v=>/^he[-_]IL$/i.test(v.lang))||voices[0]||null;
+    }catch(_){localHebrewVoice=null}
+    $('systemVoiceOption').disabled=!localHebrewVoice;
+    if(!localHebrewVoice&&$('voiceMode').value==='system')$('voiceMode').value='google';
+    $('voiceHint').textContent=localHebrewVoice
+      ? 'נמצא קול עברי מקומי: '+localHebrewVoice.name+'. הוא קבוע, אבל האיכות והקצב תלויים במחשב.'
+      : 'לא נמצא קול עברי מקומי מותקן. הקריינות הרגילה של Google זמינה כרגיל.';
+  }
+  function speakHebrewChunk(thisRun){
+    clearTimeout(ttsTimer);ttsTimer=null;
+    if(!ttsText||!usingSystemVoice()||state==='idle'||runId!==thisRun)return;
+    const phrase=ttsText.trim();ttsText='';
+    if(!phrase)return;
+    const utter=new SpeechSynthesisUtterance(phrase);
+    utter.lang='he-IL';utter.voice=localHebrewVoice;utter.rate=1.07;
+    try{tts.speak(utter)}catch(_){
+      // Never lose the normal Google path if the local browser TTS fails.
+      $('voiceMode').value='google';
+      setStatus('הקול המקומי לא זמין. חזרתי לקריינות של Google.','neutral');
+    }
+  }
+  function queueHebrewVoice(text,thisRun){
+    if(!usingSystemVoice()||state==='idle'||runId!==thisRun)return;
+    const part=String(text||'').trim();if(!part)return;
+    ttsText+=(ttsText?' ':'')+part;
+    // Avoid per-token stutter; latency is higher than Google native audio.
+    if(ttsText.length>=70||/[.!?׃]$/.test(part))speakHebrewChunk(thisRun);
+    else{clearTimeout(ttsTimer);ttsTimer=setTimeout(()=>speakHebrewChunk(thisRun),700)}
+  }
   const WS_ENDPOINT='wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1beta.GenerativeService.BidiGenerateContent';
   const MODEL_ENDPOINT='https://generativelanguage.googleapis.com/v1beta/models/'+MODEL;
 
@@ -21,6 +60,7 @@
   function switchControls(running){
     startButton.disabled=running;stopButton.disabled=!running;
     keyInput.disabled=running;checkButton.disabled=running;$('suppress').disabled=running;
+    $('voiceMode').disabled=running;
   }
   // A cheap, optional stereo side-channel mix. It cancels truly centered
   // speech; unlike AI source separation, mono and centered effects cannot survive.
@@ -234,6 +274,8 @@
     if(captureNode){captureNode.port.onmessage=null;try{captureNode.disconnect()}catch(_){}captureNode=null}
     if(inputNode){try{inputNode.disconnect()}catch(_){}inputNode=null}
     if(backgroundGain){try{backgroundGain.disconnect()}catch(_){}backgroundGain=null}
+    clearTimeout(ttsTimer);ttsTimer=null;ttsText='';
+    if(tts){try{tts.cancel()}catch(_){}}
     if(capture){for(const t of capture.getTracks()){try{t.stop()}catch(_){}}capture=null}
     for(const s of activeSources){try{s.stop()}catch(_){}}activeSources.clear();playbackTime=0;
     // Capture and playback share one context to reduce CPU and audio clocks.
@@ -256,16 +298,19 @@
     const c=msg.serverContent;
     if(!c)return;
     if(c.inputTranscription?.text)appendTranscript(orig,c.inputTranscription.text);
-    if(c.outputTranscription?.text)appendTranscript(translated,c.outputTranscription.text);
+    if(c.outputTranscription?.text){
+      appendTranscript(translated,c.outputTranscription.text);
+      if(usingSystemVoice())queueHebrewVoice(c.outputTranscription.text,thisRun);
+    }
     for(const part of c.modelTurn?.parts||[]){
-      if(part.inlineData?.data)playTranslated(part.inlineData.data,part.inlineData.mimeType,thisRun).catch(()=>{
+      if(part.inlineData?.data&&!usingSystemVoice())playTranslated(part.inlineData.data,part.inlineData.mimeType,thisRun).catch(()=>{
         if(state!=='idle'&&runId===thisRun&&socket===originSocket)stop('שגיאה בהשמעת הקריינות העברית.');
       });
     }
   }
   async function startCaptureProcessing(thisRun){
     const context=captureContext=playbackContext;
-    await context.audioWorklet.addModule('/dub-worklet.js');
+    await context.audioWorklet.addModule('/dub-worklet.js?v='+DUB_BUILD);
     if(state!=='starting'||runId!==thisRun||captureContext!==context)return;
     inputNode=context.createMediaStreamSource(capture);
     captureNode=new AudioWorkletNode(context,'hebrew-dub-capture',{outputChannelCount:[2]});
@@ -275,8 +320,16 @@
     backgroundGain.connect(context.destination);
     updateAmbience();
     captureNode.port.onmessage=e=>{
+      if(e.data?.type==='soundLevels'){
+        const d=e.data;
+        // Show what was actually captured; mono previously produced no soundtrack.
+        const source=Number(d.channels)===1?'מונו':'סטריאו';
+        const relative=d.sourceRms>0?Math.round(100*d.backgroundRms/d.sourceRms):0;
+        $('soundReport').textContent='שמע מקור: '+source+' · רקע משוחזר: '+relative+'% מעוצמת המקור (לפני הכיוון)';
+        return;
+      }
       if(state!=='running'||!setupReady||!socket||socket.readyState!==WebSocket.OPEN)return;
-      // Network back-pressure: skip data rather than freeze the browser.
+      if(!(e.data instanceof ArrayBuffer))return;
       if(socket.bufferedAmount>300000)return;
       const packet=new Uint8Array(e.data);
       socket.send(JSON.stringify({realtimeInput:{audio:{data:toB64(packet),mimeType:'audio/pcm;rate=16000'}}}));
@@ -310,6 +363,7 @@
         return;
       }
       capture=stream;
+      $('soundReport').textContent='ממתין לנתוני שמע מהסרטון…';
       const audio=capture.getAudioTracks()[0];
       if(!audio){stop('שגיאה: הלשונית נבחרה בלי שמע. יש להפעיל מחדש ולסמן Share tab audio.');return}
       for(const track of capture.getTracks())track.addEventListener('ended',()=>{
@@ -351,6 +405,10 @@
         timer=setInterval(()=>{
           const s=Math.max(0,Math.ceil((deadline-Date.now())/1000));
           countdown.textContent='נותרו '+Math.floor(s/60)+':'+String(s%60).padStart(2,'0')+' דקות';
+          const queue=playbackContext&&heardAudio?Math.max(0,playbackTime-playbackContext.currentTime):0;
+          $('latencyInfo').textContent=heardAudio
+            ? 'תור שמע מקומי: '+queue.toFixed(2)+' שניות. זמן העיבוד של Google נוסף לכך.'
+            : 'מחכה לקריינות. השהיית Google אינה בשליטת הנגן.';
           if(!s)stop('הניסוי הסתיים לאחר 10 דקות. לא נמשיך לצרוך API בלי הפעלה מחדש.');
         },1000);
         setStatus('החיבור נפתח. מחכה לאישור תחילת תרגום…');
@@ -385,6 +443,11 @@
   stopButton.addEventListener('click',()=>stop('הדיבוב הופסק לבקשתך.'));
   $('ambience').addEventListener('change',updateAmbience);
   $('ambienceVolume').addEventListener('input',updateAmbience);
+  $('voiceMode').addEventListener('change',()=>{
+    if($('voiceMode').value==='system'&&!localHebrewVoice)$('voiceMode').value='google';
+  });
+  refreshHebrewVoice();
+  if(tts&&typeof tts.addEventListener==='function')tts.addEventListener('voiceschanged',refreshHebrewVoice);
   updateAmbience();
   window.addEventListener('pagehide',()=>stop('הדיבוב הסתיים.'));
 })();
