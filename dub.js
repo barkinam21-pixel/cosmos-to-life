@@ -23,6 +23,8 @@
   const usingSystemVoice=()=>Boolean(tts&&browserHebrewVoice&&$('voiceMode').value==='system');
   function refreshHebrewVoice(){
     if(!tts)return;
+    // Preserve the exact voice object for the whole running session.
+    if(state!=='idle'&&browserHebrewVoice)return;
     try{
       const voices=tts.getVoices().filter(v=>/^he(?:[-_]|$)/i.test(v.lang));
       browserHebrewVoice=voices.find(v=>voiceId(v)===lockedVoiceId)
@@ -33,6 +35,7 @@
       if(browserHebrewVoice)lockedVoiceId=voiceId(browserHebrewVoice);
     }catch(_){browserHebrewVoice=null}
     $('systemVoiceOption').disabled=!browserHebrewVoice;
+    $('previewVoice').disabled=!browserHebrewVoice;
     if(!browserHebrewVoice&&$('voiceMode').value==='system')$('voiceMode').value='google';
     if(!voiceModeChosen&&state==='idle')$('voiceMode').value=browserHebrewVoice?'system':'google';
     $('voiceHint').textContent=browserHebrewVoice
@@ -65,7 +68,13 @@
       clearTimeout(ttsWatchdog);ttsWatchdog=null;
       speechBusy=false;speakNext(thisRun);
     };
-    utter.onstart=()=>{started=true;clearTimeout(ttsWatchdog);ttsWatchdog=null};
+    utter.onstart=()=>{
+      started=true;clearTimeout(ttsWatchdog);ttsWatchdog=null;
+      if(!heardAudio&&runId===thisRun&&state!=='idle'){
+        heardAudio=true;
+        setStatus('הקריינות העברית בקול הקבוע מתנגנת. אותו קול נשמר גם אחרי שתיקה.','good');
+      }
+    };
     utter.onend=finish;
     utter.onerror=()=>{
       if(runId===thisRun&&state!=='idle')revertToGoogleAudio('הקריין הקבוע לא הצליח לדבר. חזרתי לקול Google כדי למנוע שקט ממושך.');
@@ -522,6 +531,12 @@
   stopButton.addEventListener('click',()=>stop('הדיבוב הופסק לבקשתך.'));
   $('ambience').addEventListener('change',updateAmbience);
   $('ambienceVolume').addEventListener('input',updateAmbience);
+  $('cleanOnly').addEventListener('click',()=>{
+    $('ambience').checked=false;
+    if(state==='idle')$('suppress').checked=true;
+    updateAmbience();
+    setStatus('בוטל ערבוב שמע הסרטון: תשמע רק דיבוב עברי, אם דפדפן השיתוף אכן משתיק את לשונית המקור. גם המוזיקה והאפקטים המקוריים יושתקו.');
+  });
   $('voiceMode').addEventListener('change',()=>{
     voiceModeChosen=true;
     if($('voiceMode').value==='system'&&!browserHebrewVoice)$('voiceMode').value='google';
