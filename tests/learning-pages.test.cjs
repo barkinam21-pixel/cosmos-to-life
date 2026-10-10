@@ -1,0 +1,34 @@
+const fs=require('node:fs');
+const vm=require('node:vm');
+const assert=require('node:assert/strict');
+const pager=fs.readFileSync('learning-pages.js','utf8');
+new vm.Script(pager,{filename:'learning-pages.js'});
+assert.match(pager,/const PAGE_SIZE=6;/);
+assert.match(pager,/history\.pushState/);
+assert.match(pager,/refreshLearningPageMedia/);
+let grandTotal=0,grandYT=0;
+for(const path of ['index.html','life.html']){
+ const html=fs.readFileSync(path,'utf8');
+ assert.match(html,/<script src="\/learning-pages\.js"><\/script>/);
+ assert.match(html,/<a href="\/dub\.html" target="_blank"/);
+ assert.match(html,/cleanupLearningPageMedia/);
+ assert.match(html,/pageYtObserver/);
+ assert.match(html,/learningPages\?\.hasNext\(\)/);
+ for(const m of html.matchAll(/<script>([\s\S]*?)<\/script>/g))new vm.Script(m[1],{filename:path});
+ const chapters=JSON.parse(html.match(/const chapters = (.*);/)[1]);
+ const order=JSON.parse(html.match(/const EMBED_ORDER=(\[[^\n]*?\]);/)[1]);
+ const urls=chapters.flatMap(c=>c.items.map(item=>item[6]));
+ const extracted=urls.map(u=>u&&u.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube-nocookie\.com\/embed\/)([A-Za-z0-9_-]{11})/)?.[1]).filter(Boolean);
+ assert.deepEqual(extracted,order,path+' YouTube order must stay identical');
+ assert.equal(new Set(extracted).size,extracted.length,path+' duplicate YouTube IDs');
+ const pages=chapters.flatMap((c,ci)=>Array.from({length:Math.ceil(c.items.length/6)},(_,k)=>({ci,start:k*6,end:Math.min(c.items.length,(k+1)*6)})));
+ const allItems=pages.flatMap(p=>chapters[p.ci].items.slice(p.start,p.end));
+ assert.deepEqual(allItems,chapters.flatMap(c=>c.items),path+' all units survive in order');
+ assert(pages.every(p=>p.end-p.start>0&&p.end-p.start<=6));
+ grandTotal+=allItems.length;grandYT+=order.length;
+ console.log(path+': '+allItems.length+' units, '+pages.length+' lightweight pages, '+order.length+' YouTube IDs verified');
+}
+assert.equal(grandTotal,394);
+assert.equal(grandYT,336);
+assert.match(fs.readFileSync('dub.html','utf8'),/src="\/dub\.js"/);
+console.log('Pager syntax, ordering, dubbing link and small-page invariants: PASS');

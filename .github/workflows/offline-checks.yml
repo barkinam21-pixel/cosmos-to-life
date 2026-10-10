@@ -10,6 +10,7 @@ on:
       - 'dub.html'
       - 'index.html'
       - 'life.html'
+      - 'learning-pages.js'
       - 'tests/**'
       - '.github/workflows/offline-checks.yml'
   pull_request:
@@ -28,6 +29,8 @@ jobs:
         run: |
           node --version
           node --check dub.js
+          node --check learning-pages.js
+          node --check tests/learning-pages.test.cjs
           node --check dub-worklet.js
           node --check tests/dub-schema.test.cjs
           node --check tests/dub-frames.test.cjs
@@ -35,3 +38,4 @@ jobs:
           node tests/dub-frames.test.cjs
           node tests/dub-schema.test.cjs
           node tests/dub-runtime.test.cjs
+          node tests/learning-pages.test.cjs
