@@ -42,7 +42,7 @@ function setupRig(getDisplayMedia){
   }
   class MockAudioContext{
     constructor(){this.state='running';this.destination={};this.currentTime=0;this.closed=false;contexts.push(this);
-      this.audioWorklet={addModule:async p=>assert.equal(p,'/dub-worklet.js?v=2026-10-11.3')};}
+      this.audioWorklet={addModule:async p=>assert.equal(p,'/dub-worklet.js?v=2026-10-11.4')};}
     createMediaStreamSource(stream){return {connect(){},disconnect(){}}}
     createGain(){
       const node={gain:{value:1,setTargetAtTime(value){this.value=value}},connect(){},disconnect(){}};

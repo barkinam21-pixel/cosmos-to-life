@@ -30,9 +30,10 @@ function gain(freq,antiphase=false){
   }
   return Math.sqrt(wet/dry);
 }
-const bass=gain(80),speech=gain(1100),treble=gain(8000),side=gain(1000,true);
+const bass=gain(80),melody=gain(440),speech=gain(1100),treble=gain(8000),side=gain(1000,true);
 assert(bass>0.5,'Mono bass/music must be audible, unlike the previous filter');
-assert(speech<0.13,'Mono speech mid-band must be significantly attenuated');
+assert(melody>0.34,'Center-panned mono melodies must no longer disappear at 440Hz');
+assert(speech<0.25,'Spoken mid-band must remain quieter than unfiltered English');
 assert(treble>0.15,'Mono high effects must be audible');
 assert(side>0.55,'Stereo side background must pass');
 assert(packets.length>10&&packets.every(p=>p.length===1600),'PCM 16kHz / 100ms');
@@ -43,4 +44,4 @@ for(let f=0;f<13;f++){
   mono.process([[new Float32Array(128).fill(0.4)]],[[out,new Float32Array(128)]]);
 }
 assert(out.some(x=>x>0),'Pure mono input must not go completely silent');
-console.log('PASS: offline mono/stereo soundtrack, speech attenuation, 16kHz PCM and sound-level telemetry');
+console.log('PASS: offline mono/stereo soundtrack, restored 440Hz melody, limited 1100Hz speech, 16kHz PCM');

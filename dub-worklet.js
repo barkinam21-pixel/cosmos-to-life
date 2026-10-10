@@ -1,15 +1,15 @@
-/* Low-cost stereo soundfield + mono-safe frequency-band background recovery.
-   Translation always receives original mono PCM; only local playback is filtered.
-   This cannot fully separate English speech from music in mixed audio. */
+/* Lightweight, stereo-preserving live ambience for mono and stereo videos.
+   Google receives the unchanged mono audio; this filters only local playback.
+   No frequency filter can isolate all music without leaking some speech. */
 class HebrewDubCapture extends AudioWorkletProcessor {
   constructor(){
     super();
     this.phase=0;this.sum=0;this.samples=0;this.sampleIndex=0;
     this.packet=new Int16Array(1600);this.inputRate=sampleRate;
-    this.lowA=1-Math.exp(-2*Math.PI*180/sampleRate);
+    this.lowA=1-Math.exp(-2*Math.PI*190/sampleRate);
     this.highA=Math.exp(-2*Math.PI*3600/sampleRate);
-    this.low1=0;this.low2=0;this.hi1=0;this.hi2=0;
-    this.lastMid=0;this.lastHi1=0;
+    this.low1=0;this.hi1=0;
+    this.lastMid=0;
     this.meterSamples=0;this.rawSquare=0;this.backgroundSquare=0;this.sideSquare=0;
   }
   process(inputs,outputs){
@@ -21,16 +21,15 @@ class HebrewDubCapture extends AudioWorkletProcessor {
     for(let i=0;i<left.length;i++){
       const l=left[i],r=stereo?right[i]:l;
       const mid=(l+r)*0.5,side=stereo?(l-r)*0.5:0;
-      // Recover music bass and high-frequency effects also when input is mono.
+      // Complementary one-pole low/mid/high bands avoid the narrow-band
+      // cancellations of the old two-pole mix (especially melodies 400-700 Hz).
+      // A modest mid band restores instruments while limiting speech leakage.
       this.low1+=this.lowA*(mid-this.low1);
-      this.low2+=this.lowA*(this.low1-this.low2);
       this.hi1=this.highA*(this.hi1+mid-this.lastMid);
-      this.hi2=this.highA*(this.hi2+this.hi1-this.lastHi1);
-      this.lastMid=mid;this.lastHi1=this.hi1;
-      // Keep stereo effects on their respective sides instead of flattening
-      // everything to two copies of the left side; mono remains supported.
-      const common=1.3*this.low2+0.85*this.hi2;
-      const stereoSide=1.1*side;
+      this.lastMid=mid;
+      const speechAndMelody=mid-this.low1-this.hi1;
+      const common=1.15*this.low1+this.hi1+0.10*speechAndMelody;
+      const stereoSide=1.0*side;
       const bgLeft=Math.max(-1,Math.min(1,common+stereoSide));
       const bgRight=Math.max(-1,Math.min(1,common-stereoSide));
       if(outLeft)outLeft[i]=bgLeft;

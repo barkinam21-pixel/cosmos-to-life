@@ -6,7 +6,7 @@
   const status=$('status'),countdown=$('countdown');
   const orig=$('original'),translated=$('translated');
   const MODEL='gemini-3.5-live-translate-preview';
-  const DUB_BUILD='2026-10-11.3';
+  const DUB_BUILD='2026-10-11.4';
   const LIMIT_MS=10*60*1000;
   let state='idle', capture=null, socket=null, captureContext=null, playbackContext=null;
   let captureNode=null, backgroundGain=null, inputNode=null, mixCompressor=null;
@@ -249,10 +249,11 @@
       activeSources.clear();playbackTime=now+0.045;
       setStatus('הדיבוב מתעכב. איפסתי את תור השמע כדי לחזור לזמן אמת.','neutral');
     }
-    // Gently drain a growing client-side queue; this cannot eliminate
-    // model/network latency. Avoid high rates that audibly change Hebrew pitch.
+    // Gently drain only a real local backlog. PlaybackRate also changes pitch:
+    // limit catch-up to 2-4% to avoid distorting Hebrew pronunciation.
+    // This does not remove the model's own translation delay.
     const queued=Math.max(0,playbackTime-now);
-    const speed=queued>1.25?1.08:queued>0.45?1.04:1;
+    const speed=queued>1.8?1.04:queued>0.75?1.02:1;
     source.playbackRate.value=speed;
     const at=playbackTime;
     playbackTime+=data.length/rate/speed;
