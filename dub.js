@@ -39,49 +39,65 @@
   }
   function explainHttp(status,body){
     const code=body?.error?.status||'';
-    if(status===400) return 'Google דחתה את המפתח או בקשת הבדיקה (400). יש ליצור מפתח Auth חדש ב-Google AI Studio.';
+    if(status===400) return 'Google דחתה בקשה (400). זה אינו מוכיח שהמפתח שגוי; נבדוק את חיבור Live עצמו.';
     if(status===401) return 'Google לא אישרה את המפתח (401). השתמש במפתח Auth חדש מתוך AI Studio, ולא במפתח Standard ישן.';
     if(status===402) return 'Google דורשת יתרת Prepay בחשבון בתשלום (402). זה לא אומר שהמפתח שגוי; בדוק Billing ב-AI Studio. אין להפעיל טעינה אוטומטית לפני שבודקים עלות.';
     if(status===403) return 'אין הרשאה למודל או ל-Gemini API בפרויקט (403). בדוק סוג מפתח והגבלות הפרויקט ב-AI Studio.';
-    if(status===404) return 'המודל Gemini Live Translate אינו זמין כרגע למפתח או לפרויקט הזה (404).';
+    if(status===404) return 'נקודת בדיקת המודל החזירה 404. זה לא בהכרח אומר שחיבור Live חסום.';
     if(status===429) return 'מכסת השימוש של Google נוצלה (429). זה לא אומר שהמפתח פגום.';
     if(status>=500) return 'שירות Google אינו זמין זמנית ('+status+'). המפתח לא בהכרח פגום.';
     return 'Google החזירה שגיאה '+status+(code?' ('+code+')':'')+'. אין לשלם לפני שמבררים אותה.';
   }
-  async function testKeyWithGoogle(key){
-    // Metadata lookup is not audio generation; send the key only to Google.
-    let response;
+  function explainLiveFailure(code,reason){
+    const detail=String(reason||'').slice(0,140);
+    if(/resource.exhausted|quota|rate.limit|429/i.test(detail))return 'מכסת Gemini נוצלה (429). המפתח לא בהכרח שגוי.';
+    if(/402|prepay|billing|payment|insufficient.funds/i.test(detail))return 'נדרשת יתרת תשלום בחשבון Google (402). אל תפעיל חיוב לפני שבודקים מחיר.';
+    if(/401|api.key.invalid|unauthenticated|invalid.api.key/i.test(detail))return 'Google לא מאשרת את מפתח ה-API (401). כדאי ליצור מפתח Auth חדש ב-AI Studio.';
+    if(/403|permission.denied|forbidden/i.test(detail))return 'למפתח אין הרשאה למודל (403). בדוק הרשאות או סוג פרויקט.';
+    if(/404|model.*not.found/i.test(detail))return 'המודל אינו נגיש בחשבון הזה (404).';
+    return 'חיבור Live נסגר (קוד '+code+'). '+(detail||'ייתכן חיבור רשת, הרשאת Google או מגבלת API.');
+  }
+  async function diagnoseLiveFailure(key,original){
+    // REST is only a secondary diagnostic. A model metadata lookup can fail
+    // even when the Live WebSocket is usable, so never let it veto Live setup.
     try{
-      response=await fetch(MODEL_ENDPOINT,{method:'GET',headers:{'x-goog-api-key':key},cache:'no-store',signal:AbortSignal.timeout(12000)});
-    }catch(e){
-      return {ok:false,message:'לא הצלחתי לבדוק את Google בדפדפן (חסימת רשת / CORS). זה לא אומר שהמפתח שגוי. אפשר לנסות הפעלה.',uncertain:true};
-    }
-    if(!response.ok){
-      let json={};try{json=await response.json()}catch(_){}
-      return {ok:false,message:explainHttp(response.status,json),uncertain:false};
-    }
-    // The metadata API alone does not prove the Live socket works.
-    return new Promise(resolve=>{
+      const response=await fetch(MODEL_ENDPOINT,{method:'GET',headers:{'x-goog-api-key':key},cache:'no-store',signal:AbortSignal.timeout(8500)});
+      if([401,402,403,429].includes(response.status)){
+        let body={};try{body=await response.json()}catch(_){}
+        return explainHttp(response.status,body);
+      }
+    }catch(_){}
+    return original;
+  }
+  async function testKeyWithGoogle(key){
+    // Test actual translation session FIRST, not a different REST operation.
+    // This avoids the former false-negative when GET /models rejects a
+    // Live-only model or the metadata endpoint is blocked by the browser.
+    const live=await new Promise(resolve=>{
       let done=false,ws;
       const finish=(ok,message)=>{
         if(done)return;done=true;clearTimeout(timeout);
         try{if(ws&&ws.readyState<=1)ws.close()}catch(_){}
-        resolve({ok,message,uncertain:false});
+        resolve({ok,message});
       };
-      const timeout=setTimeout(()=>finish(false,'בדיקת חיבור Live נמשכה יותר מדי. ייתכן עומס או חסימת רשת; אל תשלם כעת.'),12000);
+      const timeout=setTimeout(()=>finish(false,'בדיקת חיבור Live לא הסתיימה בתוך 12 שניות. ייתכן עומס או חסימת רשת.'),12000);
       try{
         ws=new WebSocket(WS_ENDPOINT+'?key='+encodeURIComponent(key));
         ws.onopen=()=>ws.send(JSON.stringify(setupPayload()));
         ws.onmessage=e=>{
           let data={};try{data=JSON.parse(e.data)}catch(_){}
-          if(data.setupComplete)finish(true,'המפתח והחיבור למודל התרגום לעברית אושרו. עדיין צריך לבדוק איכות קול בפועל.');
-          else if(data.error)finish(false,'Google דחתה את חיבור Live: '+String(data.error.message||data.error.code||'שגיאה').slice(0,170));
+          if(data.setupComplete)finish(true,'המפתח וחיבור התרגום לעברית אושרו. הצעד הבא הוא בדיקת הקול בסרטון קצר.');
+          else if(data.error)finish(false,explainLiveFailure(data.error.code||'API',data.error.message||data.error.status));
         };
-        ws.onerror=()=>{}; // onclose includes the server's reason when supplied.
-        ws.onclose=e=>finish(false,'המפתח עבר בדיקת REST אך חיבור Live נסגר ('+e.code+'). '+(e.reason?String(e.reason).slice(0,120):'ייתכן חסימת רשת או הרשאות למודל.'));
-      }catch(_){finish(false,'לא ניתן ליצור חיבור Live בדפדפן. בדוק Chrome/Edge ורשת.');}
+        ws.onerror=()=>{};
+        ws.onclose=e=>finish(false,explainLiveFailure(e.code,e.reason));
+      }catch(_){finish(false,'הדפדפן לא הצליח לפתוח חיבור Live. בדוק Chrome/Edge או רשת.');}
     });
+    if(live.ok)return {ok:true,message:live.message,uncertain:false};
+    const message=await diagnoseLiveFailure(key,live.message);
+    return {ok:false,message,uncertain:!/(401|402|403|429|שגוי|מכסת|הרשאה|יתרת תשלום)/i.test(message)};
   }
+
   async function checkKey(){
     if(state!=='idle')return;
     const key=readKey();if(!key)return;
@@ -162,7 +178,7 @@
     if(state==='idle')return;
     let msg;
     try{msg=JSON.parse(raw)}catch(_){return}
-    if(msg.error){stop('שגיאה ממנוע Google: '+String(msg.error.message||msg.error.code||'לא ידועה').slice(0,210));return}
+    if(msg.error){stop('שגיאה ממנוע Google: '+explainLiveFailure(msg.error.code||'API',msg.error.message||msg.error.status));return}
     if(msg.setupComplete){setupReady=true;verifiedKey=keyInput.value.trim()||verifiedKey;keyInput.value='';setStatus('החיבור פעיל. הפעל סרטון בלשונית ששיתפת.','good');return}
     const c=msg.serverContent;
     if(!c)return;
@@ -239,7 +255,7 @@
         if(state!=='idle')stop('שגיאה בחיבור Google. בדוק מפתח, מכסה וזמינות המודל.');
       };
       thisSocket.onclose=event=>{
-        if(state!=='idle')stop('שגיאה: חיבור Live נסגר (קוד '+event.code+'). '+(event.reason?String(event.reason).slice(0,130):'לחץ תחילה על בדיקת מפתח כדי לזהות בעיית הרשאות או מכסה.'));
+        if(state!=='idle')stop('שגיאה: '+explainLiveFailure(event.code,event.reason));
       };
     }catch(e){
       if(state==='idle')return;
