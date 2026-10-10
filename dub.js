@@ -125,6 +125,14 @@
       setStatus('מנגן דוגמת קול בדפדפן. הבדיקה לא שולחת שמע או מפתח ל-Google.');
     }catch(_){setStatus('הדפדפן לא הצליח להפעיל את הקול שבחרנו. אפשר לבחור בקריינות Google.','bad')}
   }
+  // If Google sends translated PCM but omits captions, a text-only browser
+  // voice would otherwise remain silent. Keep only a few seconds of fallback
+  // audio in RAM; after five seconds fall back automatically to native PCM.
+  let fallbackAudio=[],fallbackChars=0,missingCaptionTimer=null,seenHebrewCaption=false;
+  function clearAudioFallback(){
+    clearTimeout(missingCaptionTimer);missingCaptionTimer=null;
+    fallbackAudio=[];fallbackChars=0;seenHebrewCaption=false;
+  }
   const WS_ENDPOINT='wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1beta.GenerativeService.BidiGenerateContent';
   const MODEL_ENDPOINT='https://generativelanguage.googleapis.com/v1beta/models/'+MODEL;
 
@@ -351,7 +359,7 @@
     if(inputNode){try{inputNode.disconnect()}catch(_){}inputNode=null}
     if(backgroundGain){try{backgroundGain.disconnect()}catch(_){}backgroundGain=null}
     if(mixCompressor){try{mixCompressor.disconnect()}catch(_){}mixCompressor=null}
-    clearSpeech();
+    clearSpeech();clearAudioFallback();
     if(capture){for(const t of capture.getTracks()){try{t.stop()}catch(_){}}capture=null}
     for(const s of activeSources){try{s.stop()}catch(_){}}activeSources.clear();playbackTime=0;
     // Capture and playback share one context to reduce CPU and audio clocks.
@@ -374,14 +382,43 @@
     const c=msg.serverContent;
     if(!c)return;
     if(c.inputTranscription?.text)appendTranscript(orig,c.inputTranscription.text);
+    if(c.interrupted){
+      // Google's interrupted flag invalidates audio and speech queues.
+      clearSpeech();
+      for(const s of activeSources){try{s.stop()}catch(_){}}
+      activeSources.clear();playbackTime=playbackContext?playbackContext.currentTime:0;
+    }
     if(c.outputTranscription?.text){
       appendTranscript(translated,c.outputTranscription.text);
+      seenHebrewCaption=true;
+      fallbackAudio=[];fallbackChars=0;
+      clearTimeout(missingCaptionTimer);missingCaptionTimer=null;
       if(usingSystemVoice())queueHebrewVoice(c.outputTranscription.text,thisRun);
     }
     for(const part of c.modelTurn?.parts||[]){
-      if(part.inlineData?.data&&!usingSystemVoice())playTranslated(part.inlineData.data,part.inlineData.mimeType,thisRun).catch(()=>{
+      if(!part.inlineData?.data)continue;
+      if(usingSystemVoice()){
+        if(!seenHebrewCaption){
+          const item={data:part.inlineData.data,mime:part.inlineData.mimeType};
+          fallbackAudio.push(item);fallbackChars+=item.data.length;
+          while(fallbackChars>340000&&fallbackAudio.length>1)
+            fallbackChars-=fallbackAudio.shift().data.length;
+          if(!missingCaptionTimer)missingCaptionTimer=setTimeout(()=>{
+            missingCaptionTimer=null;
+            if(state==='idle'||runId!==thisRun||socket!==originSocket||
+                seenHebrewCaption||!usingSystemVoice())return;
+            const pending=fallbackAudio.slice();
+            revertToGoogleAudio('Google שלחה קול מתורגם בלי כתוביות. עברתי אוטומטית לקול Google כדי שלא תישאר בלי שמע.');
+            clearAudioFallback();
+            for(const x of pending)playTranslated(x.data,x.mime,thisRun).catch(()=>{});
+          },5000);
+        }
+      }else playTranslated(part.inlineData.data,part.inlineData.mimeType,thisRun).catch(()=>{
         if(state!=='idle'&&runId===thisRun&&socket===originSocket)stop('שגיאה בהשמעת הקריינות העברית.');
       });
+    }
+    if(c.turnComplete&&usingSystemVoice()){
+      speakHebrewChunk(thisRun);lastTtsFrame='';lastTtsFrameAt=0;
     }
   }
   async function startCaptureProcessing(thisRun){
@@ -431,7 +468,7 @@
       setStatus('שגיאה: הדפדפן אינו תומך בלכידת שמע מהלשונית. נסה Chrome/Edge במחשב.','bad');return;
     }
     const thisRun=++runId;
-    clearSpeech();
+    clearSpeech();clearAudioFallback();
     state='starting';setupReady=false;heardAudio=false;switchControls(true);
     orig.dataset.hasTranscript='0';translated.dataset.hasTranscript='0';
     orig.textContent='מחכה לדיבור בשפת המקור…';translated.textContent='מחכה לתרגום לעברית…';
