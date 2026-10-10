@@ -11,9 +11,9 @@ function deferred(){
   return {promise,resolve,reject};
 }
 async function flush(){for(let i=0;i<24;i++)await Promise.resolve()}
-function setupRig(getDisplayMedia){
+function setupRig(getDisplayMedia,voiceList=[{name:'Local Hebrew Test',lang:'he-IL',localService:true,voiceURI:'he-local-test'}]){
   const elements={};
-  for(const id of ['start','stop','checkKey','apiKey','status','countdown','original','translated','suppress','ambience','ambienceVolume','ambienceVolumeLabel','soundReport','latencyInfo','voiceMode','systemVoiceOption','voiceHint']){
+  for(const id of ['start','stop','checkKey','apiKey','status','countdown','original','translated','suppress','ambience','ambienceVolume','ambienceVolumeLabel','soundReport','latencyInfo','voiceMode','systemVoiceOption','voiceHint','previewVoice','cleanOnly']){
     elements[id]={value:'',textContent:'',dataset:{},disabled:false,checked:true,events:{},
       addEventListener(type,fn){this.events[type]=fn},scrollTop:0,scrollHeight:0};
   }
@@ -25,8 +25,9 @@ function setupRig(getDisplayMedia){
   elements.stop.disabled=true;
   const streams=[],sockets=[],buffers=[],audioStarts=[],contexts=[],gains=[],worklets=[],spoken=[],compressors=[];
   let ttsCanceled=0;
+  const scheduled=new Map();let nextTimer=0;
   const localTts={
-    getVoices:()=>[{name:'Local Hebrew Test',lang:'he-IL',localService:true}],
+    getVoices:()=>voiceList,
     speak:utter=>spoken.push(utter),
     cancel:()=>{ttsCanceled++},
     addEventListener(){}
@@ -42,7 +43,7 @@ function setupRig(getDisplayMedia){
   }
   class MockAudioContext{
     constructor(){this.state='running';this.destination={};this.currentTime=0;this.closed=false;contexts.push(this);
-      this.audioWorklet={addModule:async p=>assert.equal(p,'/dub-worklet.js?v=2026-10-11.4')};}
+      this.audioWorklet={addModule:async p=>assert.equal(p,'/dub-worklet.js?v=2026-10-11.5')};}
     createMediaStreamSource(stream){return {connect(){},disconnect(){}}}
     createGain(){
       const node={gain:{value:1,setTargetAtTime(value){this.value=value}},connect(){},disconnect(){}};
@@ -74,10 +75,15 @@ function setupRig(getDisplayMedia){
     WebSocket:MockWebSocket,Blob,ArrayBuffer,TextDecoder,Uint8Array,Float32Array,
     btoa:raw=>Buffer.from(raw,'binary').toString('base64'),
     atob:raw=>Buffer.from(raw,'base64').toString('binary'),
-    setTimeout:()=>123,clearTimeout:()=>{},setInterval:()=>234,clearInterval:()=>{},
+    setTimeout:(fn,delay)=>{const id=++nextTimer;scheduled.set(id,{fn,delay});return id},
+    clearTimeout:id=>scheduled.delete(id),setInterval:()=>234,clearInterval:()=>{},
     Date,console};
   vm.runInNewContext(source,sandbox,{filename:'dub.js',timeout:2000});
-  return {elements,sockets,buffers,audioStarts,contexts,streams,gains,worklets,spoken,compressors,get ttsCanceled(){return ttsCanceled}};
+  return {elements,sockets,buffers,audioStarts,contexts,streams,gains,worklets,spoken,compressors,
+    fireTimeouts(maxDelay){
+      for(const [id,t] of [...scheduled])if(t.delay<=maxDelay){scheduled.delete(id);t.fn()}
+    },
+    get ttsCanceled(){return ttsCanceled}};
 }
 function stream(){
   const tracks=[{stopped:0,listeners:[],stop(){this.stopped++},addEventListener(type,fn){this.listeners.push({type,fn})}},
@@ -111,6 +117,9 @@ function stream(){
   assert.equal(newer.compressors[0].threshold.value,-9);
   assert.equal(newer.compressors[0].ratio.value,2.2);
   assert.equal(newer.elements.systemVoiceOption.disabled,false,'Installed Hebrew voice should be offered');
+  assert.equal(newer.elements.voiceMode.value,'system','Stable Hebrew voice is the default when available');
+  assert.equal(newer.elements.previewVoice.disabled,true,'Voice preview stays disabled while a dub is active');
+  newer.elements.voiceMode.value='google';newer.elements.voiceMode.events.change();
   newer.worklets[0].port.onmessage({data:{type:'soundLevels',channels:1,sourceRms:0.1,backgroundRms:0.08}});
   assert.match(newer.elements.soundReport.textContent,/מונו/);
   newer.elements.ambience.checked=false;
@@ -120,6 +129,8 @@ function stream(){
   newer.elements.ambienceVolume.value='25';
   newer.elements.ambienceVolume.events.input();
   assert.equal(newer.gains[0].gain.value,0.25,'Adjust background without reconnecting');
+  newer.elements.cleanOnly.events.click();
+  assert.equal(newer.gains[0].gain.value,0,'Speech-only mode must remove all remixed source sound');
 
   // Active path: translation setup, Blob confirmation, binary transcripts and PCM audio.
   const ws=newer.sockets[0];
@@ -156,7 +167,7 @@ function stream(){
   assert.equal(r2.sockets.length,0);
   // Optional Hebrew fixed voice uses one local speaker; native audio is not mixed twice.
   const fixed=setupRig(async()=>stream());
-  fixed.elements.voiceMode.value='system';
+  assert.equal(fixed.elements.voiceMode.value,'system','Stable voice should be automatic');
   await fixed.elements.start.events.click();
   const fixedWS=fixed.sockets[0];fixedWS.open();
   fixedWS.message(JSON.stringify({setupComplete:{}}));await flush();
@@ -167,7 +178,46 @@ function stream(){
   assert.equal(fixed.spoken.length,1,'Local Hebrew TTS must speak output transcript');
   assert.equal(fixed.spoken[0].voice.name,'Local Hebrew Test');
   assert.equal(fixed.buffers.length,0,'No double-play with Google native PCM');
+  fixedWS.message(JSON.stringify({serverContent:{outputTranscription:{text:'שלום לכולם. זהו ניסוי בקריינות עברית קבועה.'}}}));
+  await flush();
+  assert.equal(fixed.spoken.length,1,'Duplicate caption frames must not repeat a whole sentence');
   fixed.elements.stop.events.click();
   assert(fixed.ttsCanceled>=1,'Stop must cancel local TTS');
-  console.log('PASS: offline MockWebSocket voice options, mono meter, Blob/transcript/audio, stop cleanup');
+  // When the provider sends PCM without any translated captions, browser TTS
+  // must not stay silent. Five-second offline timeout replays buffered PCM.
+  const missing=setupRig(async()=>stream());
+  await missing.elements.start.events.click();
+  const missingWS=missing.sockets[0];missingWS.open();
+  missingWS.message(JSON.stringify({setupComplete:{}}));await flush();
+  missingWS.message(JSON.stringify({serverContent:{
+    modelTurn:{parts:[{inlineData:{data:pcm,mimeType:'audio/pcm;rate=24000'}}]}
+  }}));await flush();
+  assert.equal(missing.buffers.length,0,'Do not double play audio before caption fallback');
+  missing.fireTimeouts(5500);await flush();
+  assert.equal(missing.elements.voiceMode.value,'google','Missing text must trigger audible Google fallback');
+  assert.equal(missing.buffers.length,1,'Fallback must play buffered Hebrew PCM');
+  missing.elements.stop.events.click();
+
+  // Final partial Hebrew phrases should be spoken even without punctuation.
+  const finalPhrase=setupRig(async()=>stream());
+  await finalPhrase.elements.start.events.click();
+  const phraseWS=finalPhrase.sockets[0];phraseWS.open();
+  phraseWS.message(JSON.stringify({setupComplete:{}}));await flush();
+  phraseWS.message(JSON.stringify({serverContent:{outputTranscription:{text:'משפט ללא סימן פיסוק'},turnComplete:true}}));
+  await flush();
+  assert.equal(finalPhrase.spoken.length,1,'End of a turn must flush an unfinished Hebrew phrase');
+  finalPhrase.elements.stop.events.click();
+
+  const preview=setupRig(async()=>stream());
+  assert.equal(preview.elements.previewVoice.disabled,false,'Idle voice preview should be available');
+  preview.elements.previewVoice.events.click();
+  assert.equal(preview.spoken.length,1,'Voice preview must speak in the browser');
+  assert.equal(preview.sockets.length,0,'Voice preview must not open a Google session');
+  const remote=setupRig(async()=>stream(),[{name:'Remote Hebrew Voice',lang:'he-IL',localService:false,voiceURI:'browser-he-online'}]);
+  assert.equal(remote.elements.voiceMode.value,'system','Remote Hebrew voice is a valid fixed-voice fallback');
+  assert.match(remote.elements.voiceHint.textContent,/מקוון/,'Remote service privacy disclosure');
+  const none=setupRig(async()=>stream(),[]);
+  assert.equal(none.elements.voiceMode.value,'google','Google audio is the fallback when no Hebrew voice exists');
+  assert.equal(none.elements.systemVoiceOption.disabled,true);
+  console.log('PASS: offline MockWebSocket fixed local/remote Hebrew voice, preview, speech-only mix, Blob/transcript/audio and cleanup');
 })().catch(e=>{console.error(e);process.exitCode=1});

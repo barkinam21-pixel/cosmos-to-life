@@ -6,50 +6,132 @@
   const status=$('status'),countdown=$('countdown');
   const orig=$('original'),translated=$('translated');
   const MODEL='gemini-3.5-live-translate-preview';
-  const DUB_BUILD='2026-10-11.4';
+  const DUB_BUILD='2026-10-11.5';
   const LIMIT_MS=10*60*1000;
   let state='idle', capture=null, socket=null, captureContext=null, playbackContext=null;
   let captureNode=null, backgroundGain=null, inputNode=null, mixCompressor=null;
   let playbackTime=0, activeSources=new Set(), deadline=0, timer=null, setupReady=false, heardAudio=false;
   let connectionTimer=null, setupTimer=null, runId=0;
   let verifiedKey=''; // RAM only: cleared when this tab closes or reloads.
-  // Live Translate has no supported persistent speaker lock. Optional browser
-  // speech synthesis can use one installed, locally provided Hebrew voice.
+  // Live Translate does not offer a persistent speaker lock. Use one
+  // explicit browser Hebrew voice for every speech chunk, including after silence.
+  // Browser remote voices may send text to the browser's speech provider.
   const tts=window.speechSynthesis||null;
-  let localHebrewVoice=null,ttsText='',ttsTimer=null;
-  const usingSystemVoice=()=>Boolean(tts&&localHebrewVoice&&$('voiceMode').value==='system');
+  let browserHebrewVoice=null,lockedVoiceId='',ttsText='',ttsTimer=null,ttsWatchdog=null;
+  let speechQueue=[],speechBusy=false,voiceModeChosen=false,lastTtsFrame='',lastTtsFrameAt=0;
+  const voiceId=v=>String(v.voiceURI||v.name+'|'+v.lang);
+  const usingSystemVoice=()=>Boolean(tts&&browserHebrewVoice&&$('voiceMode').value==='system');
   function refreshHebrewVoice(){
     if(!tts)return;
+    // Preserve the exact voice object for the whole running session.
+    if(state!=='idle'&&browserHebrewVoice)return;
     try{
-      const voices=tts.getVoices().filter(v=>/^he(?:[-_]|$)/i.test(v.lang)&&v.localService);
-      localHebrewVoice=voices.find(v=>/^he[-_]IL$/i.test(v.lang))||voices[0]||null;
-    }catch(_){localHebrewVoice=null}
-    $('systemVoiceOption').disabled=!localHebrewVoice;
-    if(!localHebrewVoice&&$('voiceMode').value==='system')$('voiceMode').value='google';
-    $('voiceHint').textContent=localHebrewVoice
-      ? 'נמצא קול עברי מקומי: '+localHebrewVoice.name+'. הוא קבוע, אבל האיכות והקצב תלויים במחשב.'
-      : 'לא נמצא קול עברי מקומי מותקן. הקריינות הרגילה של Google זמינה כרגיל.';
+      const voices=tts.getVoices().filter(v=>/^he(?:[-_]|$)/i.test(v.lang));
+      browserHebrewVoice=voices.find(v=>voiceId(v)===lockedVoiceId)
+        ||voices.find(v=>v.localService&&/^he[-_]IL$/i.test(v.lang))
+        ||voices.find(v=>v.localService)
+        ||voices.find(v=>/^he[-_]IL$/i.test(v.lang))
+        ||voices[0]||null;
+      if(browserHebrewVoice)lockedVoiceId=voiceId(browserHebrewVoice);
+    }catch(_){browserHebrewVoice=null}
+    $('systemVoiceOption').disabled=!browserHebrewVoice;
+    $('previewVoice').disabled=!browserHebrewVoice;
+    if(!browserHebrewVoice&&$('voiceMode').value==='system')$('voiceMode').value='google';
+    if(!voiceModeChosen&&state==='idle')$('voiceMode').value=browserHebrewVoice?'system':'google';
+    $('voiceHint').textContent=browserHebrewVoice
+      ? 'קול עברי קבוע: '+browserHebrewVoice.name+
+        (browserHebrewVoice.localService?' (מקומי, ללא שליחת טקסט נוספת).':
+          ' (שירות קול מקוון של הדפדפן: הטקסט עשוי להישלח לספק הקול).')+
+        ' אותו קול נבחר גם לאחר הפסקות בדיבור.'
+      : 'לא נמצא קול עברי בדפדפן. Google תשמש לקריינות, אך היא עלולה להחליף קולות אחרי שתיקה.';
+  }
+  function clearSpeech(){
+    clearTimeout(ttsTimer);ttsTimer=null;clearTimeout(ttsWatchdog);ttsWatchdog=null;
+    ttsText='';speechQueue=[];speechBusy=false;lastTtsFrame='';lastTtsFrameAt=0;
+    if(tts){try{tts.cancel()}catch(_){}}
+  }
+  function revertToGoogleAudio(message){
+    if(state==='idle'||$('voiceMode').value!=='system')return;
+    voiceModeChosen=true;$('voiceMode').value='google';
+    clearSpeech();
+    setStatus(message,'neutral');
+  }
+  function speakNext(thisRun){
+    if(speechBusy||!speechQueue.length||!usingSystemVoice()||state==='idle'||runId!==thisRun)return;
+    const phrase=speechQueue.shift();
+    const utter=new SpeechSynthesisUtterance(phrase);
+    utter.lang='he-IL';utter.voice=browserHebrewVoice;utter.rate=1.06;
+    speechBusy=true;
+    let started=false,finished=false;
+    const finish=()=>{
+      if(finished)return;finished=true;
+      clearTimeout(ttsWatchdog);ttsWatchdog=null;
+      speechBusy=false;speakNext(thisRun);
+    };
+    utter.onstart=()=>{
+      started=true;clearTimeout(ttsWatchdog);ttsWatchdog=null;
+      if(!heardAudio&&runId===thisRun&&state!=='idle'){
+        heardAudio=true;
+        setStatus('הקריינות העברית בקול הקבוע מתנגנת. אותו קול נשמר גם אחרי שתיקה.','good');
+      }
+    };
+    utter.onend=finish;
+    utter.onerror=()=>{
+      if(runId===thisRun&&state!=='idle')revertToGoogleAudio('הקריין הקבוע לא הצליח לדבר. חזרתי לקול Google כדי למנוע שקט ממושך.');
+      else finish();
+    };
+    // A browser may list a voice that never starts (e.g. a missing cloud voice).
+    // Do not silently discard all Google audio indefinitely in that situation.
+    ttsWatchdog=setTimeout(()=>{
+      if(!started&&speechBusy&&runId===thisRun&&usingSystemVoice())
+        revertToGoogleAudio('הקול הקבוע לא התחיל בתוך 8 שניות. חזרתי אוטומטית לשמע Google.');
+    },8000);
+    try{tts.speak(utter)}catch(_){
+      revertToGoogleAudio('הדפדפן דחה את הקול הקבוע. ממשיך עם הקריינות של Google.');
+    }
   }
   function speakHebrewChunk(thisRun){
     clearTimeout(ttsTimer);ttsTimer=null;
     if(!ttsText||!usingSystemVoice()||state==='idle'||runId!==thisRun)return;
     const phrase=ttsText.trim();ttsText='';
     if(!phrase)return;
-    const utter=new SpeechSynthesisUtterance(phrase);
-    utter.lang='he-IL';utter.voice=localHebrewVoice;utter.rate=1.07;
-    try{tts.speak(utter)}catch(_){
-      // Never lose the normal Google path if the local browser TTS fails.
-      $('voiceMode').value='google';
-      setStatus('הקול המקומי לא זמין. חזרתי לקריינות של Google.','neutral');
-    }
+    speechQueue.push(phrase);
+    // Cap browser TTS backlog: preserve recent translation if speech runs behind.
+    while(speechQueue.length>1&&speechQueue.reduce((n,t)=>n+t.length,0)>480)speechQueue.shift();
+    speakNext(thisRun);
   }
   function queueHebrewVoice(text,thisRun){
     if(!usingSystemVoice()||state==='idle'||runId!==thisRun)return;
-    const part=String(text||'').trim();if(!part)return;
+    const raw=String(text||'').trim();if(!raw)return;
+    const now=Date.now();
+    if(raw===lastTtsFrame&&now-lastTtsFrameAt<4000)return;
+    let part=raw;
+    // Some providers revise one growing caption; avoid saying its prefix twice.
+    if(lastTtsFrame.length>=3&&raw.startsWith(lastTtsFrame)&&now-lastTtsFrameAt<4000)
+      part=raw.slice(lastTtsFrame.length).trim();
+    lastTtsFrame=raw;lastTtsFrameAt=now;
+    if(!part)return;
     ttsText+=(ttsText?' ':'')+part;
-    // Avoid per-token stutter; latency is higher than Google native audio.
-    if(ttsText.length>=70||/[.!?׃]$/.test(part))speakHebrewChunk(thisRun);
-    else{clearTimeout(ttsTimer);ttsTimer=setTimeout(()=>speakHebrewChunk(thisRun),700)}
+    if(ttsText.length>=85||/[.!?׃]$/.test(part))speakHebrewChunk(thisRun);
+    else{clearTimeout(ttsTimer);ttsTimer=setTimeout(()=>speakHebrewChunk(thisRun),500)}
+  }
+  function previewVoice(){
+    if(state!=='idle'||!tts||!browserHebrewVoice)return;
+    try{
+      tts.cancel();
+      const utter=new SpeechSynthesisUtterance('שלום, זהו הקול העברי הקבוע שלי.');
+      utter.lang='he-IL';utter.voice=browserHebrewVoice;utter.rate=1.06;
+      tts.speak(utter);
+      setStatus('מנגן דוגמת קול בדפדפן. הבדיקה לא שולחת שמע או מפתח ל-Google.');
+    }catch(_){setStatus('הדפדפן לא הצליח להפעיל את הקול שבחרנו. אפשר לבחור בקריינות Google.','bad')}
+  }
+  // If Google sends translated PCM but omits captions, a text-only browser
+  // voice would otherwise remain silent. Keep only a few seconds of fallback
+  // audio in RAM; after five seconds fall back automatically to native PCM.
+  let fallbackAudio=[],fallbackChars=0,missingCaptionTimer=null,seenHebrewCaption=false;
+  function clearAudioFallback(){
+    clearTimeout(missingCaptionTimer);missingCaptionTimer=null;
+    fallbackAudio=[];fallbackChars=0;seenHebrewCaption=false;
   }
   const WS_ENDPOINT='wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1beta.GenerativeService.BidiGenerateContent';
   const MODEL_ENDPOINT='https://generativelanguage.googleapis.com/v1beta/models/'+MODEL;
@@ -61,6 +143,7 @@
     startButton.disabled=running;stopButton.disabled=!running;
     keyInput.disabled=running;checkButton.disabled=running;$('suppress').disabled=running;
     $('voiceMode').disabled=running;
+    $('previewVoice').disabled=running||!browserHebrewVoice;
   }
   // A cheap, optional stereo side-channel mix. It cancels truly centered
   // speech; unlike AI source separation, mono and centered effects cannot survive.
@@ -276,8 +359,7 @@
     if(inputNode){try{inputNode.disconnect()}catch(_){}inputNode=null}
     if(backgroundGain){try{backgroundGain.disconnect()}catch(_){}backgroundGain=null}
     if(mixCompressor){try{mixCompressor.disconnect()}catch(_){}mixCompressor=null}
-    clearTimeout(ttsTimer);ttsTimer=null;ttsText='';
-    if(tts){try{tts.cancel()}catch(_){}}
+    clearSpeech();clearAudioFallback();
     if(capture){for(const t of capture.getTracks()){try{t.stop()}catch(_){}}capture=null}
     for(const s of activeSources){try{s.stop()}catch(_){}}activeSources.clear();playbackTime=0;
     // Capture and playback share one context to reduce CPU and audio clocks.
@@ -300,14 +382,43 @@
     const c=msg.serverContent;
     if(!c)return;
     if(c.inputTranscription?.text)appendTranscript(orig,c.inputTranscription.text);
+    if(c.interrupted){
+      // Google's interrupted flag invalidates audio and speech queues.
+      clearSpeech();
+      for(const s of activeSources){try{s.stop()}catch(_){}}
+      activeSources.clear();playbackTime=playbackContext?playbackContext.currentTime:0;
+    }
     if(c.outputTranscription?.text){
       appendTranscript(translated,c.outputTranscription.text);
+      seenHebrewCaption=true;
+      fallbackAudio=[];fallbackChars=0;
+      clearTimeout(missingCaptionTimer);missingCaptionTimer=null;
       if(usingSystemVoice())queueHebrewVoice(c.outputTranscription.text,thisRun);
     }
     for(const part of c.modelTurn?.parts||[]){
-      if(part.inlineData?.data&&!usingSystemVoice())playTranslated(part.inlineData.data,part.inlineData.mimeType,thisRun).catch(()=>{
+      if(!part.inlineData?.data)continue;
+      if(usingSystemVoice()){
+        if(!seenHebrewCaption){
+          const item={data:part.inlineData.data,mime:part.inlineData.mimeType};
+          fallbackAudio.push(item);fallbackChars+=item.data.length;
+          while(fallbackChars>340000&&fallbackAudio.length>1)
+            fallbackChars-=fallbackAudio.shift().data.length;
+          if(!missingCaptionTimer)missingCaptionTimer=setTimeout(()=>{
+            missingCaptionTimer=null;
+            if(state==='idle'||runId!==thisRun||socket!==originSocket||
+                seenHebrewCaption||!usingSystemVoice())return;
+            const pending=fallbackAudio.slice();
+            revertToGoogleAudio('Google שלחה קול מתורגם בלי כתוביות. עברתי אוטומטית לקול Google כדי שלא תישאר בלי שמע.');
+            clearAudioFallback();
+            for(const x of pending)playTranslated(x.data,x.mime,thisRun).catch(()=>{});
+          },5000);
+        }
+      }else playTranslated(part.inlineData.data,part.inlineData.mimeType,thisRun).catch(()=>{
         if(state!=='idle'&&runId===thisRun&&socket===originSocket)stop('שגיאה בהשמעת הקריינות העברית.');
       });
+    }
+    if(c.turnComplete&&usingSystemVoice()){
+      speakHebrewChunk(thisRun);lastTtsFrame='';lastTtsFrameAt=0;
     }
   }
   async function startCaptureProcessing(thisRun){
@@ -357,6 +468,7 @@
       setStatus('שגיאה: הדפדפן אינו תומך בלכידת שמע מהלשונית. נסה Chrome/Edge במחשב.','bad');return;
     }
     const thisRun=++runId;
+    clearSpeech();clearAudioFallback();
     state='starting';setupReady=false;heardAudio=false;switchControls(true);
     orig.dataset.hasTranscript='0';translated.dataset.hasTranscript='0';
     orig.textContent='מחכה לדיבור בשפת המקור…';translated.textContent='מחכה לתרגום לעברית…';
@@ -456,9 +568,17 @@
   stopButton.addEventListener('click',()=>stop('הדיבוב הופסק לבקשתך.'));
   $('ambience').addEventListener('change',updateAmbience);
   $('ambienceVolume').addEventListener('input',updateAmbience);
-  $('voiceMode').addEventListener('change',()=>{
-    if($('voiceMode').value==='system'&&!localHebrewVoice)$('voiceMode').value='google';
+  $('cleanOnly').addEventListener('click',()=>{
+    $('ambience').checked=false;
+    if(state==='idle')$('suppress').checked=true;
+    updateAmbience();
+    setStatus('בוטל ערבוב שמע הסרטון: תשמע רק דיבוב עברי, אם דפדפן השיתוף אכן משתיק את לשונית המקור. גם המוזיקה והאפקטים המקוריים יושתקו.');
   });
+  $('voiceMode').addEventListener('change',()=>{
+    voiceModeChosen=true;
+    if($('voiceMode').value==='system'&&!browserHebrewVoice)$('voiceMode').value='google';
+  });
+  $('previewVoice').addEventListener('click',previewVoice);
   refreshHebrewVoice();
   if(tts&&typeof tts.addEventListener==='function')tts.addEventListener('voiceschanged',refreshHebrewVoice);
   updateAmbience();

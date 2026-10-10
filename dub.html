@@ -22,13 +22,14 @@ select{width:100%;max-width:100%;padding:10px;border:1px solid #55799b;border-ra
 <h1>🎧 דיבוב חי לעברית</h1>
 <p class="muted">דיבוב בעברית למחשב Chrome / Edge. שומעים את הסרטון באתר הרגיל, עם קול עברי שמופק בזמן אמת בחלון העזר הזה.</p>
 <section class="panel notice" aria-label="מידע לפני התחלה">
-<span class="pill">מוכן לשימוש · גרסה 1.1 · 11.10.2026</span>
+<span class="pill">קול עברי יציב · גרסה 1.2 · 11.10.2026</span>
 <h2>לפני שמתחילים</h2>
 <ol class="instructions">
 <li>פתח את <a href="/" target="_blank" rel="noopener noreferrer">הסרטונים באתר</a> בלשונית נפרדת.</li>
 <li>הכנס מפתח <strong>Gemini Auth</strong> חדש מתוך Google AI Studio. זהו מפתח חינמי ליצירה, ובדרך כלל הוא מתחיל ב־<code dir="ltr">AQ.</code>. אין צורך להפעיל חיוב בשביל בדיקת המפתח. <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer">יצירת מפתח ב־Google AI Studio</a>.</li>
 <li>לחץ על <strong>הפעל דיבוב</strong>, בחר בלשונית <strong>מהמפץ הגדול לחיים</strong> וסמן <strong>שיתוף שמע מהלשונית</strong> (Share tab audio).</li>
 <li>חזור לסרטון והפעל אותו. השאר את חלון הדיבוב פתוח.</li>
+<li>כדאי לבדוק תחילה אם לנגן YouTube יש <strong>⚙️ רצועת שמע ← עברית</strong>. כשהיא קיימת, זה עדיף: הסאונד המקורי והדיבוב מגיעים יחד, בלי שירות תרגום נוסף.</li>
 </ol>
 <p class="muted">כל הפעלת דיבוב מוגבלת לעשר דקות. Google מקבלת רק את שמע הלשונית שנבחרה, לא את התמונה. אין הורדה או העלאה מחדש של הסרטונים. השימוש ב־API עשוי להיות מוגבל במכסות ולעיתים כרוך בעלות לפי החשבון שלך. </p>
 </section>
@@ -37,19 +38,21 @@ select{width:100%;max-width:100%;padding:10px;border:1px solid #55799b;border-ra
 <input id="apiKey" type="password" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="AQ.…" aria-describedby="privacy">
 <small id="privacy">המפתח נשלח ישירות ל־Google לצורך בדיקה והפעלה. הוא אינו נשלח לשרת האתר ואינו נשמר באחסון הדפדפן; מפתח שאושר נשאר רק בזיכרון הלשונית עד שסוגרים אותה. אין לשתף אותו או להשתמש בחיוב בלתי מוגבל.</small>
 <label class="option" for="suppress"><input type="checkbox" id="suppress" checked> השתיק את השמע המקורי בלשונית (כדי שלא ישמעו אנגלית; תלוי ב־Chrome)</label>
-<label class="option" for="ambience"><input type="checkbox" id="ambience" checked> שמור מה שאפשר מהמוזיקה והאפקטים (גם בסרטון מונו)</label>
+<label class="option" for="ambience"><input type="checkbox" id="ambience" checked> שמור חלק מהמוזיקה ומהאפקטים — ייתכן שיישמע גם מעט דיבור באנגלית</label>
 <div class="ambience-volume"><label for="ambienceVolume">עוצמת הרקע: <output id="ambienceVolumeLabel" for="ambienceVolume">75%</output></label><input id="ambienceVolume" type="range" min="0" max="100" step="5" value="75" aria-label="עוצמת מוזיקה ואפקטים"></div>
-<small>השמע מחזיר חלק מהמוזיקה והאפקטים גם ממונו, ומשמר את תחושת הסטריאו כשהיא קיימת. האנגלית המרכזית מופחתת, אבל הפרדת דיבור ממוזיקה אינה מושלמת: המוזיקה יכולה להישמע מסוננת ולעיתים יש דליפת קול. אפשר להנמיך את הרקע.</small>
+<small>הסינון החסכוני מתאים גם למונו, אך אינו יכול להפריד באופן מושלם בין מוזיקה לדיבור. כדי שלא נחזיר אנגלית מתוך השמע המעורב, אפשר לכבות מיד את הרקע בכפתור הבא. במקרה כזה גם המוזיקה והאפקטים לא יושמעו.</small>
+<div class="controls"><button id="cleanOnly" type="button" class="secondary">🔇 רק דיבוב עברי — בלי ערבוב קול הסרטון</button></div>
 <p id="soundReport" class="muted" aria-live="off">נתוני שחזור הרקע יופיעו לאחר הפעלת סרטון.</p>
-<details class="voice-choice">
-<summary>אם Google מחליפה קולות: אפשרות לקול עברי קבוע</summary>
+<details class="voice-choice" open>
+<summary>קול עברי קבוע — נבחר אוטומטית אם קיים בדפדפן</summary>
 <label for="voiceMode">מקור הקריינות</label>
 <select id="voiceMode" aria-describedby="voiceHint">
-<option value="google" selected>Google — הקול הרגיל, לרוב טבעי ומהיר יותר</option>
-<option id="systemVoiceOption" value="system" disabled>קול עברי קבוע מהמחשב — ייתכן עיכוב נוסף</option>
+<option value="google" selected>Google Live — טבעי יותר, אבל הקול עלול להשתנות אחרי שתיקה</option>
+<option id="systemVoiceOption" value="system" disabled>קול עברי קבוע מהדפדפן — נשאר זהה בין משפטים</option>
 </select>
-<small id="voiceHint">בודק אם מותקן קול עברי מקומי במחשב…</small>
-<small>משתמש בתמלול Google ובקול המותקן במחשב. עשוי להיות פחות טבעי או איטי יותר. לא מופעל שירות קריינות בתשלום.</small>
+<small id="voiceHint">מאתר קולות עבריים מקומיים ומקוונים שהדפדפן מציע…</small>
+<div class="controls"><button id="previewVoice" type="button" class="secondary" disabled>▶ שמע דוגמה של הקול הקבוע (בלי מפתח API)</button></div>
+<small>התרגום עדיין מגיע מ-Google, אבל הקריינות מתבצעת באמצעות קול עברי יחיד שנבחר בדפדפן. קול מקומי אינו שולח את הטקסט לספק קול נוסף; קול מקוון עשוי להעביר את הטקסט לספק הקול. איכות הקריינות, הזמינות והמהירות משתנות לפי המחשב והדפדפן.</small>
 </details>
 <p id="latencyInfo" class="muted" aria-live="off">תור השמע המקומי יימדד במהלך הדיבוב.</p>
 <div class="controls">
@@ -64,8 +67,8 @@ select{width:100%;max-width:100%;padding:10px;border:1px solid #55799b;border-ra
 <div><h2>מה שמענו בשפת המקור</h2><div id="original" class="transcript muted" aria-live="off">התמלול יופיע כאן כשהשמע יתחיל.</div></div>
 <div><h2>התרגום לעברית</h2><div id="translated" class="transcript" aria-live="off">התרגום יופיע כאן כשהמודל יחזיר אודיו.</div></div>
 </section>
-<details><summary>מה עובד ומה עדיין לא הוכח?</summary><p>המנוע הרשמי של Google תומך בתרגום דיבור חי לעברית, אך מודל התרגום עצמו עדיין מסומן Preview על ידי Google. הכלי הזה משתמש בשיתוף שמע של לשונית, ולכן הוא לא תלוי בשאלה אם הסרטון מוטמע מ־YouTube, Vimeo או PBS. עם זאת, חלק מהדפדפנים לא מאפשרים שיתוף שמע, השתקת הקול המקורי אינה מובטחת, והסנכרון אינם מושלמים. האיחור תלוי גם בזמן העיבוד של Google; האתר מצמצם רק השהיה מקומית. החלפת קול אחרי הפסקות ומבטא הם מגבלות מוכרות של מודל התרגום. סינון הרקע אינו הפרדת דיבור מקצועית, אך כעת תומך גם במונו. אפשר לבחור קול עברי מקומי קבוע אם מותקן כזה, במחיר השהיה נוספת. בטלפון Android הפתרון הזה אינו נתמך באופן אמין.</p><p>שיתוף הלשונית אינו כולל את חלון הדיבוב, כך שלא נוצרת לולאת שמע חוזר. אם נותק שיתוף הלשונית, יש להפעיל שוב. לבדיקת איכות יש להשתמש תחילה בקטע קצר לפני ניסוי ממושך.</p></details>
+<details><summary>מה עובד ומה עדיין לא הוכח?</summary><p>המנוע הרשמי של Google תומך בתרגום דיבור חי לעברית, אך מודל התרגום עצמו עדיין מסומן Preview על ידי Google. הכלי הזה משתמש בשיתוף שמע של לשונית, ולכן הוא לא תלוי בשאלה אם הסרטון מוטמע מ־YouTube, Vimeo או PBS. עם זאת, חלק מהדפדפנים לא מאפשרים שיתוף שמע, השתקת הקול המקורי אינה מובטחת, והסנכרון אינם מושלמים. האיחור תלוי גם בזמן העיבוד של Google; האתר מצמצם רק השהיה מקומית. החלפת קול אחרי הפסקות ומבטא הם מגבלות מוכרות של מודל התרגום. סינון הרקע אינו הפרדת דיבור מקצועית, אך כעת תומך גם במונו. קול עברי קבוע נבחר אוטומטית אם הדפדפן מציע קול מקומי או מקוון; קריינות מקוונת יכולה להיות איטית יותר, ואם אינה מתחילה האתר חוזר ל-Google. אין דרך מוכחת וחינמית להפחית את האנגלית לאפס ובו בזמן לשמר את כל פס הקול המקורי ממקור מונו מעורב, בלי הפרדת מקורות כבדה.  בטלפון Android הפתרון הזה אינו נתמך באופן אמין.</p><p>שיתוף הלשונית אינו כולל את חלון הדיבוב, כך שלא נוצרת לולאת שמע חוזר. אם נותק שיתוף הלשונית, יש להפעיל שוב. לבדיקת איכות יש להשתמש תחילה בקטע קצר לפני ניסוי ממושך.</p></details>
 </main>
-<script src="/dub.js?v=2026-10-11.4" defer></script>
+<script src="/dub.js?v=2026-10-11.5" defer></script>
 </body>
 </html>
