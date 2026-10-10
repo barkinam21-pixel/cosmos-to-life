@@ -1,15 +1,15 @@
 'use strict';
-/* Client-only tab-audio-to-Hebrew pilot: no website backend, persistence, or analytics. */
+/* Client-only Hebrew dubbing: no website backend, key persistence, or analytics. */
 (()=>{
   const $=id=>document.getElementById(id);
   const startButton=$('start'),stopButton=$('stop'),checkButton=$('checkKey'),keyInput=$('apiKey');
   const status=$('status'),countdown=$('countdown');
   const orig=$('original'),translated=$('translated');
   const MODEL='gemini-3.5-live-translate-preview';
-  const DUB_BUILD='2026-10-11.2';
+  const DUB_BUILD='2026-10-11.3';
   const LIMIT_MS=10*60*1000;
   let state='idle', capture=null, socket=null, captureContext=null, playbackContext=null;
-  let captureNode=null, backgroundGain=null, inputNode=null;
+  let captureNode=null, backgroundGain=null, inputNode=null, mixCompressor=null;
   let playbackTime=0, activeSources=new Set(), deadline=0, timer=null, setupReady=false, heardAudio=false;
   let connectionTimer=null, setupTimer=null, runId=0;
   let verifiedKey=''; // RAM only: cleared when this tab closes or reloads.
@@ -240,7 +240,7 @@
     const buffer=outputContext.createBuffer(1,data.length,rate);
     buffer.getChannelData(0).set(data);
     const source=outputContext.createBufferSource();
-    source.buffer=buffer;source.connect(outputContext.destination);
+    source.buffer=buffer;source.connect(mixCompressor||outputContext.destination);
     const now=outputContext.currentTime;
     if(playbackTime<now)playbackTime=now+0.025;
     // Avoid an ever-growing backlog when the translation falls behind.
@@ -274,6 +274,7 @@
     if(captureNode){captureNode.port.onmessage=null;try{captureNode.disconnect()}catch(_){}captureNode=null}
     if(inputNode){try{inputNode.disconnect()}catch(_){}inputNode=null}
     if(backgroundGain){try{backgroundGain.disconnect()}catch(_){}backgroundGain=null}
+    if(mixCompressor){try{mixCompressor.disconnect()}catch(_){}mixCompressor=null}
     clearTimeout(ttsTimer);ttsTimer=null;ttsText='';
     if(tts){try{tts.cancel()}catch(_){}}
     if(capture){for(const t of capture.getTracks()){try{t.stop()}catch(_){}}capture=null}
@@ -317,7 +318,18 @@
     backgroundGain=context.createGain();backgroundGain.gain.value=0;
     inputNode.connect(captureNode);
     captureNode.connect(backgroundGain);
-    backgroundGain.connect(context.destination);
+    // Mix native Hebrew audio with recovered effects through a light limiter.
+    // Native WebAudio compression avoids clipping without third-party models.
+    if(typeof context.createDynamicsCompressor==='function'){
+      mixCompressor=context.createDynamicsCompressor();
+      mixCompressor.threshold.value=-9;
+      mixCompressor.knee.value=10;
+      mixCompressor.ratio.value=2.2;
+      mixCompressor.attack.value=0.003;
+      mixCompressor.release.value=0.18;
+      mixCompressor.connect(context.destination);
+    }
+    backgroundGain.connect(mixCompressor||context.destination);
     updateAmbience();
     captureNode.port.onmessage=e=>{
       if(e.data?.type==='soundLevels'){
@@ -409,7 +421,7 @@
           $('latencyInfo').textContent=heardAudio
             ? 'תור שמע מקומי: '+queue.toFixed(2)+' שניות. זמן העיבוד של Google נוסף לכך.'
             : 'מחכה לקריינות. השהיית Google אינה בשליטת הנגן.';
-          if(!s)stop('הניסוי הסתיים לאחר 10 דקות. לא נמשיך לצרוך API בלי הפעלה מחדש.');
+          if(!s)stop('ההפעלה הסתיימה לאחר 10 דקות. לא נמשיך לצרוך API בלי הפעלה מחדש.');
         },1000);
         setStatus('החיבור נפתח. מחכה לאישור תחילת תרגום…');
       };

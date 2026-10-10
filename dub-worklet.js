@@ -1,6 +1,6 @@
-/* Stereo-side and mono-safe frequency-band soundtrack recovery.
-   AI translation always receives the original mono PCM; only local output
-   is filtered. This is NOT true speech/music source separation. */
+/* Low-cost stereo soundfield + mono-safe frequency-band background recovery.
+   Translation always receives original mono PCM; only local playback is filtered.
+   This cannot fully separate English speech from music in mixed audio. */
 class HebrewDubCapture extends AudioWorkletProcessor {
   constructor(){
     super();
@@ -27,10 +27,17 @@ class HebrewDubCapture extends AudioWorkletProcessor {
       this.hi1=this.highA*(this.hi1+mid-this.lastMid);
       this.hi2=this.highA*(this.hi2+this.hi1-this.lastHi1);
       this.lastMid=mid;this.lastHi1=this.hi1;
-      const bg=Math.max(-1,Math.min(1,0.8*side+1.2*this.low2+this.hi2));
-      if(outLeft)outLeft[i]=bg;
-      if(outRight)outRight[i]=bg;
-      this.rawSquare+=mid*mid;this.backgroundSquare+=bg*bg;this.sideSquare+=side*side;
+      // Keep stereo effects on their respective sides instead of flattening
+      // everything to two copies of the left side; mono remains supported.
+      const common=1.3*this.low2+0.85*this.hi2;
+      const stereoSide=1.1*side;
+      const bgLeft=Math.max(-1,Math.min(1,common+stereoSide));
+      const bgRight=Math.max(-1,Math.min(1,common-stereoSide));
+      if(outLeft)outLeft[i]=bgLeft;
+      if(outRight)outRight[i]=bgRight;
+      this.rawSquare+=mid*mid;
+      this.backgroundSquare+=0.5*(bgLeft*bgLeft+bgRight*bgRight);
+      this.sideSquare+=side*side;
       this.meterSamples++;
       if(this.meterSamples>=this.inputRate){
         const n=this.meterSamples;

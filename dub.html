@@ -20,9 +20,9 @@ select{width:100%;max-width:100%;padding:10px;border:1px solid #55799b;border-ra
 <main>
 <a class="back" href="/" target="_blank" rel="noopener noreferrer">↗ פתח את מסלול הסרטונים</a>
 <h1>🎧 דיבוב חי לעברית</h1>
-<p class="muted">ניסוי למחשב Chrome / Edge. שומעים את הסרטון באתר הרגיל, עם קול עברי שמופק בזמן אמת בחלון העזר הזה.</p>
+<p class="muted">דיבוב בעברית למחשב Chrome / Edge. שומעים את הסרטון באתר הרגיל, עם קול עברי שמופק בזמן אמת בחלון העזר הזה.</p>
 <section class="panel notice" aria-label="מידע לפני התחלה">
-<span class="pill">גרסת ניסיון • רקע משופר 2 · 11.10.2026</span>
+<span class="pill">מוכן לשימוש · גרסה 1.0 · 11.10.2026</span>
 <h2>לפני שמתחילים</h2>
 <ol class="instructions">
 <li>פתח את <a href="/" target="_blank" rel="noopener noreferrer">הסרטונים באתר</a> בלשונית נפרדת.</li>
@@ -30,7 +30,7 @@ select{width:100%;max-width:100%;padding:10px;border:1px solid #55799b;border-ra
 <li>לחץ על <strong>הפעל דיבוב</strong>, בחר בלשונית <strong>מהמפץ הגדול לחיים</strong> וסמן <strong>שיתוף שמע מהלשונית</strong> (Share tab audio).</li>
 <li>חזור לסרטון והפעל אותו. השאר את חלון הדיבוב פתוח.</li>
 </ol>
-<p class="muted">הדיבוב מיועד לניסוי של עד 10 דקות בכל הפעלה. Google מקבלת רק את שמע הלשונית שנבחרה, לא את התמונה. אין הורדה או העלאה מחדש של הסרטונים. השימוש ב־API עשוי להיות מוגבל במכסות ולעיתים כרוך בעלות לפי החשבון שלך. </p>
+<p class="muted">כל הפעלת דיבוב מוגבלת לעשר דקות. Google מקבלת רק את שמע הלשונית שנבחרה, לא את התמונה. אין הורדה או העלאה מחדש של הסרטונים. השימוש ב־API עשוי להיות מוגבל במכסות ולעיתים כרוך בעלות לפי החשבון שלך. </p>
 </section>
 <section class="panel" aria-label="הגדרות דיבוב">
 <label for="apiKey">מפתח Gemini Auth (חדש, בדרך כלל AQ.)</label>
@@ -38,11 +38,11 @@ select{width:100%;max-width:100%;padding:10px;border:1px solid #55799b;border-ra
 <small id="privacy">המפתח נשלח ישירות ל־Google לצורך בדיקה והפעלה. הוא אינו נשלח לשרת האתר ואינו נשמר באחסון הדפדפן; מפתח שאושר נשאר רק בזיכרון הלשונית עד שסוגרים אותה. אין לשתף אותו או להשתמש בחיוב בלתי מוגבל.</small>
 <label class="option" for="suppress"><input type="checkbox" id="suppress" checked> השתיק את השמע המקורי בלשונית (כדי שלא ישמעו אנגלית; תלוי ב־Chrome)</label>
 <label class="option" for="ambience"><input type="checkbox" id="ambience" checked> שמור מה שאפשר מהמוזיקה והאפקטים (גם בסרטון מונו)</label>
-<div class="ambience-volume"><label for="ambienceVolume">עוצמת הרקע: <output id="ambienceVolumeLabel" for="ambienceVolume">60%</output></label><input id="ambienceVolume" type="range" min="0" max="100" step="5" value="60" aria-label="עוצמת מוזיקה ואפקטים"></div>
-<small>השיפור החדש משחזר חלק מהצלילים גם בסרטון מונו: בס ואפקטים גבוהים, ובסטריאו גם צלילי צד. האנגלית המרכזית מופחתת, אבל הפרדת דיבור ממוזיקה אינה מושלמת: המוזיקה יכולה להישמע מסוננת ולעיתים יש דליפת קול. אפשר להנמיך את הרקע.</small>
+<div class="ambience-volume"><label for="ambienceVolume">עוצמת הרקע: <output id="ambienceVolumeLabel" for="ambienceVolume">75%</output></label><input id="ambienceVolume" type="range" min="0" max="100" step="5" value="75" aria-label="עוצמת מוזיקה ואפקטים"></div>
+<small>השמע מחזיר חלק מהמוזיקה והאפקטים גם ממונו, ומשמר את תחושת הסטריאו כשהיא קיימת. האנגלית המרכזית מופחתת, אבל הפרדת דיבור ממוזיקה אינה מושלמת: המוזיקה יכולה להישמע מסוננת ולעיתים יש דליפת קול. אפשר להנמיך את הרקע.</small>
 <p id="soundReport" class="muted" aria-live="off">נתוני שחזור הרקע יופיעו לאחר הפעלת סרטון.</p>
 <details class="voice-choice">
-<summary>רוצה קול עברי קבוע במקום החלפות קול? (ניסוי)</summary>
+<summary>אם Google מחליפה קולות: אפשרות לקול עברי קבוע</summary>
 <label for="voiceMode">מקור הקריינות</label>
 <select id="voiceMode" aria-describedby="voiceHint">
 <option value="google" selected>Google — הקול הרגיל, לרוב טבעי ומהיר יותר</option>
@@ -53,19 +53,19 @@ select{width:100%;max-width:100%;padding:10px;border:1px solid #55799b;border-ra
 </details>
 <p id="latencyInfo" class="muted" aria-live="off">תור השמע המקומי יימדד במהלך הדיבוב.</p>
 <div class="controls">
-<button id="checkKey" type="button" class="secondary">✓ בדוק מפתח וחיבור (בלי שמע)</button>
+<button id="checkKey" type="button" class="secondary">בדיקת מפתח (לא חובה)</button>
 <button id="start" type="button">▶ הפעל דיבוב</button>
 <button id="stop" type="button" class="secondary" disabled>■ עצור דיבוב</button>
 <span id="countdown" aria-live="off"></span>
 </div>
-<p id="status" role="status" aria-live="polite" data-kind="neutral">מוכן לבדיקה. קודם מומלץ ללחוץ ״בדוק מפתח״; רק אחרי אישור נסה דיבוב של דקה אחת.</p>
+<p id="status" role="status" aria-live="polite" data-kind="neutral">מוכן. הזן מפתח ולחץ ״הפעל דיבוב״. בדיקת מפתח נפרדת אינה חובה.</p>
 </section>
 <section class="panel transcripts" aria-label="בדיקת איכות התרגום">
 <div><h2>מה שמענו בשפת המקור</h2><div id="original" class="transcript muted" aria-live="off">התמלול יופיע כאן כשהשמע יתחיל.</div></div>
 <div><h2>התרגום לעברית</h2><div id="translated" class="transcript" aria-live="off">התרגום יופיע כאן כשהמודל יחזיר אודיו.</div></div>
 </section>
-<details><summary>מה עובד ומה עדיין לא הוכח?</summary><p>המנוע הרשמי של Google תומך בתרגום דיבור חי לעברית. הכלי הזה משתמש בשיתוף שמע של לשונית, ולכן הוא לא תלוי בשאלה אם הסרטון מוטמע מ־YouTube, Vimeo או PBS. עם זאת, חלק מהדפדפנים לא מאפשרים שיתוף שמע, השתקת הקול המקורי אינה מובטחת, והסנכרון אינם מושלמים. האיחור תלוי גם בזמן העיבוד של Google; האתר מצמצם רק השהיה מקומית. החלפת קול אחרי הפסקות ומבטא הם מגבלות מוכרות של מודל התרגום. סינון הרקע אינו הפרדת דיבור מקצועית, אך כעת תומך גם במונו. אפשר לבחור קול עברי מקומי קבוע אם מותקן כזה, במחיר השהיה נוספת. בטלפון Android הפתרון הזה אינו נתמך באופן אמין.</p><p>שיתוף הלשונית אינו כולל את חלון הדיבוב, כך שלא נוצרת לולאת שמע חוזר. אם נותק שיתוף הלשונית, יש להפעיל שוב. לבדיקת איכות יש להשתמש תחילה בקטע קצר לפני ניסוי ממושך.</p></details>
+<details><summary>מה עובד ומה עדיין לא הוכח?</summary><p>המנוע הרשמי של Google תומך בתרגום דיבור חי לעברית, אך מודל התרגום עצמו עדיין מסומן Preview על ידי Google. הכלי הזה משתמש בשיתוף שמע של לשונית, ולכן הוא לא תלוי בשאלה אם הסרטון מוטמע מ־YouTube, Vimeo או PBS. עם זאת, חלק מהדפדפנים לא מאפשרים שיתוף שמע, השתקת הקול המקורי אינה מובטחת, והסנכרון אינם מושלמים. האיחור תלוי גם בזמן העיבוד של Google; האתר מצמצם רק השהיה מקומית. החלפת קול אחרי הפסקות ומבטא הם מגבלות מוכרות של מודל התרגום. סינון הרקע אינו הפרדת דיבור מקצועית, אך כעת תומך גם במונו. אפשר לבחור קול עברי מקומי קבוע אם מותקן כזה, במחיר השהיה נוספת. בטלפון Android הפתרון הזה אינו נתמך באופן אמין.</p><p>שיתוף הלשונית אינו כולל את חלון הדיבוב, כך שלא נוצרת לולאת שמע חוזר. אם נותק שיתוף הלשונית, יש להפעיל שוב. לבדיקת איכות יש להשתמש תחילה בקטע קצר לפני ניסוי ממושך.</p></details>
 </main>
-<script src="/dub.js?v=2026-10-11.2" defer></script>
+<script src="/dub.js?v=2026-10-11.3" defer></script>
 </body>
 </html>

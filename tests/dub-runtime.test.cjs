@@ -19,11 +19,11 @@ function setupRig(getDisplayMedia){
   }
   elements.apiKey.value='AQ.'+'x'.repeat(32);
   elements.ambience.checked=true;
-  elements.ambienceVolume.value='60';
+  elements.ambienceVolume.value='75';
   elements.voiceMode.value='google';
   elements.systemVoiceOption.disabled=true;
   elements.stop.disabled=true;
-  const streams=[],sockets=[],buffers=[],audioStarts=[],contexts=[],gains=[],worklets=[],spoken=[];
+  const streams=[],sockets=[],buffers=[],audioStarts=[],contexts=[],gains=[],worklets=[],spoken=[],compressors=[];
   let ttsCanceled=0;
   const localTts={
     getVoices:()=>[{name:'Local Hebrew Test',lang:'he-IL',localService:true}],
@@ -47,6 +47,11 @@ function setupRig(getDisplayMedia){
     createGain(){
       const node={gain:{value:1,setTargetAtTime(value){this.value=value}},connect(){},disconnect(){}};
       gains.push(node);return node;
+    }
+    createDynamicsCompressor(){
+      const p=()=>({value:0});
+      const node={threshold:p(),knee:p(),ratio:p(),attack:p(),release:p(),connect(){},disconnect(){}};
+      compressors.push(node);return node;
     }
     createBuffer(channels,length,rate){buffers.push({channels,length,rate});return {getChannelData:()=>new Float32Array(length)}}
     createBufferSource(){return {connect(){},playbackRate:{value:1},start(at){audioStarts.push({at,rate:this.playbackRate.value})},stop(){},onended:null,buffer:null}}
@@ -72,7 +77,7 @@ function setupRig(getDisplayMedia){
     setTimeout:()=>123,clearTimeout:()=>{},setInterval:()=>234,clearInterval:()=>{},
     Date,console};
   vm.runInNewContext(source,sandbox,{filename:'dub.js',timeout:2000});
-  return {elements,sockets,buffers,audioStarts,contexts,streams,gains,worklets,spoken,get ttsCanceled(){return ttsCanceled}};
+  return {elements,sockets,buffers,audioStarts,contexts,streams,gains,worklets,spoken,compressors,get ttsCanceled(){return ttsCanceled}};
 }
 function stream(){
   const tracks=[{stopped:0,listeners:[],stop(){this.stopped++},addEventListener(type,fn){this.listeners.push({type,fn})}},
@@ -101,7 +106,10 @@ function stream(){
   assert.equal(newer.sockets.length,1);
   assert.equal(newer.contexts.length,1,'Capture and dub audio should reuse one AudioContext');
   assert.equal(newer.gains.length,1,'Background audio must be controlled by a gain node');
-  assert.equal(newer.gains[0].gain.value,0.6,'Default soundtrack mix must be modest');
+  assert.equal(newer.gains[0].gain.value,0.75,'Default soundtrack must be audible');
+  assert.equal(newer.compressors.length,1,'Stereo and Hebrew speech must share a native output compressor');
+  assert.equal(newer.compressors[0].threshold.value,-9);
+  assert.equal(newer.compressors[0].ratio.value,2.2);
   assert.equal(newer.elements.systemVoiceOption.disabled,false,'Installed Hebrew voice should be offered');
   newer.worklets[0].port.onmessage({data:{type:'soundLevels',channels:1,sourceRms:0.1,backgroundRms:0.08}});
   assert.match(newer.elements.soundReport.textContent,/מונו/);

@@ -22,7 +22,11 @@ function gain(freq,antiphase=false){
       l[i]=v;r[i]=antiphase?-v:v;
     }
     p.process([[l,r]],[[a,b]]);
-    for(let i=0;i<128;i++){wet+=a[i]**2;dry+=l[i]**2;assert.equal(a[i],b[i])}
+    for(let i=0;i<128;i++){
+      wet+=a[i]**2;dry+=l[i]**2;
+      if(antiphase)assert(Math.abs(a[i]+b[i])<1e-5,'Stereo side effects must retain direction');
+      else assert.equal(a[i],b[i],'Centered audio should remain centered');
+    }
   }
   return Math.sqrt(wet/dry);
 }
