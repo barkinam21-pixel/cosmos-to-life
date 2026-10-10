@@ -46,6 +46,21 @@
       outputAudioTranscription:{}
     }};
   }
+  // Gemini WebSocket replies may be UTF-8 JSON text frames, Blob frames or
+  // ArrayBuffer binary frames. Never JSON.parse a Blob directly: it silently
+  // discards setupComplete and makes an accepted session appear to time out.
+  async function parseLiveFrame(frame){
+    let text=frame;
+    try{
+      if(typeof text==='string'){}
+      else if(typeof Blob!=='undefined' && text instanceof Blob)text=await text.text();
+      else if(text instanceof ArrayBuffer)text=new TextDecoder().decode(text);
+      else if(ArrayBuffer.isView(text))text=new TextDecoder().decode(text);
+      else return null;
+      const message=JSON.parse(text);
+      return message && typeof message==='object'?message:null;
+    }catch(_){return null;}
+  }
   function explainHttp(status,body){
     const code=body?.error?.status||'';
     if(status===400) return 'Google דחתה בקשה (400). זה אינו מוכיח שהמפתח שגוי; נבדוק את חיבור Live עצמו.';
@@ -71,11 +86,12 @@
     // REST is only a secondary diagnostic. A model metadata lookup can fail
     // even when the Live WebSocket is usable, so never let it veto Live setup.
     try{
-      const response=await fetch(MODEL_ENDPOINT,{method:'GET',headers:{'x-goog-api-key':key},cache:'no-store',signal:AbortSignal.timeout(8500)});
+      const response=await fetch(MODEL_ENDPOINT,{method:'GET',headers:{'x-goog-api-key':key},cache:'no-store',signal:AbortSignal.timeout(5000)});
       if([401,402,403,429].includes(response.status)){
         let body={};try{body=await response.json()}catch(_){}
         return explainHttp(response.status,body);
       }
+      if(response.ok) return original+' בדיקת REST של Google הצליחה, אבל החיבור החי לא אושר.';
     }catch(_){}
     return original;
   }
@@ -84,22 +100,37 @@
     // This avoids the former false-negative when GET /models rejects a
     // Live-only model or the metadata endpoint is blocked by the browser.
     const live=await new Promise(resolve=>{
-      let done=false,ws;
+      let done=false,ws,opened=false,frames=0,decoded=0;
       const finish=(ok,message)=>{
         if(done)return;done=true;clearTimeout(timeout);
-        try{if(ws&&ws.readyState<=1)ws.close()}catch(_){}
+        if(ws){ws.onopen=null;ws.onmessage=null;ws.onerror=null;ws.onclose=null;
+          try{if(ws.readyState<=1)ws.close()}catch(_){}}
         resolve({ok,message});
       };
-      const timeout=setTimeout(()=>finish(false,'בדיקת חיבור Live לא הסתיימה בתוך 12 שניות. ייתכן עומס או חסימת רשת.'),12000);
+      // Diagnose the actual stage rather than treating a missed binary frame
+      // as a network failure. Twenty seconds is a safety cap, not a retry loop.
+      const timeout=setTimeout(()=>{
+        let reason;
+        if(!opened)reason='חיבור WebSocket ל-Google לא נפתח. ייתכן סינון רשת/דפדפן או עומס.';
+        else if(frames===0)reason='WebSocket נפתח והגדרות נשלחו, אך Google לא החזירה תשובה.';
+        else if(decoded===0)reason='Google החזירה '+frames+' הודעות, אבל כולן לא פוענחו. זו תקלת תאימות בקוד, לא במפתח.';
+        else reason='Google החזירה '+decoded+' הודעות קריאות, אך לא אישרה setupComplete.';
+        finish(false,'החיבור לא אושר בתוך 20 שניות. '+reason);
+      },20000);
       try{
         ws=new WebSocket(WS_ENDPOINT+'?key='+encodeURIComponent(key));
-        ws.onopen=()=>ws.send(JSON.stringify(setupPayload()));
-        ws.onmessage=e=>{
-          let data={};try{data=JSON.parse(e.data)}catch(_){}
+        ws.binaryType='arraybuffer';
+        ws.onopen=()=>{opened=true;ws.send(JSON.stringify(setupPayload()));};
+        ws.onmessage=async e=>{
+          frames++;
+          const data=await parseLiveFrame(e.data);
+          if(done)return;
+          if(!data)return;
+          decoded++;
           if(data.setupComplete)finish(true,'המפתח וחיבור התרגום לעברית אושרו. הצעד הבא הוא בדיקת הקול בסרטון קצר.');
           else if(data.error)finish(false,explainLiveFailure(data.error.code||'API',data.error.message||data.error.status));
         };
-        ws.onerror=()=>{};
+        ws.onerror=()=>{}; // onclose typically has the real reason.
         ws.onclose=e=>finish(false,explainLiveFailure(e.code,e.reason));
       }catch(_){finish(false,'הדפדפן לא הצליח לפתוח חיבור Live. בדוק Chrome/Edge או רשת.');}
     });
@@ -187,10 +218,14 @@
     if(playbackContext){const a=playbackContext;playbackContext=null;a.close().catch(()=>{})}
     switchControls(false);setStatus(reason,reason.startsWith('שגיאה')?'bad':'neutral');
   }
-  function onMessage(raw){
+  async function onMessage(raw){
     if(state==='idle')return;
-    let msg;
-    try{msg=JSON.parse(raw)}catch(_){return}
+    const msg=await parseLiveFrame(raw);
+    if(state==='idle')return;
+    if(!msg){
+      if(!setupReady)stop('שגיאה: Google החזירה הודעה בפורמט לא צפוי. לא משמע שהמפתח שגוי.');
+      return;
+    }
     if(msg.error){stop('שגיאה ממנוע Google: '+explainLiveFailure(msg.error.code||'API',msg.error.message||msg.error.status));return}
     if(msg.setupComplete){clearTimeout(setupTimer);setupTimer=null;setupReady=true;verifiedKey=keyInput.value.trim()||verifiedKey;keyInput.value='';setStatus('החיבור פעיל. הפעל סרטון בלשונית ששיתפת.','good');return}
     const c=msg.serverContent;
@@ -250,6 +285,7 @@
       socket=new WebSocket(url);
       // Keep the entered key until Google confirms setup; avoid repeat typing on failure.
       const thisSocket=socket;
+      thisSocket.binaryType='arraybuffer';
       connectionTimer=setTimeout(()=>{
         if(state!=='idle'&&socket===thisSocket&&thisSocket.readyState!==WebSocket.OPEN)
           stop('שגיאה: החיבור אל Google לא נפתח בתוך 15 שניות. בדוק את החיבור לרשת.');
@@ -272,7 +308,11 @@
         },1000);
         setStatus('החיבור נפתח. מחכה לאישור תחילת תרגום…');
       };
-      thisSocket.onmessage=event=>onMessage(event.data);
+      thisSocket.onmessage=event=>{
+        onMessage(event.data).catch(()=>{
+          if(state!=='idle')stop('שגיאה: נכשל פענוח הודעת Google.');
+        });
+      };
       thisSocket.onerror=()=>{
         // onclose usually follows onerror and carries the real 1007/401 reason.
         // Do not stop here, or we would hide the actionable error message.
