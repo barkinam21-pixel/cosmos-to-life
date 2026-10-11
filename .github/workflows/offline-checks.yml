@@ -29,15 +29,18 @@ jobs:
         run: |
           node --version
           node --check dub.js
+          node --check dub-free.js
           node --check learning-pages.js
           node --check tests/learning-pages.test.cjs
           node --check dub-worklet.js
           node --check tests/dub-schema.test.cjs
           node --check tests/dub-frames.test.cjs
           node --check tests/dub-runtime.test.cjs
+          node --check tests/dub-free.test.cjs
           node --check tests/dub-sound.test.cjs
           node tests/dub-frames.test.cjs
           node tests/dub-schema.test.cjs
           node tests/dub-runtime.test.cjs
+          node tests/dub-free.test.cjs
           node tests/dub-sound.test.cjs
           node tests/learning-pages.test.cjs
