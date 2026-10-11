@@ -3,6 +3,7 @@
 const fs=require('node:fs');
 const path=require('node:path');
 const assert=require('node:assert/strict');
+const vm=require('node:vm');
 const root=path.resolve(__dirname,'..');
 const s=fs.readFileSync(path.join(root,'dub.js'),'utf8');
 const a=s.indexOf('function setupPayload(){');
@@ -37,5 +38,12 @@ for(const page of ['index.html','life.html']){
   assert(body.includes('href="/dub.html"')&&body.includes('advanceAfterCard')&&body.includes('showEmbedFallback'));
   assert(body.includes('🎧 נסה דיבוב חינמי ב־YouTube'),'Every YouTube card should offer an opt-in free dubbing route');
   assert(body.includes('class="watch free-dub-watch"'),'Free route must be an ordinary link, never an injected player');
+  // Every inline page script must remain valid JS; no browser, network or keys.
+  const inlineScripts=[...body.matchAll(/<script\\b[^>]*>([\\s\\S]*?)<\\/script>/gi)]
+    .map(match=>match[1]).filter(Boolean);
+  assert(inlineScripts.length>=2,page+': expected inline scripts');
+  for(const [i,source] of inlineScripts.entries()){
+    assert.doesNotThrow(()=>new vm.Script(source,{filename:page+'#inline'+i}),page+': invalid inline JS '+i);
+  }
 }
 console.log('PASS: Gemini Live 1007 setup schema, Hebrew translation, privacy and both video sequences');
