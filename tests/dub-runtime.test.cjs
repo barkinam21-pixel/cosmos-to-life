@@ -43,7 +43,7 @@ function setupRig(getDisplayMedia,voiceList=[{name:'Local Hebrew Test',lang:'he-
   }
   class MockAudioContext{
     constructor(){this.state='running';this.destination={};this.currentTime=0;this.closed=false;contexts.push(this);
-      this.audioWorklet={addModule:async p=>assert.equal(p,'/dub-worklet.js?v=2026-10-11.5')};}
+      this.audioWorklet={addModule:async p=>assert.equal(p,'/dub-worklet.js?v=2026-10-11.6')};}
     createMediaStreamSource(stream){return {connect(){},disconnect(){}}}
     createGain(){
       const node={gain:{value:1,setTargetAtTime(value){this.value=value}},connect(){},disconnect(){}};
@@ -207,6 +207,58 @@ function stream(){
   await flush();
   assert.equal(finalPhrase.spoken.length,1,'End of a turn must flush an unfinished Hebrew phrase');
   finalPhrase.elements.stop.events.click();
+
+  // Regression: a later turn without outputTranscription must NOT stay mute.
+  // The earlier spoken turn must not permanently disable PCM fallback.
+  const later=setupRig(async()=>stream());
+  await later.elements.start.events.click();
+  const laterWS=later.sockets[0];laterWS.open();
+  laterWS.message(JSON.stringify({setupComplete:{}}));await flush();
+  laterWS.message(JSON.stringify({serverContent:{
+    outputTranscription:{text:'שלום, זה הקטע הראשון.'},
+    modelTurn:{parts:[{inlineData:{data:pcm,mimeType:'audio/pcm;rate=24000'}}]},
+    turnComplete:true
+  }}));await flush();
+  assert.equal(later.spoken.length,1,'First translated turn must use fixed voice');
+  assert.equal(later.buffers.length,0,'Do not play PCM twice with available Hebrew text');
+  laterWS.message(JSON.stringify({serverContent:{
+    modelTurn:{parts:[{inlineData:{data:pcm,mimeType:'audio/pcm;rate=24000'}}]},
+    turnComplete:true
+  }}));await flush();
+  assert.equal(later.buffers.length,0,'Give the next turn time to provide text');
+  later.fireTimeouts(5500);await flush();
+  assert.equal(later.elements.voiceMode.value,'google','Second silent-caption turn must switch to audible Google audio');
+  assert.equal(later.buffers.length,1,'The second turn PCM must be played after fallback');
+  later.elements.stop.events.click();
+
+  // Regression: interruption discards buffered audio, then canceled TTS callbacks
+  // must not replace a still-working fixed Hebrew voice with Google.
+  const interrupted=setupRig(async()=>stream());
+  await interrupted.elements.start.events.click();
+  const interruptedWS=interrupted.sockets[0];interruptedWS.open();
+  interruptedWS.message(JSON.stringify({setupComplete:{}}));await flush();
+  interruptedWS.message(JSON.stringify({serverContent:{
+    outputTranscription:{text:'קטע אחד שנקטע.'},turnComplete:true
+  }}));await flush();
+  assert.equal(interrupted.spoken.length,1,'First phrase should reach browser TTS');
+  const canceledUtterance=interrupted.spoken[0];
+  interruptedWS.message(JSON.stringify({serverContent:{
+    modelTurn:{parts:[{inlineData:{data:pcm,mimeType:'audio/pcm;rate=24000'}}]}
+  }}));await flush();
+  assert.equal(interrupted.buffers.length,0);
+  interruptedWS.message(JSON.stringify({serverContent:{interrupted:true}}));await flush();
+  canceledUtterance.onerror?.({error:'canceled'});
+  canceledUtterance.onend?.();
+  await flush();
+  assert.equal(interrupted.elements.voiceMode.value,'system','Late canceled speech event must not switch the voice');
+  interrupted.fireTimeouts(5500);await flush();
+  assert.equal(interrupted.buffers.length,0,'Interrupted, canceled PCM must never replay');
+  interruptedWS.message(JSON.stringify({serverContent:{
+    outputTranscription:{text:'הקריינות נמשכת באותו קול.'},turnComplete:true
+  }}));await flush();
+  assert.equal(interrupted.spoken.length,2,'Speech should resume after interruption');
+  assert.equal(interrupted.spoken[1].voice.name,'Local Hebrew Test');
+  interrupted.elements.stop.events.click();
 
   const preview=setupRig(async()=>stream());
   assert.equal(preview.elements.previewVoice.disabled,false,'Idle voice preview should be available');
