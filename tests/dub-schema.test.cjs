@@ -39,8 +39,8 @@ for(const page of ['index.html','life.html']){
   assert(body.includes('🎧 נסה דיבוב חינמי ב־YouTube'),'Every YouTube card should offer an opt-in free dubbing route');
   assert(body.includes('class="watch free-dub-watch"'),'Free route must be an ordinary link, never an injected player');
   // Every inline page script must remain valid JS; no browser, network or keys.
-  const inlineScripts=[...body.matchAll(/<script\\b[^>]*>([\\s\\S]*?)<\\/script>/gi)]
-    .map(match=>match[1]).filter(Boolean);
+  const inlineScripts=body.split('<script>').slice(1)
+    .map(chunk=>chunk.split('</script>')[0]).filter(Boolean);
   assert(inlineScripts.length>=2,page+': expected inline scripts');
   for(const [i,source] of inlineScripts.entries()){
     assert.doesNotThrow(()=>new vm.Script(source,{filename:page+'#inline'+i}),page+': invalid inline JS '+i);
