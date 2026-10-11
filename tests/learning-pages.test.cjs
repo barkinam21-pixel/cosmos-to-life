@@ -47,8 +47,9 @@ for(const path of ['index.html','life.html']){
  grandTotal+=allItems.length;grandYT+=order.length;
  console.log(path+': '+allItems.length+' units, '+pages.length+' lightweight pages, '+order.length+' YouTube IDs verified');
 }
-assert.equal(grandTotal,394);
-assert.equal(grandYT,336);
+// Preserve the original catalogue size, while allowing vetted additions.
+assert(grandTotal>=394,'Unexpected loss of learning units');
+assert(grandYT>=336,'Unexpected loss of YouTube videos');
 assert.match(fs.readFileSync('dub.html','utf8'),/src="\/dub\.js(?:\?[^"]*)?"/);
 console.log('Pager syntax, ordering, dubbing link and small-page invariants: PASS');
 
