@@ -1,0 +1,56 @@
+{
+  "date": "2026-10-11",
+  "status": "researched-not-integrated",
+  "note": "Do not deploy blindly. Verify compatibility with latest main. No dubbing or player changes.",
+  "target": "life.html > chapters[1].items",
+  "candidates": [
+    {
+      "after": "The Complete History of the Earth: Proterozoic Eon",
+      "title": "When Earth Had Supermountains",
+      "id": "PUDvZYXxMuQ",
+      "source": "PBS Eons",
+      "level": "העשרה–מחקר",
+      "rationale": "Potential links between ancient mountain erosion, nutrients, and early life; label hypotheses."
+    },
+    {
+      "after": "How Volcanoes Froze the Earth...Twice",
+      "title": "How Did Life Survive Snowball Earth?",
+      "id": "YTSTwqbDrRc",
+      "source": "PBS Eons",
+      "level": "העמקה–מחקר",
+      "rationale": "Mechanisms and evidence for life persisting through Snowball Earth; unresolved hypotheses."
+    },
+    {
+      "after": "How the Egg Came First",
+      "title": "What Drove Life Into The Trees?",
+      "id": "yN4Ck8CSdWU",
+      "source": "PBS Eons",
+      "level": "העשרה–המחשה",
+      "rationale": "Ecological and anatomical bridge from terrestrial tetrapods to arboreal life."
+    },
+    {
+      "after": "Dimetrodon: Our Most Unlikely Ancestor",
+      "title": "Why Were Sails So Popular 300 Million Years Ago",
+      "id": "IXU43nvmDkE",
+      "source": "PBS Eons",
+      "level": "העשרה–דיון מדעי",
+      "rationale": "Multiple functions hypothesized for dorsal sails of early synapsids."
+    },
+    {
+      "after": "That Time Almost Everything Died | Life and Death on Pangea",
+      "title": "Did the Ozone Collapse 252 Million Years Ago?",
+      "id": "sIupXhjet0s",
+      "source": "PBS Eons",
+      "level": "העמקה–השערה מדעית",
+      "rationale": "Explores possible ozone damage in the Permian extinction; avoid claiming causal certainty."
+    },
+    {
+      "after": "How Mountains Make Evolution Weird",
+      "title": "How the Tibetan Plateau Created the Ultimate Cat",
+      "id": "Zfv8b4R9GuI",
+      "source": "PBS Eons",
+      "level": "העשרה–מקרה מבחן",
+      "rationale": "Deepens geological ecology with saber-toothed cat evolution in high-altitude environments."
+    }
+  ]
+}
