@@ -6,7 +6,7 @@
   const status=$('status'),countdown=$('countdown');
   const orig=$('original'),translated=$('translated');
   const MODEL='gemini-3.5-live-translate-preview';
-  const DUB_BUILD='2026-10-11.5';
+  const DUB_BUILD='2026-10-11.6';
   const LIMIT_MS=10*60*1000;
   let state='idle', capture=null, socket=null, captureContext=null, playbackContext=null;
   let captureNode=null, backgroundGain=null, inputNode=null, mixCompressor=null;
@@ -18,7 +18,7 @@
   // Browser remote voices may send text to the browser's speech provider.
   const tts=window.speechSynthesis||null;
   let browserHebrewVoice=null,lockedVoiceId='',ttsText='',ttsTimer=null,ttsWatchdog=null;
-  let speechQueue=[],speechBusy=false,voiceModeChosen=false,lastTtsFrame='',lastTtsFrameAt=0;
+  let speechQueue=[],speechBusy=false,speechEpoch=0,voiceModeChosen=false,lastTtsFrame='',lastTtsFrameAt=0;
   const voiceId=v=>String(v.voiceURI||v.name+'|'+v.lang);
   const usingSystemVoice=()=>Boolean(tts&&browserHebrewVoice&&$('voiceMode').value==='system');
   function refreshHebrewVoice(){
@@ -46,6 +46,10 @@
       : 'לא נמצא קול עברי בדפדפן. Google תשמש לקריינות, אך היא עלולה להחליף קולות אחרי שתיקה.';
   }
   function clearSpeech(){
+    // A canceled utterance can still fire onerror/onend asynchronously.
+    // Invalidate callbacks before canceling so they cannot switch voices or
+    // overwrite a newer utterance's busy state.
+    ++speechEpoch;
     clearTimeout(ttsTimer);ttsTimer=null;clearTimeout(ttsWatchdog);ttsWatchdog=null;
     ttsText='';speechQueue=[];speechBusy=false;lastTtsFrame='';lastTtsFrameAt=0;
     if(tts){try{tts.cancel()}catch(_){}}
@@ -59,16 +63,19 @@
   function speakNext(thisRun){
     if(speechBusy||!speechQueue.length||!usingSystemVoice()||state==='idle'||runId!==thisRun)return;
     const phrase=speechQueue.shift();
+    const thisSpeechEpoch=speechEpoch;
+    const isCurrent=()=>speechEpoch===thisSpeechEpoch&&runId===thisRun&&state!=='idle';
     const utter=new SpeechSynthesisUtterance(phrase);
     utter.lang='he-IL';utter.voice=browserHebrewVoice;utter.rate=1.06;
     speechBusy=true;
     let started=false,finished=false;
     const finish=()=>{
-      if(finished)return;finished=true;
+      if(finished||!isCurrent())return;finished=true;
       clearTimeout(ttsWatchdog);ttsWatchdog=null;
       speechBusy=false;speakNext(thisRun);
     };
     utter.onstart=()=>{
+      if(!isCurrent())return;
       started=true;clearTimeout(ttsWatchdog);ttsWatchdog=null;
       if(!heardAudio&&runId===thisRun&&state!=='idle'){
         heardAudio=true;
@@ -77,13 +84,14 @@
     };
     utter.onend=finish;
     utter.onerror=()=>{
-      if(runId===thisRun&&state!=='idle')revertToGoogleAudio('הקריין הקבוע לא הצליח לדבר. חזרתי לקול Google כדי למנוע שקט ממושך.');
-      else finish();
+      // Ignore onerror emitted by speechSynthesis.cancel() on interruption.
+      if(!isCurrent())return;
+      revertToGoogleAudio('הקריין הקבוע לא הצליח לדבר. חזרתי לקול Google כדי למנוע שקט ממושך.');
     };
     // A browser may list a voice that never starts (e.g. a missing cloud voice).
     // Do not silently discard all Google audio indefinitely in that situation.
     ttsWatchdog=setTimeout(()=>{
-      if(!started&&speechBusy&&runId===thisRun&&usingSystemVoice())
+      if(isCurrent()&&!started&&speechBusy&&usingSystemVoice())
         revertToGoogleAudio('הקול הקבוע לא התחיל בתוך 8 שניות. חזרתי אוטומטית לשמע Google.');
     },8000);
     try{tts.speak(utter)}catch(_){
@@ -383,8 +391,9 @@
     if(!c)return;
     if(c.inputTranscription?.text)appendTranscript(orig,c.inputTranscription.text);
     if(c.interrupted){
-      // Google's interrupted flag invalidates audio and speech queues.
-      clearSpeech();
+      // Discard incomplete audio and cancel pending fallback timers on interruption.
+      // Otherwise stale PCM may be replayed five seconds after speech resumes.
+      clearSpeech();clearAudioFallback();
       for(const s of activeSources){try{s.stop()}catch(_){}}
       activeSources.clear();playbackTime=playbackContext?playbackContext.currentTime:0;
     }
@@ -417,8 +426,14 @@
         if(state!=='idle'&&runId===thisRun&&socket===originSocket)stop('שגיאה בהשמעת הקריינות העברית.');
       });
     }
-    if(c.turnComplete&&usingSystemVoice()){
-      speakHebrewChunk(thisRun);lastTtsFrame='';lastTtsFrameAt=0;
+    if(c.turnComplete){
+      if(usingSystemVoice()){
+        speakHebrewChunk(thisRun);lastTtsFrame='';lastTtsFrameAt=0;
+      }
+      // This flag is scoped to ONE translated turn, not the entire session.
+      // The following turn may send PCM without outputTranscription; re-arm
+      // the bounded five-second Google-audio fallback for that turn.
+      seenHebrewCaption=false;
     }
   }
   async function startCaptureProcessing(thisRun){
