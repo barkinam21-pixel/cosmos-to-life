@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self'; media-src 'self' blob:; object-src 'none'; base-uri 'none'; form-action 'none'">
+<title>דיבוב עברי חינמי ללא מפתח · מהמפץ הגדול לחיים</title>
+<style>
+:root{color-scheme:dark;--bg:#091321;--card:#13263a;--line:#3e5b77;--text:#f5faff;--muted:#c0d0dc}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:linear-gradient(180deg,#081521,#15253a);color:var(--text);font:16px/1.6 Arial,system-ui,sans-serif}
+main{max-width:770px;margin:auto;padding:24px 15px 60px}
+h1{font-size:clamp(25px,5vw,34px);line-height:1.3;margin:12px 0}h2{font-size:19px;margin:0 0 10px}
+p{margin:6px 0 12px}.muted,small{color:var(--muted)}
+a{color:#aadfff}.back{display:inline-block;text-decoration:none;margin-bottom:8px}
+.panel{padding:18px;border-radius:18px;background:var(--card);border:1px solid var(--line);margin-top:15px}
+.notice{border-right:4px solid #76c7ee}
+.controls{display:flex;gap:10px;flex-wrap:wrap;margin:15px 0}
+button,.action{background:#16517b;border:1px solid #70a5c8;color:#fff;border-radius:11px;font:700 16px Arial,system-ui,sans-serif;padding:11px 18px;text-decoration:none;cursor:pointer}
+button.secondary,.action.secondary{background:#354b60}
+button:disabled{opacity:.48;cursor:not-allowed}
+button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #c3e9ff;outline-offset:3px}
+#freeStatus{font-weight:700}#freeStatus[data-kind=good]{color:#b0f6cf}#freeStatus[data-kind=bad]{color:#ffbcba}
+.option{display:flex;align-items:center;gap:9px;margin:8px 0}.option input{width:20px;height:20px}
+.slider{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:8px 0}
+.slider input{width:min(320px,95%);accent-color:#aee1ff}
+.transcripts{display:grid;gap:14px}.transcript{border:1px solid #31506a;border-radius:10px;background:#09192a;padding:10px;min-height:68px;max-height:155px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere}
+.pill{font-size:12px;background:#235177;color:#e3f6ff;border-radius:50px;padding:4px 10px}
+li{margin:5px 0}
+@media(max-width:460px){.panel{padding:13px}main{padding-top:15px}button,.action{width:100%;text-align:center}}
+</style>
+</head>
+<body>
+<main>
+<a class="back" href="/dub.html">← כל אפשרויות הדיבוב</a>
+<h1>🎧 דיבוב עברי ללא מפתח API</h1>
+<p class="muted">אפשרות חדשה שמזהה אנגלית משמע הלשונית, מתרגמת בדפדפן ומקריאה בקול עברי קבוע. אין כאן מגבלת 10 או 15 דקות שהאתר מגדיר, אין חיוב API ואין צורך בהתקנת תוכנה.</p>
+<section class="panel notice" aria-label="הפעלת דיבוב">
+<span class="pill">ניסוי ב־Chrome עדכני למחשב בלבד · ללא תשלום API</span>
+<h2>שתי פעולות להפעלה</h2>
+<ol>
+<li>פתח את <a href="/" target="_blank" rel="noopener noreferrer">מסלול הסרטונים בלשונית נפרדת</a> והשאר אותה פתוחה.</li>
+<li>לחץ <strong>הפעל</strong>; בחר את לשונית הסרטון וסמן <strong>Share tab audio / שיתוף שמע מהלשונית</strong>. חזור לנגן והפעל סרטון באנגלית.</li>
+</ol>
+<div class="controls">
+<button id="freeStart" disabled>▶ הפעל דיבוב ללא מפתח</button>
+<button id="freeStop" class="secondary" disabled>■ עצור</button>
+<button id="freePreview" class="secondary" disabled>▶ בדיקת קול עברי</button>
+</div>
+<p id="freeStatus" data-kind="neutral" role="status" aria-live="polite">בודק תאימות וקול עברי בדפדפן…</p>
+<p id="freeProgress" class="muted">בודק חבילת תרגום מקומית…</p>
+<p id="freeVoiceInfo" class="muted">מאתר קול עברי…</p>
+<p id="freeElapsed" class="muted"></p>
+</section>
+<section class="panel">
+<h2>מוזיקה ואפקטים</h2>
+<label class="option" for="freeAmbience"><input type="checkbox" id="freeAmbience" checked> לשמר חלק ממוזיקת הרקע והאפקטים בעזרת מסנן שמע קל</label>
+<div class="slider"><label for="freeVolume">עוצמת רקע</label><input type="range" id="freeVolume" min="0" max="100" value="35"><span id="freeVolumeText">35%</span></div>
+<div class="controls"><button id="freeClean" class="secondary" disabled>רק עברית, בלי שמע רקע</button></div>
+<p id="freeSound" class="muted">מסנן הרקע אינו הפרדה מקצועית: הוא עשוי להשאיר דיבור חלש באנגלית, בעיקר בסרטוני מונו. אפשר להנמיך או להשתיק את הרקע בלחיצה.</p>
+</section>
+<section class="panel transcripts">
+<h2>מה זוהה ומה תורגם</h2>
+<div><strong>אנגלית מקורית</strong><div id="freeOriginal" class="transcript" aria-live="off">ממתין לאנגלית…</div></div>
+<div><strong>עברית</strong><div id="freeHebrew" class="transcript" aria-live="off">התרגום יופיע כאן…</div></div>
+</section>
+<section class="panel">
+<h2>מה חשוב לדעת</h2>
+<p>זהו מסלול <strong>ניסיוני</strong>, לא הבטחה לדיבוב רציף בכל דפדפן. הוא דורש Chrome חדש במחשב, תמיכה בתרגום מובנה אנגלית→עברית, זיהוי שמע וקול עברי מותקן. בפעם הראשונה ייתכן שתידרש הורדה אוטומטית של חבילת שפה. אם אחד התנאים חסר, הכפתור לא יופעל.</p>
+<p>התרגום עצמו מתבצע בדפדפן, אבל <strong>זיהוי הדיבור עשוי לשלוח את שמע הלשונית לשירות של ספק הדפדפן</strong>. האתר לא שומר תמלול, קבצי שמע או מפתח. זיהוי הדיבור עלול להיעצר או להיות מוגבל על ידי הדפדפן; אין מכסה של 15 דקות בקוד הזה, אך אין הבטחה לשימוש בלתי מוגבל מצד ספק השירות.</p>
+<p>התרגום עשוי להתאחר אחרי הסרטון, וקול הקריין קבוע רק כל עוד הדפדפן מספק את הקול שנבחר. בסרטון עם רצועת שמע עברית מובנית עדיף לבחור אותה בנגן: כך מקבלים את המוזיקה והאפקטים ללא הפרדה מלאכותית.</p>
+<div class="controls">
+<a class="action secondary" href="/dub.html">חזור למסלולי AutoDub ו־Google Live</a>
+<a class="action secondary" href="/" target="_blank" rel="noopener noreferrer">פתח סרטונים באתר ↗</a>
+</div>
+</section>
+</main>
+<script src="/dub-free.js?v=2026-10-11.1" defer></script>
+</body>
+</html>
