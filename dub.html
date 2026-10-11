@@ -19,11 +19,29 @@ select{width:100%;max-width:100%;padding:10px;border:1px solid #55799b;border-ra
 <body>
 <main>
 <a class="back" href="/" target="_blank" rel="noopener noreferrer">↗ פתח את מסלול הסרטונים</a>
-<h1>🎧 דיבוב חי לעברית</h1>
-<p class="muted">דיבוב בעברית למחשב Chrome / Edge. שומעים את הסרטון באתר הרגיל, עם קול עברי שמופק בזמן אמת בחלון העזר הזה.</p>
+<h1>🎧 דיבוב עברי — בחינם או באמצעות Google</h1>
+<p class="muted">קודם נסה דיבוב עברי ללא מפתח API לסרטוני YouTube; לדיבוב ישיר מתוך האתר ולמקורות אחרים אפשר עדיין להשתמש ב־Google Live.</p>
+<section class="panel notice" aria-label="דרך חינמית לסרטוני YouTube">
+<span class="pill">לסרטוני YouTube עם כתוביות · בלי מפתח API אישי</span>
+<h2>דיבוב עברי חינמי לצפייה ממושכת</h2>
+<p><strong>הכי כדאי:</strong> אם בסרטון יש ⚙️ רצועת שמע ← עברית, בחר אותה. כך מקבלים גם את המוזיקה והאפקטים של הסרטון.</p>
+<p>אם אין רצועה כזאת, התוסף <strong>AutoDub</strong> מציע דיבוב עברי עם בחירת קול. לפי מפתח התוסף: ללא הרשמה, ללא מפתח API אישי וללא מכסת סרטונים יומית.</p>
+<div class="controls">
+<a class="action" href="https://chromewebstore.google.com/detail/youtube-video-translator/kallpmoklcckbobcoccenpphbhbijndc" target="_blank" rel="noopener noreferrer">התקן AutoDub ל־Chrome / Edge ↗</a>
+<a class="action" href="/" target="_blank" rel="noopener noreferrer">בחר סרטון באתר ↗</a>
+</div>
+<p><strong>אחרי התקנה:</strong> מתחת לכל סרטון YouTube באתר יש קישור ״🎧 נסה דיבוב חינמי ב־YouTube״. פתח אותו, בחר עברית וקול בתוסף. כדי לחסוך לחיצות אפשר להגדיר בתוסף הפעלה אוטומטית לסרטונים בשפה זרה.</p>
+<details><summary>מה חשוב לדעת לפני שמתקינים?</summary>
+<p>AutoDub פועל בדף YouTube עצמו, <strong>לא בתוך הנגן המוטמע באתר</strong>, ורק כשיש לסרטון כתוביות, כולל כתוביות אוטומטיות. סרטוני Vimeo, PBS וסרטונים בלי כתוביות אינם נתמכים במסלול הזה. זמינות השירות והמגבלות עלולות להשתנות; לא ביצענו האזנה אמיתית לתוסף.</p>
+<p>אפשר להשתיק בתוסף את קול המקור כדי שלא לשמוע אנגלית, אבל אז נעלמים גם האפקטים והמוזיקה המקוריים. הנמכת המקור שומרת חלק מהצלילים אך גם יכולה להשאיר אנגלית חלשה. בניגוד למצב מקומי בלבד, AutoDub מעביר את מזהה הסרטון וכתוביותיו לשירות חיצוני לצורך התרגום והקול. אין צורך לתת לו מפתח Gemini שלך.</p>
+</details>
+</section>
+<p class="muted">לסרטונים שלא נתמכים בתוסף: כלי Google Live הישן נשאר זמין למטה.</p>
 <section class="panel notice" aria-label="מידע לפני התחלה">
 <span class="pill">קול עברי יציב · גרסה 1.3 · 11.10.2026</span>
-<h2>לפני שמתחילים</h2>
+<h2>דיבוב Google Live מתוך האתר — אפשרות נוספת</h2>
+<p class="muted">זוהי האפשרות הקיימת לשיתוף שמע הלשונית, ודורשת מפתח Gemini אישי. 15 דקות היא מגבלת אורך של סשן Google ללא דחיסה, לא בהכרח מכסה חינמית כוללת. האתר מסיים הפעלה אחרי עשר דקות מטעמי זהירות. מכסת השימוש בחינם תלויה בחשבון.</p>
+<h3>לפני שמתחילים</h3>
 <ol class="instructions">
 <li>פתח את <a href="/" target="_blank" rel="noopener noreferrer">הסרטונים באתר</a> בלשונית נפרדת.</li>
 <li>הכנס מפתח <strong>Gemini Auth</strong> חדש מתוך Google AI Studio. זהו מפתח חינמי ליצירה, ובדרך כלל הוא מתחיל ב־<code dir="ltr">AQ.</code>. אין צורך להפעיל חיוב בשביל בדיקת המפתח. <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer">יצירת מפתח ב־Google AI Studio</a>.</li>

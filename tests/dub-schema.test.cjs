@@ -23,6 +23,9 @@ assert(!/localStorage|sessionStorage|indexedDB/.test(s),'Do not persist private 
 const html=fs.readFileSync(path.join(root,'dub.html'),'utf8');
 assert(html.includes('id="checkKey"')&&html.includes('id="apiKey"'));
 assert(html.includes('wss://generativelanguage.googleapis.com'));
+assert(html.includes('kallpmoklcckbobcoccenpphbhbijndc'),'Verified Chrome Web Store AutoDub link required');
+assert(html.includes('לא בתוך הנגן המוטמע באתר'),'Do not claim third-party extension works inside our iframe');
+assert(html.includes('בלי מפתח API אישי'),'No-key mode must be explicit');
 for(const page of ['index.html','life.html']){
   const body=fs.readFileSync(path.join(root,page),'utf8');
   const embed=body.match(/EMBED_ORDER\s*=\s*(\[[^\]]*\])/);
@@ -32,5 +35,7 @@ for(const page of ['index.html','life.html']){
   assert.deepEqual(ids,links,page+': video order mismatch');
   assert.equal(ids.length,new Set(ids).size,page+': duplicate video');
   assert(body.includes('href="/dub.html"')&&body.includes('advanceAfterCard')&&body.includes('showEmbedFallback'));
+  assert(body.includes('🎧 נסה דיבוב חינמי ב־YouTube'),'Every YouTube card should offer an opt-in free dubbing route');
+  assert(body.includes('class="watch free-dub-watch"'),'Free route must be an ordinary link, never an injected player');
 }
 console.log('PASS: Gemini Live 1007 setup schema, Hebrew translation, privacy and both video sequences');
