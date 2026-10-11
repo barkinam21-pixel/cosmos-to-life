@@ -1,0 +1,86 @@
+{
+  "project": "cosmos-to-life",
+  "saved_on": "2026-10-11",
+  "base_main_commit": "212915a783a355dbec096ce48162966b0cc58fac",
+  "purpose": "Preserve seven reviewed educational video placements for later safe integration; root site remains unchanged.",
+  "constraints": [
+    "In the actual index.html add each entry to chapters and EMBED_ORDER once and in matched sequence.",
+    "Never replace existing content or edit dubbing code.",
+    "Keep <=6 cards per virtual page; existing learning-pages.js automatically paginates.",
+    "Before integrating verify current main head and both index.html/life.html to exclude duplicate video ids.",
+    "A full index.html update_file attempt to main was blocked by safety checks; do not claim this branch serves new videos.",
+    "Confirm GitHub CI and production Vercel after a future allowed deployment."
+  ],
+  "units": [
+    {
+      "title": "What is a Quantum Field?!?",
+      "creator": "The Science Asylum",
+      "youtube_id": "Y7Ac8zKTD-E",
+      "url": "https://www.youtube.com/watch?v=Y7Ac8zKTD-E",
+      "chapter_index_one_based": 2,
+      "insert_after": "The Standard Model",
+      "educational_value": "מבוא מוחשי לשדה ולעירורים",
+      "status": "proposed; not yet deployed; confirm embed before promotion"
+    },
+    {
+      "title": "What the HECK is a Photon?!",
+      "creator": "The Science Asylum",
+      "youtube_id": "73XdlgzSKws",
+      "url": "https://www.youtube.com/watch?v=73XdlgzSKws",
+      "chapter_index_one_based": 3,
+      "insert_after": "Light: Crash Course Astronomy #24",
+      "educational_value": "פוטונים וגשר מגלים לאור קוונטי",
+      "status": "proposed; not yet deployed; confirm embed before promotion"
+    },
+    {
+      "title": "Why Doesn't Light Have Mass?",
+      "creator": "The Science Asylum",
+      "youtube_id": "ueuwWiR-Dw4",
+      "url": "https://www.youtube.com/watch?v=ueuwWiR-Dw4",
+      "chapter_index_one_based": 3,
+      "insert_after": "What the HECK is a Photon?!",
+      "educational_value": "אנרגיה ותנע מול מסת מנוחה",
+      "status": "proposed; not yet deployed; confirm embed before promotion"
+    },
+    {
+      "title": "The Sun can't work without Quantum Tunneling",
+      "creator": "The Science Asylum",
+      "youtube_id": "lQapfUcf4Do",
+      "url": "https://www.youtube.com/watch?v=lQapfUcf4Do",
+      "chapter_index_one_based": 3,
+      "insert_after": "Origin of Light — Solar Fusion and Photon Journey",
+      "educational_value": "מנהור קוונטי מאפשר היתוך בכוכבים",
+      "status": "proposed; not yet deployed; confirm embed before promotion"
+    },
+    {
+      "title": "Feynman's Infinite Quantum Paths",
+      "creator": "PBS Space Time",
+      "youtube_id": "vSFRN-ymfgE",
+      "url": "https://www.youtube.com/watch?v=vSFRN-ymfgE",
+      "chapter_index_one_based": 4,
+      "insert_after": "The First Quantum Field Theory",
+      "educational_value": "העשרה מתקדמת: מסלולים קוונטיים וסכימת אמפליטודות",
+      "status": "proposed; not yet deployed; confirm embed before promotion"
+    },
+    {
+      "title": "Solving the Impossible in Quantum Field Theory",
+      "creator": "PBS Space Time",
+      "youtube_id": "oQ1WZ-eJW8Y",
+      "url": "https://www.youtube.com/watch?v=oQ1WZ-eJW8Y",
+      "chapter_index_one_based": 4,
+      "insert_after": "Feynman's Infinite Quantum Paths",
+      "educational_value": "העשרה מתקדמת: דיאגרמות פיינמן, קירובים ואינסופים",
+      "status": "proposed; not yet deployed; confirm embed before promotion"
+    },
+    {
+      "title": "Why does the Periodic Table look like that?",
+      "creator": "The Science Asylum",
+      "youtube_id": "r40g-lurgHI",
+      "url": "https://www.youtube.com/watch?v=r40g-lurgHI",
+      "chapter_index_one_based": 4,
+      "insert_after": "The Periodic Table: Crash Course Chemistry #4",
+      "educational_value": "כיצד אורביטלים וספין מסבירים את הטבלה המחזורית",
+      "status": "proposed; not yet deployed; confirm embed before promotion"
+    }
+  ]
+}
