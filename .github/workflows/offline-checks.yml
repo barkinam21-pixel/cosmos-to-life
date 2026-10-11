@@ -7,6 +7,7 @@ on:
     paths:
       - 'dub.js'
       - 'dub-worklet.js'
+      - 'dub-free-ambience-worklet.js'
       - 'dub.html'
       - 'index.html'
       - 'life.html'
@@ -30,6 +31,7 @@ jobs:
           node --version
           node --check dub.js
           node --check dub-free.js
+          node --check dub-free-ambience-worklet.js
           node --check learning-pages.js
           node --check tests/learning-pages.test.cjs
           node --check dub-worklet.js
@@ -37,10 +39,12 @@ jobs:
           node --check tests/dub-frames.test.cjs
           node --check tests/dub-runtime.test.cjs
           node --check tests/dub-free.test.cjs
+          node --check tests/dub-free-sound.test.cjs
           node --check tests/dub-sound.test.cjs
           node tests/dub-frames.test.cjs
           node tests/dub-schema.test.cjs
           node tests/dub-runtime.test.cjs
           node tests/dub-free.test.cjs
+          node tests/dub-free-sound.test.cjs
           node tests/dub-sound.test.cjs
           node tests/learning-pages.test.cjs

@@ -13,14 +13,15 @@
   const packOptions={sourceLanguage:'en',targetLanguage:'he'};
   let state='idle', run=0, stream=null, translator=null, audioContext=null, input=null, worklet=null, background=null;
   let recognition=null, recognitionTimer=null, clock=null, begunAt=0, recentRestartTimes=[];
-  let lockedVoice=null, speechItems=[], speaking=false, speechTimer=null, translationChain=Promise.resolve(), pending=0;
+  let recognitionStartedAt=0,lastRecognizedAt=0,endedForSilence=false,lastPhrase='',lastPhraseAt=0;
+  let lockedVoice=null,speechItems=[],speaking=false,speechTimer=null,speechToken=0,voiceStalls=0;
+  let translationChain=Promise.resolve(),pending=0,pendingTranslator=null,sourceConnected=false;
   let compatibility=false;
 
   function report(message,kind='neutral') {
     status.textContent=message;
     status.dataset.kind=kind;
   }
-  function voiceKey(voice){return String(voice.voiceURI||voice.name+'|'+voice.lang)}
   function chooseVoice() {
     if(!speech || !speech.getVoices)return null;
     const voices=speech.getVoices().filter(v=>/^he(?:[-_]|$)/i.test(v.lang));
@@ -37,6 +38,10 @@
     const pct=Number($('freeVolume').value)||0;
     $('freeVolumeText').textContent=pct+'%';
     $('freeVolume').disabled=!$('freeAmbience').checked;
+    if(input&&worklet){
+      if($('freeAmbience').checked&&!sourceConnected){input.connect(worklet);sourceConnected=true}
+      else if(!$('freeAmbience').checked&&sourceConnected){input.disconnect(worklet);sourceConnected=false}
+    }
     if(background&&audioContext) {
       const to=$('freeAmbience').checked?pct/100:0;
       if(background.gain.setTargetAtTime)
@@ -49,7 +54,7 @@
     for(const t of s.getTracks())try{t.stop()}catch(_){}
   }
   function cleanup(message,kind) {
-    ++run; state='idle'; compatibility=Boolean(compatibility);
+    ++run; ++speechToken; state='idle';
     clearTimeout(recognitionTimer); recognitionTimer=null;
     clearTimeout(speechTimer); speechTimer=null;
     clearInterval(clock); clock=null;
@@ -61,54 +66,94 @@
     speechItems=[];speaking=false;
     if(speech)try{speech.cancel()}catch(_){}
     releaseTracks(stream);stream=null;
-    if(input)try{input.disconnect()}catch(_){} input=null;
+    if(input)try{input.disconnect()}catch(_){} input=null;sourceConnected=false;
     if(worklet){worklet.port.onmessage=null;try{worklet.disconnect()}catch(_){}worklet=null}
     if(background)try{background.disconnect()}catch(_){}background=null;
     if(audioContext){const c=audioContext;audioContext=null;c.close().catch(()=>{})}
     if(translator){try{translator.destroy()}catch(_){}translator=null}
+    if(pendingTranslator){try{pendingTranslator.destroy()}catch(_){}pendingTranslator=null}
     lockedVoice=null;pending=0;translationChain=Promise.resolve();recentRestartTimes=[];
+    recognitionStartedAt=0;lastRecognizedAt=0;endedForSilence=false;lastPhrase='';lastPhraseAt=0;voiceStalls=0;
     controls();
     if(message)report(message,kind||'neutral');
   }
   function nextSpeech(thisRun) {
     if(speaking||!speechItems.length||state!=='running'||run!==thisRun||!lockedVoice)return;
     const text=speechItems.shift();
+    const token=++speechToken;
+    const isCurrent=()=>state==='running'&&run===thisRun&&speechToken===token;
     const utter=new SpeechSynthesisUtterance(text);
-    utter.lang='he-IL'; utter.voice=lockedVoice; utter.rate=1.12; utter.pitch=1;
+    utter.lang='he-IL';utter.voice=lockedVoice;utter.rate=1.12;utter.pitch=1;
     speaking=true;
-    let started=false, ended=false;
-    const done=()=>{
-      if(ended||run!==thisRun||state!=='running')return;
-      ended=true;clearTimeout(speechTimer);speechTimer=null;
-      speaking=false;nextSpeech(thisRun);
+    let started=false,finished=false;
+    const finish=()=>{
+      if(finished||!isCurrent())return;
+      finished=true;clearTimeout(speechTimer);speechTimer=null;
+      speaking=false;voiceStalls=0;nextSpeech(thisRun);
     };
-    utter.onstart=()=>{if(run!==thisRun)return;started=true;clearTimeout(speechTimer);speechTimer=null};
-    utter.onend=done;
-    utter.onerror=()=>{if(run===thisRun)cleanup('הקול העברי לא הצליח להקריא. לא החלפתי קול בלי ידיעתך.','bad')};
+    utter.onstart=()=>{
+      if(!isCurrent())return;
+      started=true;clearTimeout(speechTimer);
+      // A Chromium voice may start normally but never fire onend.
+      // Use a generous duration watchdog instead of changing the voice.
+      speechTimer=setTimeout(()=>{
+        if(!isCurrent()||finished)return;
+        voiceStalls++;++speechToken;
+        clearTimeout(speechTimer);speechTimer=null;speaking=false;
+        try{speech.cancel()}catch(_){}
+        if(voiceStalls>=2){
+          cleanup('הדפדפן תקע את הקריינות פעמיים. עצרתי בלי להחליף לקול אחר.','bad');
+          return;
+        }
+        progress.textContent='הקריינות נתקעה פעם אחת, שחררתי אותה וממשיך באותו קול.';
+        nextSpeech(thisRun);
+      },Math.min(42000,Math.max(9000,text.length*210+5000)));
+    };
+    utter.onend=finish;
+    utter.onerror=()=>{
+      if(isCurrent())cleanup('קריינת העברית נכשלה. לא החלפתי קול באופן אוטומטי.','bad');
+    };
     speechTimer=setTimeout(()=>{
-      if(run===thisRun&&state==='running'&&!started)
-        cleanup('הקול העברי לא התחיל. בדוק אם קיים קול עברי עובד בדפדפן.','bad');
+      if(isCurrent()&&!started)
+        cleanup('הקול העברי לא התחיל תוך 9 שניות. לא אחליף קול בלי אישורך.','bad');
     },9000);
     try{speech.speak(utter)}catch(_){
-      cleanup('הדפדפן דחה את הקריינות העברית.','bad');
+      if(isCurrent())cleanup('הדפדפן דחה את הקריינות העברית.','bad');
     }
+  }
+  function splitSpeech(text) {
+    let remaining=String(text||'').trim().replace(/\s+/g,' ');
+    const pieces=[];
+    while(remaining.length>180){
+      let cut=remaining.lastIndexOf(' ',180);
+      if(cut<75)cut=180;
+      const sentence=Math.max(remaining.lastIndexOf('.',cut),remaining.lastIndexOf('!',cut),remaining.lastIndexOf('?',cut));
+      if(sentence>=75)cut=sentence+1;
+      pieces.push(remaining.slice(0,cut).trim());
+      remaining=remaining.slice(cut).trim();
+    }
+    if(remaining)pieces.push(remaining);
+    return pieces;
   }
   function queueSpeech(text,thisRun) {
     if(!text||run!==thisRun||state!=='running')return;
-    speechItems.push(String(text).slice(0,350));
-    // Stop lag from growing without limit during fast educational lectures.
-    while(speechItems.length>3 || speechItems.reduce((n,item)=>n+item.length,0)>500)
+    speechItems.push(...splitSpeech(text));
+    // Avoid an unbounded translated-voice backlog on fast videos.
+    while(speechItems.length>4||speechItems.reduce((n,item)=>n+item.length,0)>520)
       speechItems.shift();
     nextSpeech(thisRun);
   }
   function onSpeechResults(event,thisRun) {
     if(run!==thisRun||state!=='running'||!translator)return;
-    recentRestartTimes=[];
     for(let i=event.resultIndex||0;i<event.results.length;i++){
       const result=event.results[i];
       if(!result||!result.isFinal)continue;
       const english=String(result[0]?.transcript||'').trim();
       if(!english)continue;
+      const now=Date.now();
+      if(english===lastPhrase&&now-lastPhraseAt<1200)continue;
+      lastPhrase=english;lastPhraseAt=now;lastRecognizedAt=now;
+      endedForSilence=false;recentRestartTimes=[];
       original.textContent=(original.textContent==='ממתין לאנגלית…'?'':original.textContent+' ')+english;
       original.textContent=original.textContent.slice(-1200);
       if(pending>=6){
@@ -131,29 +176,49 @@
   }
   function resumeRecognition(thisRun,audioTrack) {
     if(run!==thisRun||state!=='running'||!recognition)return;
-    const now=Date.now();
-    recentRestartTimes=recentRestartTimes.filter(t=>now-t<60000);
-    if(recentRestartTimes.length>=5) {
-      cleanup('זיהוי הדיבור נסגר שוב ושוב. עצרתי כדי למנוע ניסיונות אינסופיים. אפשר להשתמש במסלול AutoDub.','bad');
+    if(audioTrack?.kind!=='audio'||audioTrack.readyState!=='live'){
+      cleanup('רצועת השמע ששיתפת כבר אינה פעילה. יש לשתף שוב את לשונית הסרטון.','bad');
       return;
     }
-    recentRestartTimes.push(now);
+    const now=Date.now();
+    const quiet=endedForSilence||
+      now-Math.max(lastRecognizedAt,recognitionStartedAt)>8000;
+    const unusuallyShort=now-recognitionStartedAt<3500;
+    endedForSilence=false;
+    // Silence should NOT exhaust the reconnect budget during long quiet scenes.
+    // However, a service that instantly fails repeatedly must still stop.
+    if(!quiet||unusuallyShort){
+      recentRestartTimes=recentRestartTimes.filter(t=>now-t<60000);
+      recentRestartTimes.push(now);
+      const limit=quiet?8:4;
+      if(recentRestartTimes.length>=limit){
+        cleanup('זיהוי הדיבור נסגר שוב ושוב במהירות. עצרתי כדי למנוע לולאה.','bad');
+        return;
+      }
+    }else recentRestartTimes=[];
+    if(quiet)progress.textContent='שקט בסרטון — ממתין לדיבור הבא, בלי להחליף קול.';
     recognitionTimer=setTimeout(()=>{
       recognitionTimer=null;
       if(run!==thisRun||state!=='running'||!recognition)return;
-      try{recognition.start(audioTrack)}
-      catch(_){cleanup('הדפדפן לא הצליח לחדש זיהוי דיבור אחרי הפסקה.','bad')}
-    },1200);
+      if(audioTrack.readyState!=='live'){
+        cleanup('השמע ששיתפת הסתיים, והזיהוי הופסק.','bad');return;
+      }
+      try{
+        recognitionStartedAt=Date.now();
+        recognition.start(audioTrack);
+      }catch(_){cleanup('הדפדפן לא הצליח לחדש זיהוי דיבור מאותה לשונית.','bad')}
+    },quiet?2400:1200);
   }
   async function connectAmbience(thisRun) {
     const c=audioContext=new window.AudioContext({latencyHint:'playback'});
-    await c.audioWorklet.addModule('/dub-worklet.js?v=2026-10-11.6');
+    await c.audioWorklet.addModule('/dub-free-ambience-worklet.js?v=2026-10-11.2');
     if(run!==thisRun||state!=='starting')return;
     input=c.createMediaStreamSource(stream);
-    worklet=new window.AudioWorkletNode(c,'hebrew-dub-capture',{outputChannelCount:[2]});
+    worklet=new window.AudioWorkletNode(c,'hebrew-dub-ambience',{outputChannelCount:[2]});
     background=c.createGain();
     background.gain.value=0;
-    input.connect(worklet);worklet.connect(background);background.connect(c.destination);
+    // Connect the captured audio only while soundtrack is enabled.
+    sourceConnected=false;worklet.connect(background);background.connect(c.destination);
     worklet.port.onmessage=event=>{
       if(run!==thisRun||state==='idle')return;
       if(event.data?.type==='soundLevels'){
@@ -161,7 +226,7 @@
         $('freeSound').textContent='צליל המקור '+(d.channels===1?'מונו':'סטריאו')+
           ' · הרקע המעובד שומר חלק מהמוזיקה והאפקטים, אך ייתכן גם קול אנגלי חלש.';
       }
-      // PCM packets are deliberately discarded: no stream or API upload by this page.
+      // This worklet does not generate PCM buffers at all.
     };
     setAmbience();
     await c.resume();
@@ -184,9 +249,14 @@
               progress.textContent='מוריד חבילת תרגום חד־פעמית: '+Math.round((e.loaded||0)*100)+'%';
           });
         }
+      }).then(t=>{
+        if(run!==thisRun){try{t.destroy()}catch(_){}return null}
+        pendingTranslator=t;
+        return t;
       });
-      // If sharing is canceled, release the model even if its download finishes later.
-      modelPromise.then(t=>{if(run!==thisRun)try{t.destroy()}catch(_){}},()=>{});
+      // The tab picker may remain open after a download failure.
+      // Attach a rejection handler immediately to avoid an unhandled promise.
+      modelPromise.catch(()=>{});
       capturePromise=navigator.mediaDevices.getDisplayMedia({
         video:{displaySurface:'browser',frameRate:1},
         audio:{suppressLocalAudioPlayback:true},
@@ -207,8 +277,9 @@
       });
       report('לשונית נבחרה. מכין את התרגום והקול העברי…');
       const t=await modelPromise;
-      if(run!==thisRun||state!=='starting'){try{t.destroy()}catch(_){}return}
-      translator=t;
+      if(run!==thisRun||state!=='starting')return;
+      if(!t){cleanup('תרגום העברית לא הוכן.','bad');return}
+      translator=t;pendingTranslator=null;
       await connectAmbience(thisRun);
       if(run!==thisRun||state!=='starting')return;
       lockedVoice=chooseVoice();
@@ -219,14 +290,21 @@
       recognition.onerror=e=>{
         if(run!==thisRun||state==='idle')return;
         const code=String(e?.error||'');
+        if(code==='no-speech'){
+          endedForSilence=true;
+          progress.textContent='אין כרגע דיבור בסרטון; ממשיך להמתין לקריינות באנגלית.';
+          return;
+        }
         if(['not-allowed','service-not-allowed','audio-capture','language-not-supported'].includes(code))
           cleanup('זיהוי השמע נחסם על ידי הדפדפן ('+code+'). לא ננסה שוב אוטומטית.','bad');
         else if(code==='network')
           cleanup('שירות זיהוי הדיבור של הדפדפן אינו זמין כרגע. לא ננסה שוב ושוב.','bad');
+        else cleanup('תקלה בזיהוי הדיבור ('+(code||'unknown')+'). עצרתי במקום לנסות שוב ושוב.','bad');
       };
       recognition.onend=()=>resumeRecognition(thisRun,audio);
       // Never call .start() without the selected audioTrack: that would
       // switch to microphone capture on browsers that support the overload.
+      recognitionStartedAt=Date.now();
       recognition.start(audio);
       state='running';begunAt=Date.now();
       voiceInfo.textContent='קול נעול לכל ההפעלה: '+lockedVoice.name;
