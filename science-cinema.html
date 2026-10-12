@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="theme-color" content="#091625">
+<meta name="description" content="מדע קולנועי לימים קשים: פיזיקה, כימיה, חלל וטבע בסדר כרונולוגי, עם נגן וידאו בתוך האתר ומעבר אוטומטי.">
+<title>המדע כמו סרט · קולנוע לשיא הכאב</title>
+<style>
+:root{color-scheme:dark;--bg:#08131f;--card:#15273a;--line:#365469;--ink:#f1f8ff;--muted:#bac9d7;--accent:#a7f3d4}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(#112846,#07131f 55%);color:var(--ink);font:16px/1.55 Arial,system-ui,sans-serif}button,a{font:inherit}button{cursor:pointer}a{color:#c4ffe7}button:focus-visible,a:focus-visible{outline:3px solid #fff;outline-offset:3px}.wrap{max-width:1000px;margin:0 auto;padding:0 16px}
+header{border-bottom:1px solid #4a6474;padding:20px 0 18px;background:radial-gradient(circle at 8% 5%,#387c7370,transparent 49%)}h1{font-size:clamp(27px,5vw,44px);line-height:1.2;margin:6px 0}header p{margin:6px 0 14px;max-width:780px;color:#dde9f6}.nav{display:flex;gap:7px;flex-wrap:wrap;font-size:13px}.nav a{display:inline-block;text-decoration:none;padding:9px 12px;background:#20384f;border:1px solid #497287;border-radius:10px}.tag{color:var(--accent);font-size:12px;font-weight:700}
+main{padding-top:14px;padding-bottom:40px}.notice{font-size:13px;color:#d0e3f4;margin:0 0 15px}.player-area{border:1px solid #44627c;border-radius:17px;background:#07111c;overflow:hidden;box-shadow:0 13px 42px #0006}.player{position:relative;width:100%;aspect-ratio:16/9;background:#01050b}.player iframe{width:100%;height:100%;position:absolute;inset:0;border:0}.loading{position:absolute;inset:0;display:grid;place-items:center;text-align:center;color:#c6d5e6;padding:20px}.current{padding:15px}.eyebrow{font-size:12px;color:#a7f3d4;font-weight:700}.current h2{font-size:22px;margin:4px 0 5px}.current p{margin:0;color:#d7e4ef;font-size:14px}.status{font-size:12px;color:#f5d99e;min-height:18px;margin-top:10px}
+.controls{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.controls button,.filter{background:#24425b;border:1px solid #5d849e;color:white;border-radius:12px;padding:10px 14px;min-height:45px;font-weight:700}.controls button.primary{background:#a7f3d4;border-color:#a7f3d4;color:#092b29}.controls button.on{background:#2c665a;border-color:#a7f3d4}.filters{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0 13px}.filter[aria-pressed="true"]{background:#2b786e;border-color:#b3ffee}.filter.emphasis{background:#54452b;border-color:#efdfaa}.filter.emphasis[aria-pressed="true"]{background:#7a6231}
+.headrow{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}h3{font-size:19px;margin:8px 0}#count{color:var(--muted);font-size:12px}.playlist{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}.item{width:100%;display:flex;gap:10px;align-items:center;text-align:right;background:#14283b;border:1px solid #38536a;border-radius:14px;color:inherit;padding:10px;min-height:109px}.item.active{background:#164539;border:2px solid #a7f3d4}.item img{width:112px;aspect-ratio:16/9;object-fit:cover;border-radius:9px;background:#09131d;flex-shrink:0}.item .text{min-width:0}.item b{display:block;font-size:15px;line-height:1.3}.item small{display:block;color:#bdd2df;font-size:12px;margin-top:4px}.item .light{color:#ffe3aa}.pagebar{display:flex;align-items:center;justify-content:center;gap:12px;margin:16px 0}.pagebar button{background:#284963;border:1px solid #49758a;border-radius:11px;color:white;padding:9px 13px;min-height:43px}footer{color:#b4c5d3;font-size:12px;padding:20px 0;text-align:center;border-top:1px solid #335065}
+@media(max-width:700px){.playlist{grid-template-columns:1fr}.item{min-height:101px}.item img{width:102px}header{padding-top:16px}main{padding-top:10px}.current h2{font-size:19px}.controls button{flex:1}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+<div class="tag">🎬 מדע קולנועי · נגן בתוך האתר</div>
+<h1>לטייל ביקום, בלי להתאמץ</h1>
+<p>סרטוני פיזיקה, כימיה, חלל ומדע לפי התפתחות היקום. כמה שיותר תמונות, צבע, תנועה ופליאה — וכמה שפחות צורך לחשוב. מתאים להסחת דעת גם כשקשה להתרכז.</p>
+<div class="nav"><a href="/cinema.html">🎞️ הקולנוע הכללי</a><a href="/">🏠 המסלול הלימודי</a><a href="/dub-free.html">🎧 דיבוב עברי חינמי</a></div>
+</div></header>
+<main class="wrap">
+<p class="notice">לוחצים פעם אחת על ״הפעל״; אחר כך הנגן מנסה לעבור אוטומטית לסרט הבא. הכול מנוגן באותו עמוד, בלי לפתוח את YouTube. ההפעלה תלויה בהרשאות של בעלי הסרטונים ובדפדפן.</p>
+<section class="player-area" aria-label="נגן המדע">
+<div class="player"><div id="youtube-player"></div><div id="loading" class="loading">מכין את הנגן…</div></div>
+<div class="current">
+<div class="eyebrow" id="phase"></div>
+<h2 id="heading"></h2><p id="about"></p>
+<div class="controls">
+<button type="button" id="previous">⏮ הקודם</button>
+<button type="button" id="play" class="primary">▶ הפעל</button>
+<button type="button" id="next">⏭ הבא</button>
+<button type="button" id="auto" class="on" aria-pressed="true">🔁 רצף אוטומטי פעיל</button>
+</div>
+<div id="status" class="status" role="status" aria-live="polite"></div>
+</div></section>
+<div class="filters" role="group" aria-label="בחר סוג צפייה">
+<button type="button" class="filter" data-mode="all" aria-pressed="true">🌌 הכול לפי הסדר</button>
+<button type="button" class="filter emphasis" data-mode="easy" aria-pressed="false">💛 כשהכאב בשיא</button>
+<button type="button" class="filter" data-mode="visual" aria-pressed="false">🌄 הכי חזותי</button>
+</div>
+<div class="headrow"><h3>הפרקים במסלול</h3><span id="count"></span></div>
+<div class="playlist" id="playlist"></div>
+<div class="pagebar"><button id="p-prev" type="button">→ קודמים</button><span id="p-label"></span><button id="p-next" type="button">הבאים ←</button></div>
+</main><footer>נגן YouTube רשמי בתוך האתר · ללא הורדות או עותקים לא מורשים · הצפייה נועדה להסחת דעת ואינה תחליף לטיפול בכאב</footer>
+<script>
+const videos=[{"id":"QTQVZuBV9oA","title":"היקום כולו בעשר דקות","en":"TIMELAPSE OF THE UNIVERSE (Remastered)","who":"melodysheep","phase":"🌌 תחילת היקום","note":"חוויה קולנועית מהמפץ הגדול ועד החיים; מוזיקה, תנועה ומראות עצומים.","ease":0,"quiet":false,"duration":"כ־10 דקות"},{"id":"yQP4UJhNn0I","title":"כמה קטן הוא אטום?","en":"Just How Small Is an Atom?","who":"TED-Ed","phase":"⚛️ אטומים וחלקיקים","note":"אנימציה קלילה עם השוואות מפתיעות לגודלו של האטום.","ease":1,"quiet":false,"duration":"כ־5 דקות"},{"id":"dgqHFpP1w2k","title":"מה זה בעצם אלקטרון?","en":"What Is an Electron?","who":"ACS Reactions","phase":"⚛️ אטומים וחלקיקים","note":"תשובות מפתיעות על החלקיק שמניע כימיה, חשמל ואור.","ease":2,"quiet":false,"duration":"קצר"},{"id":"fkWrjrdT3Zg","title":"לטוס לתוך ערפילית אוריון","en":"Flight Through Orion Nebula","who":"NASA","phase":"⭐ הכוכבים נולדים","note":"טיסה מרהיבה בין ענני גז ואבק בצילומי טלסקופים ובשחזור תלת־ממדי.","ease":0,"quiet":true,"duration":"קצר"},{"id":"2bm479V8qPs","title":"למה אנחנו עשויים מאבק כוכבים?","en":"Why We Are Made of Star Stuff","who":"ACS Reactions","phase":"⭐ כוכבים ויסודות","note":"כיצד כוכבים יוצרים את היסודות המרכיבים אותנו.","ease":1,"quiet":false,"duration":"קצר"},{"id":"Jh_O5JP10aQ","title":"כימיה מפתיעה במעמקי החלל","en":"Complex Chemistry in Space","who":"ACS Reactions","phase":"🧪 מולקולות ראשונות","note":"היכן נוצרות מולקולות מורכבות הרבה לפני שהיו כאן חיים.","ease":2,"quiet":false,"duration":"קצר"},{"id":"RT4OO0TFLHw","title":"איך נוצרה מערכת השמש?","en":"The Solar System's Formation","who":"NASA Space Place","phase":"🪐 מערכת השמש","note":"אנימציה פשוטה על לידת השמש והכוכבים המקיפים אותה.","ease":0,"quiet":false,"duration":"קצר"},{"id":"i7mZBaleCFE","title":"מה השמש עושה לכדור הארץ?","en":"What Could An Explosion On the Sun Do Here On Earth?","who":"ACS Reactions","phase":"☀️ אנרגיה ופיזיקה","note":"מבט חזותי על הפעילות העוצמתית של השמש והשפעתה עלינו.","ease":2,"quiet":false,"duration":"קצר"},{"id":"6xgBSQwqAuE","title":"הקסם הפיזיקלי של הצבעים","en":"How Color Works","who":"ACS Reactions","phase":"🌈 אור וצבע","note":"אור, אלקטרונים וצבע — הרבה תמונות וצבעים בוהקים.","ease":1,"quiet":false,"duration":"קצר"},{"id":"nPHegSulI_M","title":"הכימיה של זיקוקים","en":"The Chemistry of Fireworks","who":"ACS Reactions","phase":"🎆 כימיה שאפשר לראות","note":"צבעים, זיקוקים ואפקטים — כימיה בתנועה.","ease":0,"quiet":false,"duration":"קצר"},{"id":"c3VVUsuowNM","title":"פרחים זוהרים בחושך","en":"How to Grow Fluorescent Flowers","who":"ACS Reactions","phase":"🌸 כימיה והחיים","note":"ניסוי מצולם וצבעוני עם פרחים פלואורסצנטיים.","ease":0,"quiet":false,"duration":"קצר"},{"id":"uD4izuDMUQA","title":"מסע אל סוף הזמן","en":"TIMELAPSE OF THE FUTURE","who":"melodysheep","phase":"🚀 עתיד היקום","note":"סרט מדע קולנועי יפהפה וארוך על עתיד היקום; עלול לעורר תחושה מלנכולית.","ease":2,"quiet":false,"duration":"כ־29 דקות"}];
+const PAGE_SIZE=6;
+let mode='all',page=0,current=0,player=null,auto=true,ready=false,loading=false;
+const $=id=>document.getElementById(id);
+const filtered=()=>videos.map((v,i)=>i).filter(i=>mode==='all'||(mode==='easy'&&videos[i].ease===0)||(mode==='visual'&&videos[i].ease<=1));
+const selected=()=>videos[current];
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function render(){
+const v=selected(),indices=filtered();$('phase').textContent=v.phase+' · '+v.who;
+$('heading').textContent=v.title;$('about').textContent=v.note;
+if(!indices.includes(current)){current=indices[0]??0;return render();}
+const max=Math.max(0,Math.ceil(indices.length/PAGE_SIZE)-1);
+page=Math.min(max,Math.max(0,page));
+const items=indices.slice(page*PAGE_SIZE,(page+1)*PAGE_SIZE);
+$('playlist').innerHTML=items.map(i=>{const x=videos[i];return '<button type="button" class="item'+(i===current?' active':'')+'" data-i="'+i+'" aria-pressed="'+(i===current)+'"><img loading="lazy" decoding="async" alt="" src="https://i.ytimg.com/vi/'+encodeURIComponent(x.id)+'/mqdefault.jpg"><span class="text"><b>'+esc((i+1)+'. '+x.title)+'</b><small>'+esc(x.phase+' · '+x.who)+'</small><small class="'+(x.ease===0?'light':'')+'">'+(x.ease===0?'💛 קל לצפייה':'◦ דורש מעט ריכוז')+' · '+esc(x.duration)+'</small></span></button>'}).join('');
+$('count').textContent=indices.length+' פרקים';$('p-label').textContent=(page+1)+' מתוך '+(max+1);
+$('p-prev').disabled=page===0;$('p-next').disabled=page===max;
+}
+function navigate(i,play=true){const arr=filtered();if(!arr.length)return;const idx=arr.indexOf(i);if(idx<0)return;current=i;page=Math.floor(idx/PAGE_SIZE);render();$('status').textContent='';
+if(ready&&player){try{if(play)player.loadVideoById(selected().id);else player.cueVideoById(selected().id)}catch(e){$('status').textContent='אפשר ללחוץ שוב על הפעל.'}}}
+function step(delta){const arr=filtered();const p=arr.indexOf(current);navigate(arr[(p+delta+arr.length)%arr.length],true)}
+$('playlist').addEventListener('click',e=>{const b=e.target.closest('button[data-i]');if(b)navigate(Number(b.dataset.i))});
+$('previous').addEventListener('click',()=>step(-1));$('next').addEventListener('click',()=>step(1));
+$('play').addEventListener('click',()=>{if(ready&&player){player.playVideo()}else{$('status').textContent='הנגן עדיין נטען. אפשר ללחוץ שוב כשמופיע הסרט.'}});
+$('auto').addEventListener('click',()=>{auto=!auto;$('auto').classList.toggle('on',auto);$('auto').setAttribute('aria-pressed',String(auto));$('auto').textContent=auto?'🔁 רצף אוטומטי פעיל':'⏸ רצף אוטומטי כבוי'});
+document.querySelector('.filters').addEventListener('click',e=>{const b=e.target.closest('button[data-mode]');if(!b)return;mode=b.dataset.mode;page=0;document.querySelectorAll('[data-mode]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));let arr=filtered();if(!arr.includes(current))navigate(arr[0],false);else{page=Math.floor(arr.indexOf(current)/PAGE_SIZE);render()}});
+$('p-prev').addEventListener('click',()=>{page--;render()});$('p-next').addEventListener('click',()=>{page++;render()});
+window.onYouTubeIframeAPIReady=function(){try{player=new YT.Player('youtube-player',{width:'100%',height:'100%',videoId:selected().id,playerVars:{playsinline:1,rel:0,origin:location.origin,cc_load_policy:1},events:{onReady:()=>{ready=true;$('loading').remove();$('status').textContent='מוכן לצפייה';},onStateChange:e=>{if(e.data===YT.PlayerState.ENDED&&auto)step(1)},onError:e=>{const n=e.data;$('status').textContent='הסרטון אינו זמין לניגון כאן (קוד '+n+'). '+(auto?'עובר לסרט הבא.':'בחר סרט אחר.');if(auto)window.setTimeout(()=>step(1),1300)}}});}catch(e){$('status').textContent='הנגן לא נטען כרגע; אפשר לנסות לרענן את הדף.'}};
+render();
+const script=document.createElement('script');script.src='https://www.youtube.com/iframe_api';script.async=true;script.onerror=()=>{$('status').textContent='לא ניתן לטעון את הנגן כעת. נסה שוב כשהחיבור תקין.'};document.head.appendChild(script);
+</script>
+</body></html>
