@@ -18,7 +18,7 @@
   // Browser remote voices may send text to the browser's speech provider.
   const tts=window.speechSynthesis||null;
   let browserHebrewVoice=null,lockedVoiceId='',ttsText='',ttsTimer=null,ttsWatchdog=null;
-  let speechQueue=[],speechBusy=false,speechEpoch=0,voiceModeChosen=false,lastTtsFrame='',lastTtsFrameAt=0;
+  let speechQueue=[],speechBusy=false,speechEpoch=0,voiceModeChosen=false,lastTtsFrame='',lastTtsFrameAt=0,ttsStalls=0;
   const voiceId=v=>String(v.voiceURI||v.name+'|'+v.lang);
   const usingSystemVoice=()=>Boolean(tts&&browserHebrewVoice&&$('voiceMode').value==='system');
   function refreshHebrewVoice(){
@@ -51,7 +51,7 @@
     // overwrite a newer utterance's busy state.
     ++speechEpoch;
     clearTimeout(ttsTimer);ttsTimer=null;clearTimeout(ttsWatchdog);ttsWatchdog=null;
-    ttsText='';speechQueue=[];speechBusy=false;lastTtsFrame='';lastTtsFrameAt=0;
+    ttsText='';speechQueue=[];speechBusy=false;lastTtsFrame='';lastTtsFrameAt=0;ttsStalls=0;
     if(tts){try{tts.cancel()}catch(_){}}
   }
   function revertToGoogleAudio(message){
@@ -77,12 +77,29 @@
     utter.onstart=()=>{
       if(!isCurrent())return;
       started=true;clearTimeout(ttsWatchdog);ttsWatchdog=null;
+      // Some browser TTS engines fire onstart but never onend. Bound the
+      // wait by speech length, then release the queue without changing voice.
+      const speechLimitMs=Math.max(12000,Math.min(45000,12000+phrase.length*260));
+      ttsWatchdog=setTimeout(()=>{
+        if(!isCurrent()||finished||!speechBusy||!usingSystemVoice())return;
+        finished=true;
+        ++speechEpoch; // Ignore late onerror/onend from the canceled utterance.
+        clearTimeout(ttsWatchdog);ttsWatchdog=null;
+        try{tts.cancel()}catch(_){}
+        speechBusy=false;
+        if(++ttsStalls>=2){
+          revertToGoogleAudio('הקריין הקבוע נתקע פעמיים. עברתי לקול Google כדי למנוע שקט ממושך.');
+          return;
+        }
+        setStatus('הקול הקבוע נתקע והופעל מחדש באותו קול עברי.','neutral');
+        speakNext(thisRun);
+      },speechLimitMs);
       if(!heardAudio&&runId===thisRun&&state!=='idle'){
         heardAudio=true;
         setStatus('הקריינות העברית בקול הקבוע מתנגנת. אותו קול נשמר גם אחרי שתיקה.','good');
       }
     };
-    utter.onend=finish;
+    utter.onend=()=>{if(!isCurrent())return;ttsStalls=0;finish();};
     utter.onerror=()=>{
       // Ignore onerror emitted by speechSynthesis.cancel() on interruption.
       if(!isCurrent())return;
