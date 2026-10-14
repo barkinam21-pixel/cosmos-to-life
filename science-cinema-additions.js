@@ -330,6 +330,9 @@
   // NASA SVS 4565: full narrated visualization, not a trailer; sampled 2026-10-14.
   additions.push(["cimZGu5GadQ",{"id":"aWqjqLFmQnA","title":"כדור הארץ נושם · מסע צבעוני בעקבות הפחמן באטמוספרה","en":"Seasonal Changes in Carbon Dioxide","who":"NASA Goddard · Scientific Visualization Studio","phase":"🌎 אקלים · הפחמן נע סביב כדור הארץ","note":"הדמיה תלת־ממדית עטורת פרסים של NASA: ענני פחמן דו־חמצני צבעוניים זורמים עם הרוחות סביב כדור הארץ, והצמחייה משנה את הריכוז שלהם בין עונות השנה. בליווי קריינות.","ease":1,"quiet":false,"duration":"אנימציה מוסברת","bridge":"אחרי שלמדנו כיצד פחמן דו־חמצני משפיע על החום, נראה איך הרוחות מפזרות אותו בעולם ואיך הצמחים קולטים אותו."}]);
   Object.assign(bridges,{"zauJQzti7FQ":"כשראינו איך הפחמן נע באוויר ומשתנה עם העונות, נרד אל הים ונראה כיצד הזרמים קולטים ומסיעים אותו ואת החום."});
+  // Complete 63-minute original Kurzgesagt animated science film (2023-11-10).
+  additions.push(["2oKYXKKf28g",{"id":"S7TUe5w6RHo","title":"4.5 מיליארד שנה בשעה · מסע האנימציה המלא של כדור הארץ","en":"4.5 Billion Years in 1 Hour","who":"Kurzgesagt – In a Nutshell","phase":"🌍 תולדות כדור הארץ והחיים · סרט מוזיקלי מלא","note":"שעה של אנימציה יפהפייה, מוזיקה וציר זמן מ־4.5 מיליארד שנה ועד ימינו; כל שנייה מדלגת על כמיליון שנה. מסע כמעט ללא צורך בריכוז.","ease":0,"quiet":true,"duration":"כ־63 דקות · סרט אנימציה מוזיקלי מלא","bridge":"אחרי שראינו את מאגרי המים של כדור הארץ, נצא למסע רצוף בזמן: מהיווצרות העולם ועד התפתחות החיים."}]);
+  Object.assign(bridges,{"uCVnRIP3pIk":"אחרי שקיבלנו תמונה מוזיקלית רחבה של כל תולדות כדור הארץ, נחזור אל ראשית החיים ונבין איך התחילו."});
   const currentId=videos[current]?.id;
   for(const [after,v] of additions){
     if(videos.some(x=>x.id===v.id))continue;
