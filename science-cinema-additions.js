@@ -322,6 +322,10 @@
   const exceptionalMoon20261014=[["63-v6-O4Vmw",{"id":"XrqsxQCOFlw","title":"הירח: סימפוניה של אור וצל · יצירת NASA","en":"Cosmic Cycles 4: The Moon","who":"NASA Goddard · Cosmic Cycles","phase":"🌕 הירח · אור, צל ונופי חלל","note":"כ־10 דקות של טיסה בין מכתשים ומישורי ירח, תצלומי אפולו 17 ומוזיקה תזמורתית. הפרק הרביעי והחסר בסדרת Cosmic Cycles של NASA.","ease":0,"quiet":true,"duration":"כ־10 דקות · מוזיקה","bridge":"אחרי הגעש והסלעים של כדור הארץ נרחף אל סלעי הירח, לצד מוזיקה ונופים שקטים."}]];
   additions.push(...exceptionalMoon20261014);
   Object.assign(bridges, {"nr5Pj6GQL2o":"אחרי המסע המוזיקלי על הירח, נרד לנופים ולהרים שלו בטיסה מפורטת ב־4K."});
+  // Original NASA Goddard video and official SVS 12740 publisher link, checked 2026-10-14.
+  const exceptionalNeutronStars20261014=[["xHfT8-xlAkE",{"id":"x_Akn8fUBeQ","title":"התנגשות כוכבי נייטרונים · אור וגלי כבידה","en":"Doomed Neutron Stars Create Blast of Light and Gravitational Waves","who":"NASA Goddard · Scientific Visualization Studio","phase":"💥 כוכבים, כבידה ויסודות כבדים","note":"42 שניות של אנימציה צבעונית עם מוזיקה: שתי ליבות כוכבים מתנגשות, ופולטות גלי כבידה, הבזקי אור וענני חומר עשירים ביסודות כבדים.","ease":0,"quiet":true,"duration":"42 שניות · אנימציה מוזיקלית","bridge":"אחרי שראינו מה נשאר מכוכב שהתפוצץ, נראה מה קורה כששתי ליבות דחוסות של כוכבים מתמזגות."}]];
+  additions.push(...exceptionalNeutronStars20261014);
+  Object.assign(bridges, {"2bm479V8qPs":"מההתנגשות שפיזרה חומר ובו יסודות כבדים, נעבור לסיפור המקור הקוסמי של היסודות שמרכיבים אותנו."});
   const currentId=videos[current]?.id;
   for(const [after,v] of additions){
     if(videos.some(x=>x.id===v.id))continue;
