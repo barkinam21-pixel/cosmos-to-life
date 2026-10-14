@@ -326,6 +326,10 @@
   const exceptionalNeutronStars20261014=[["xHfT8-xlAkE",{"id":"x_Akn8fUBeQ","title":"התנגשות כוכבי נייטרונים · אור וגלי כבידה","en":"Doomed Neutron Stars Create Blast of Light and Gravitational Waves","who":"NASA Goddard · Scientific Visualization Studio","phase":"💥 כוכבים, כבידה ויסודות כבדים","note":"42 שניות של אנימציה צבעונית עם מוזיקה: שתי ליבות כוכבים מתנגשות, ופולטות גלי כבידה, הבזקי אור וענני חומר עשירים ביסודות כבדים.","ease":0,"quiet":true,"duration":"42 שניות · אנימציה מוזיקלית","bridge":"אחרי שראינו מה נשאר מכוכב שהתפוצץ, נראה מה קורה כששתי ליבות דחוסות של כוכבים מתמזגות."}]];
   additions.push(...exceptionalNeutronStars20261014);
   Object.assign(bridges, {"2bm479V8qPs":"מההתנגשות שפיזרה חומר ובו יסודות כבדים, נעבור לסיפור המקור הקוסמי של היסודות שמרכיבים אותנו."});
+  // NASA Science publisher embeds https://www.youtube.com/embed/aWqjqLFmQnA (resource: seasonal-changes-in-carbon-dioxide).
+  // NASA SVS 4565: full narrated visualization, not a trailer; sampled 2026-10-14.
+  additions.push(["cimZGu5GadQ",{"id":"aWqjqLFmQnA","title":"כדור הארץ נושם · מסע צבעוני בעקבות הפחמן באטמוספרה","en":"Seasonal Changes in Carbon Dioxide","who":"NASA Goddard · Scientific Visualization Studio","phase":"🌎 אקלים · הפחמן נע סביב כדור הארץ","note":"הדמיה תלת־ממדית עטורת פרסים של NASA: ענני פחמן דו־חמצני צבעוניים זורמים עם הרוחות סביב כדור הארץ, והצמחייה משנה את הריכוז שלהם בין עונות השנה. בליווי קריינות.","ease":1,"quiet":false,"duration":"אנימציה מוסברת","bridge":"אחרי שלמדנו כיצד פחמן דו־חמצני משפיע על החום, נראה איך הרוחות מפזרות אותו בעולם ואיך הצמחים קולטים אותו."}]);
+  Object.assign(bridges,{"zauJQzti7FQ":"כשראינו איך הפחמן נע באוויר ומשתנה עם העונות, נרד אל הים ונראה כיצד הזרמים קולטים ומסיעים אותו ואת החום."});
   const currentId=videos[current]?.id;
   for(const [after,v] of additions){
     if(videos.some(x=>x.id===v.id))continue;
