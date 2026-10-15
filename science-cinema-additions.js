@@ -760,6 +760,656 @@
   ]
 ];
   additions.push(...scienceCinemaContinuation20261015);
+
+  // 2026-10-15: verified official creator uploads; chronological, independently anchored physics learning path.
+  const physicsBasics20261015=[
+  [
+    "PUn2izowBkw",
+    {
+      "id": "ZM8ECpBuQYE",
+      "title": "איך מתארים תנועה? מהירות, מרחק ותאוצה",
+      "en": "Motion in a Straight Line: Crash Course Physics #1",
+      "who": "CrashCourse · סדרת Physics המקורית",
+      "phase": "⚙️ יסודות: תנועה ומהירות",
+      "note": "הקדמה עם אנימציות של מהירות, תאוצה, זמן ומרחק. כולל נוסחאות פשוטות.",
+      "ease": 1,
+      "quiet": false,
+      "duration": "כ־11 דקות",
+      "bridge": "מן השאלה מהי אנרגיה מתחילים להבין כיצד פיזיקאים מתארים תנועה."
+    }
+  ],
+  [
+    "ZM8ECpBuQYE",
+    {
+      "id": "w3BhzYI6zXU",
+      "title": "תנועה לשני כיוונים: חצים, וקטורים וכדורים מעופפים",
+      "en": "Vectors and 2D Motion: Crash Course Physics #4",
+      "who": "CrashCourse · סדרת Physics המקורית",
+      "phase": "↗️ יסודות: כיוונים ווקטורים",
+      "note": "איך מחברים מהירויות וכיוונים באמצעות חצים וסיפור של תנועת כדור.",
+      "ease": 1,
+      "quiet": false,
+      "duration": "כ־10 דקות",
+      "bridge": "ממהירות בקו ישר נעבור לתנועה בשני ממדים."
+    }
+  ],
+  [
+    "w3BhzYI6zXU",
+    {
+      "id": "kKKM8Y-u7ds",
+      "title": "שלושת חוקי ניוטון באנימציה",
+      "en": "Newton's Laws: Crash Course Physics #5",
+      "who": "CrashCourse · סדרת Physics המקורית",
+      "phase": "🧲 יסודות: כוח ותאוצה",
+      "note": "הסבר אנימטיבי לחוקי התנועה ולנוסחה F=ma, כולל דוגמאות מציאותיות.",
+      "ease": 1,
+      "quiet": false,
+      "duration": "כ־11 דקות",
+      "bridge": "עכשיו נגלה מה גורם למהירות להשתנות: הכוחות."
+    }
+  ],
+  [
+    "kKKM8Y-u7ds",
+    {
+      "id": "Ixf9ZyZaE9Q",
+      "title": "חוקי התנועה של ניוטון ומעבר להם · סרט תלת־ממד",
+      "en": "Physics: Laws of Motion - Newton and Beyond",
+      "who": "Physics Videos by Eugene Khutoryansky · אנימציית תלת־ממד מקורית",
+      "phase": "🧲 יסודות: כוחות וחוקי תנועה",
+      "note": "מסע איטי ומוחשי יותר עם הדמיות תלת־ממד, ניוטון, סיבוב, נוזלים ותנועה.",
+      "ease": 1,
+      "quiet": false,
+      "duration": "כ־26 דקות",
+      "bridge": "נרחיב את חוקי ניוטון להסבר חזותי וארוך."
+    }
+  ],
+  [
+    "Ixf9ZyZaE9Q",
+    {
+      "id": "fo_pmp5rtzo",
+      "title": "חיכוך: מה באמת עוצר תנועה?",
+      "en": "Friction: Crash Course Physics #6",
+      "who": "CrashCourse · סדרת Physics המקורית",
+      "phase": "🛞 יסודות: חיכוך וכוחות",
+      "note": "ממחיש חיכוך סטטי ודינמי, תנועה על מדרון והופעת חום.",
+      "ease": 1,
+      "quiet": false,
+      "duration": "כ־11 דקות",
+      "bridge": "לאחר הכוחות שמאיצים עצמים, נגלה מה מאט אותם."
+    }
+  ],
+  [
+    "fo_pmp5rtzo",
+    {
+      "id": "CgqciTreGWY",
+      "title": "כוחות, אנרגיה ותנועה · ניסויים גדולים",
+      "en": "Energy, Forces and Movement | FULL EPISODE COMPILATION | Science Max",
+      "who": "Science Max – Scholastic · אוסף פרקים רשמי",
+      "phase": "🎪 יסודות: ניסויים מוחשיים וגדולים",
+      "note": "אוסף פרקים עם ניסויי תנועה וכוחות מוגדלים, מתאים במיוחד לצפייה בלי נוסחאות.",
+      "ease": 0,
+      "quiet": true,
+      "duration": "אוסף פרקים ארוך",
+      "bridge": "אחרי ההסבר על חיכוך נצפה בכוחות בפעולה במתקני ניסוי גדולים."
+    }
+  ],
+  [
+    "CgqciTreGWY",
+    {
+      "id": "7gf6YpdvtE0",
+      "title": "כוח הכבידה של ניוטון · תפוחים, מסלולים ומשיכה",
+      "en": "Newtonian Gravity: Crash Course Physics #8",
+      "who": "CrashCourse · סדרת Physics המקורית",
+      "phase": "🌍 יסודות: כבידה",
+      "note": "הסבר קל עם אנימציות לקשר בין מסה, מרחק וכוח המשיכה.",
+      "ease": 1,
+      "quiet": false,
+      "duration": "כ־9 דקות",
+      "bridge": "מן התנועה על הארץ נעבור לכוח שמחזיק אותנו עליה."
+    }
+  ],
+  [
+    "7gf6YpdvtE0",
+    {
+      "id": "w4QFJb9a8vo",
+      "title": "עבודה, אנרגיה קינטית, אנרגיה פוטנציאלית והספק",
+      "en": "Work, Energy, and Power: Crash Course Physics #9",
+      "who": "CrashCourse · סדרת Physics המקורית",
+      "phase": "⚡ יסודות: עבודה, אנרגיה והספק",
+      "note": "אחד מפרקי המפתח: W=Fd, אנרגיה של תנועה, אנרגיה אגורה, שימור אנרגיה והספק.",
+      "ease": 1,
+      "quiet": false,
+      "duration": "כ־10 דקות",
+      "bridge": "מן הכבידה נעבור לשאלה איך כוח שמעביר גוף מרחק משנה את האנרגיה שלו."
+    }
+  ],
+  [
+    "w4QFJb9a8vo",
+    {
+      "id": "GfuExrKA6Es",
+      "title": "אנרגיה בחיי היומיום · מרתון ענק של ניסויים",
+      "en": "Science Max | Energy In Our Lives | FULL EPISODE COMPILATION",
+      "who": "Science Max – Scholastic · אוסף פרקים רשמי",
+      "phase": "🎢 אנרגיה: גומיות, שיגור, מגנטים ומכונות",
+      "note": "אוסף פרקים מקורי של ניסויי אנרגיה: מכונית רקטה, אנרגיה אלסטית, ריחוף מגנטי, לחץ ומכונות.",
+      "ease": 0,
+      "quiet": true,
+      "duration": "מעל שעתיים",
+      "bridge": "מיד אחרי העבודה והאנרגיה בתיאוריה נראה אנרגיה אגורה הופכת לתנועה בניסויים גדולים."
+    }
+  ],
+  [
+    "GfuExrKA6Es",
+    {
+      "id": "Y-QOfc2XqOk",
+      "title": "התנגשויות ותנע: מה נשמר כשגופים נפגשים?",
+      "en": "Collisions: Crash Course Physics #10",
+      "who": "CrashCourse · סדרת Physics המקורית",
+      "phase": "🎱 יסודות: תנע והתנגשויות",
+      "note": "המחשות כדורים והתנגשויות, מסה, תנע ואימפולס; משוואות בהסבר ברור.",
+      "ease": 1,
+      "quiet": false,
+      "duration": "כ־9 דקות",
+      "bridge": "מהעברת אנרגיה בין צורות נעבור להתנגשויות המעבירות תנע."
+    }
+  ],
+  [
+    "Y-QOfc2XqOk",
+    {
+      "id": "PNHSIEO-KOQ",
+      "title": "תנע ותנע זוויתי · תלת־ממד",
+      "en": "Momentum and Angular Momentum of the Universe",
+      "who": "Physics Videos by Eugene Khutoryansky · אנימציית תלת־ממד מקורית",
+      "phase": "🌀 יסודות: שימור התנע",
+      "note": "סיפור מצויר של תנע קווי וסיבובי, ומשמעות השימור של תנועה בכל היקום.",
+      "ease": 1,
+      "quiet": false,
+      "duration": "כ־11 דקות",
+      "bridge": "אחרי התנגשויות נראה איך שימור התנע עובד בעולם שלם."
+    }
+  ],
+  [
+    "PNHSIEO-KOQ",
+    {
+      "id": "b-HZ1SZPaQw",
+      "title": "מהו מומנט? דלתות, גלגלים ומכונות מסתובבות",
+      "en": "Torque: Crash Course Physics #12",
+      "who": "CrashCourse · סדרת Physics המקורית",
+      "phase": "🔧 יסודות: סיבוב ומומנט כוח",
+      "note": "איך כוח יכול לסובב משהו, ומה קובע כמה קל לסובב גוף; משוואות ודוגמאות.",
+      "ease": 1,
+      "quiet": false,
+      "duration": "כ־8 דקות",
+      "bridge": "מהתנע הזוויתי נגיע לכוח שגורם לתנועה סיבובית להשתנות."
+    }
+  ],
+  [
+    "b-HZ1SZPaQw",
+    {
+      "id": "leZX0GpV5W0",
+      "title": "מומנט, מנופים וסיבוב · 17 דקות תלת־ממד",
+      "en": "Torque, Levers, and the Universal Law of Rotation",
+      "who": "Physics Videos by Eugene Khutoryansky · אנימציית תלת־ממד מקורית",
+      "phase": "⚙️ יסודות: מנופים, מומנט וסיבוב",
+      "note": "הסבר חזותי מעמיק למנופים, מומנט, תאוצה זוויתית וכוח.",
+      "ease": 1,
+      "quiet": false,
+      "duration": "כ־17 דקות",
+      "bridge": "כבר ראינו מהו מומנט; כעת נרד אל הגאומטריה של מנופים ומכונות."
+    }
+  ],
+  [
+    "leZX0GpV5W0",
+    {
+      "id": "JSIPr9kcxdA",
+      "title": "איך מטוסים באמת עפים? כוחות האוויר בהדמיית תלת־ממד",
+      "en": "Aerodynamics - How Airplanes Fly, Maneuver, and Land",
+      "who": "Physics Videos by Eugene Khutoryansky · אנימציית תלת־ממד מקורית",
+      "phase": "✈️ יישום: לחץ אוויר, עילוי ותנועה",
+      "note": "הדמיות מוחשיות לזרימת אוויר, עילוי, זווית התקפה ובלימה.",
+      "ease": 0,
+      "quiet": true,
+      "duration": "כ־9 דקות",
+      "bridge": "מהכוחות שמסובבים עצמים נצא אל הכוחות שמרימים מטוס לאוויר."
+    }
+  ],
+  [
+    "YV8TT9LRBrY",
+    {
+      "id": "tuSC0ObB-qY",
+      "title": "איך חום עובר בין דברים?",
+      "en": "The Physics of Heat: Crash Course Physics #22",
+      "who": "CrashCourse · סדרת Physics המקורית",
+      "phase": "🔥 יסודות: חום ואנרגיה פנימית",
+      "note": "מה קורה למולקולות, ואיך הולכת חום, הסעה וקרינה מעבירות אנרגיה.",
+      "ease": 1,
+      "quiet": false,
+      "duration": "כ־9 דקות",
+      "bridge": "מן האש שמפיקה חום נראה כיצד החום מתפזר."
+    }
+  ],
+  [
+    "tuSC0ObB-qY",
+    {
+      "id": "4i1MUWJoI0U",
+      "title": "חוקי התרמודינמיקה: אנרגיה אינה נעלמת",
+      "en": "Thermodynamics: Crash Course Physics #23",
+      "who": "CrashCourse · סדרת Physics המקורית",
+      "phase": "🌡️ יסודות: שימור אנרגיה ואנטרופיה",
+      "note": "מכונות חום, תהליכים ומושג האנטרופיה עם ניסוי צעצוע משעשע.",
+      "ease": 2,
+      "quiet": false,
+      "duration": "כ־10 דקות",
+      "bridge": "מהעברת חום נלמד את הכללים שמגבילים אותה."
+    }
+  ],
+  [
+    "4i1MUWJoI0U",
+    {
+      "id": "GOrWy_yNBvY",
+      "title": "אנרגיה ואנטרופיה · סרט תלת־ממד באורך 36 דקות",
+      "en": "Thermodynamics and the End of the Universe: Energy, Entropy, and the Fundamental Laws of Physics",
+      "who": "Physics Videos by Eugene Khutoryansky · אנימציית תלת־ממד מקורית",
+      "phase": "🌡️ מסע ארוך: אנרגיה קינטית, פוטנציאלית וחום",
+      "note": "מנועי חום, מקררים, חיכוך ושימור אנרגיה בהדמיות תלת־ממד ארוכות. הסיום עוסק בעתיד היקום.",
+      "ease": 1,
+      "quiet": false,
+      "duration": "כ־36 דקות",
+      "bridge": "לאחר הגדרת החוקים נראה אותם עובדים בסימולציות מפורטות."
+    }
+  ],
+  [
+    "GOrWy_yNBvY",
+    {
+      "id": "vE82PDJB8ow",
+      "title": "למה לא ניתן להחזיר את כל האנרגיה השימושית?",
+      "en": "Entropy: Why the 2nd Law of Thermodynamics Is a Fundamental Law of Physics",
+      "who": "Physics Videos by Eugene Khutoryansky · אנימציית תלת־ממד מקורית",
+      "phase": "⌛ יסודות: אנטרופיה ואי־הפיכות",
+      "note": "הדמיות על התפזרות אנרגיה וכיוון תהליכים; מעט יותר מחשבה, בלי להתרכז במשוואות.",
+      "ease": 2,
+      "quiet": false,
+      "duration": "כ־15 דקות",
+      "bridge": "מן התרמודינמיקה נחזור להתמקד באי־ההפיכות של התהליכים."
+    }
+  ],
+  [
+    "zZNbVb0Z_5A",
+    {
+      "id": "TfYCnOvNnFU",
+      "title": "גלים נעים ומעבירים אנרגיה",
+      "en": "Traveling Waves: Crash Course Physics #17",
+      "who": "CrashCourse · סדרת Physics המקורית",
+      "phase": "🌊 יסודות: גלים, אורך גל ותדירות",
+      "note": "משחקי חבלים ואנימציות שממחישים מהירות גל, אמפליטודה ותדירות.",
+      "ease": 1,
+      "quiet": false,
+      "duration": "כ־8 דקות",
+      "bridge": "אחרי הדמיית הגלים בתלת־ממד נראה גל שמתפשט לאורך חבל."
+    }
+  ],
+  [
+    "TfYCnOvNnFU",
+    {
+      "id": "qV4lR9EWGlY",
+      "title": "מהו קול? תנודות, מהירות גל ואפקט דופלר",
+      "en": "Sound: Crash Course Physics #18",
+      "who": "CrashCourse · סדרת Physics המקורית",
+      "phase": "🔊 יסודות: גלים וקול",
+      "note": "איך לחץ משתנה באוויר, מה שומעים, ומה קורה כשהמקור מתקרב או מתרחק.",
+      "ease": 1,
+      "quiet": false,
+      "duration": "כ־10 דקות",
+      "bridge": "מהגל שבחבל לגל שאפשר לשמוע באוויר."
+    }
+  ],
+  [
+    "qV4lR9EWGlY",
+    {
+      "id": "Io-HXZTepH4",
+      "title": "גלים, קול, אור ומהות המציאות · תלת־ממד",
+      "en": "Waves: Light, Sound, and the Nature of Reality",
+      "who": "Physics Videos by Eugene Khutoryansky · אנימציית תלת־ממד מקורית",
+      "phase": "🌊 יסודות: גלים, צליל והשתקפות",
+      "note": "כ־25 דקות תלת־ממד על גלי קול ואור, החזרה ושבירה. בקטע השבירה בסרט המקורי יש תיקון ידוע לסדר הצבעים.",
+      "ease": 1,
+      "quiet": false,
+      "duration": "כ־25 דקות",
+      "bridge": "אחרי הצליל נרחיב את מושג הגל גם לאור."
+    }
+  ],
+  [
+    "6xgBSQwqAuE",
+    {
+      "id": "Oh4m8Ees-3Q",
+      "title": "מסלול קרן אור: מראות ועדשות",
+      "en": "Geometric Optics: Crash Course Physics #38",
+      "who": "CrashCourse · סדרת Physics המקורית",
+      "phase": "🌈 יסודות: אור והחזרה",
+      "note": "המחשה עם מראות וקרני אור; משוואות פשוטות לדרך שבה האור נע.",
+      "ease": 1,
+      "quiet": false,
+      "duration": "כ־10 דקות",
+      "bridge": "מאור וצבע נעבור למסלול של קרני האור."
+    }
+  ],
+  [
+    "Oh4m8Ees-3Q",
+    {
+      "id": "GE-VeEQFqX4",
+      "title": "עדשות, שבירה ואשליות אופטיות בתלת־ממד",
+      "en": "Lenses, Refractions and Optical Illusions of Light",
+      "who": "Physics Videos by Eugene Khutoryansky · אנימציית תלת־ממד מקורית",
+      "phase": "🔍 יסודות: עדשות ושבירה",
+      "note": "סרט אנימציה על עדשות, מעבר אור בין חומרים, היווצרות תמונה ואשליות.",
+      "ease": 1,
+      "quiet": false,
+      "duration": "כ־16 דקות",
+      "bridge": "אחרי מסלול קרני האור נראה כיצד עדשה משנה אותו."
+    }
+  ],
+  [
+    "GE-VeEQFqX4",
+    {
+      "id": "jifqsxLRRWk",
+      "title": "מראות והשתקפויות: למה לבן אינו מראה?",
+      "en": "Mirrors - Why Don't We See Reflections in White Objects?",
+      "who": "Physics Videos by Eugene Khutoryansky · אנימציית תלת־ממד מקורית",
+      "phase": "🪞 יסודות: החזרת אור",
+      "note": "סרטון תלת־ממד שמבדיל בין החזרה מסודרת במראה לפיזור אור בקיר לבן.",
+      "ease": 1,
+      "quiet": false,
+      "duration": "כ־7 דקות",
+      "bridge": "מאור בעדשה נעבור לשאלה למה משטחים שונים משקפים אחרת."
+    }
+  ],
+  [
+    "jifqsxLRRWk",
+    {
+      "id": "IRBfpBPELmE",
+      "title": "למה אור הוא גל? דוגמאות וניסויים",
+      "en": "Light Is Waves: Crash Course Physics #39",
+      "who": "CrashCourse · סדרת Physics המקורית",
+      "phase": "🌈 יסודות: גליות האור",
+      "note": "התאבכות, עקיפה, אורך גל וצבע, עם אנימציות ונוסחאות מלוות.",
+      "ease": 1,
+      "quiet": false,
+      "duration": "כ־10 דקות",
+      "bridge": "אחרי השתקפויות נבדוק את התכונות הגליות של האור."
+    }
+  ],
+  [
+    "IRBfpBPELmE",
+    {
+      "id": "8YkfEft4p-w",
+      "title": "איך אור מקוטב? סרט תלת־ממד",
+      "en": "Polarization of Light",
+      "who": "Physics Videos by Eugene Khutoryansky · אנימציית תלת־ממד מקורית",
+      "phase": "🌈 יסודות: קיטוב וגלי אור",
+      "note": "הדמיות צבעוניות המראות מהו כיוון תנודה בגל אלקטרומגנטי.",
+      "ease": 2,
+      "quiet": false,
+      "duration": "כ־20 דקות",
+      "bridge": "אחרי תכונות הגל נראה שגם לכיוון התנודות יש משמעות."
+    }
+  ],
+  [
+    "8YkfEft4p-w",
+    {
+      "id": "QCX62YJCmGk",
+      "title": "ניסוי צבעוני: אור מסובב בתוך מי סוכר",
+      "en": "This Tests Your Understanding of Light | The Barber Pole Effect",
+      "who": "3Blue1Brown · הדמיות מקוריות",
+      "phase": "🍭 ניסויי אור: קיטוב וצבע",
+      "note": "ניסוי מרהיב של קיטוב אור דרך מי סוכר, ובצידו אנימציות יפות.",
+      "ease": 0,
+      "quiet": true,
+      "duration": "ניסוי והדמיה",
+      "bridge": "מהקיטוב התיאורטי לניסוי צבעוני שנראה כמעט כמו קסם."
+    }
+  ],
+  [
+    "QCX62YJCmGk",
+    {
+      "id": "aXRTczANuIs",
+      "title": "איך מטען מתנדנד יוצר אור? הדמיית גלים",
+      "en": "How Wiggling Charges Give Rise to Light",
+      "who": "3Blue1Brown · הדמיות מקוריות",
+      "phase": "💡 אור וחשמל: גלים ושדות",
+      "note": "סימולציות צבעוניות של שדות חשמליים מתפשטים וגלים אלקטרומגנטיים; מעמיק.",
+      "ease": 2,
+      "quiet": false,
+      "duration": "כ־21 דקות",
+      "bridge": "מהניסוי נבין איך תנודה של מטען יוצרת גל של אור."
+    }
+  ],
+  [
+    "aXRTczANuIs",
+    {
+      "id": "KTzGBJPuJwM",
+      "title": "למה אור נשבר בתוך זכוכית? הדמיית פיינמן",
+      "en": "But Why Would Light 'Slow Down'? | Visualizing Feynman's Lecture on the Refractive Index",
+      "who": "3Blue1Brown · הדמיות מקוריות",
+      "phase": "🔬 אור לעומק: שבירה ומשוואות",
+      "note": "כ־29 דקות של גרפיקה מדויקת על אור, זכוכית, מנסרות ושינויי מופע; מתאים כשיש יותר ריכוז.",
+      "ease": 2,
+      "quiet": false,
+      "duration": "כ־29 דקות",
+      "bridge": "מן הקרינה של מטענים נרד לפיזיקה של שבירה בתוך זכוכית."
+    }
+  ],
+  [
+    "yc2-363MIQs",
+    {
+      "id": "TFlVWf8JX4A",
+      "title": "מטען חשמלי חיובי ושלילי · מה מושך ומה דוחה?",
+      "en": "Electric Charge: Crash Course Physics #25",
+      "who": "CrashCourse · סדרת Physics המקורית",
+      "phase": "⚡ יסודות: מטען וכוח חשמלי",
+      "note": "ניסויי חשמל סטטי, חוק קולון, משיכה ודחייה עם אנימציות.",
+      "ease": 1,
+      "quiet": false,
+      "duration": "כ־10 דקות",
+      "bridge": "אחרי החשמל הסטטי נכיר את המטענים והכוחות ביניהם."
+    }
+  ],
+  [
+    "TFlVWf8JX4A",
+    {
+      "id": "XiHVe8U5PhU",
+      "title": "חשמל, מתח, זרם ומגנטיות באנימציית תלת־ממד",
+      "en": "Voltage, Current, Electricity, Magnetism",
+      "who": "Physics Videos by Eugene Khutoryansky · אנימציית תלת־ממד מקורית",
+      "phase": "⚡ יסודות: מתח, זרם ושדה מגנטי",
+      "note": "הסבר חזותי מחובר אחד על מטען חשמלי, זרם, מתח ומגנטים.",
+      "ease": 1,
+      "quiet": false,
+      "duration": "כ־12 דקות",
+      "bridge": "מן המטען הבודד נעבור לשדה ולזרם שלו בחוט."
+    }
+  ],
+  [
+    "XiHVe8U5PhU",
+    {
+      "id": "ZrMltpK6iAw",
+      "title": "אנרגיה פוטנציאלית חשמלית, מתח וקבלים",
+      "en": "Voltage, Electric Energy, and Capacitors: Crash Course Physics #27",
+      "who": "CrashCourse · סדרת Physics המקורית",
+      "phase": "⚡ יסודות: מתח ואנרגיה אגורה",
+      "note": "משוואות פשוטות לשדה, מתח ואנרגיה בקבל; פרק צפוף יותר.",
+      "ease": 2,
+      "quiet": false,
+      "duration": "כ־10 דקות",
+      "bridge": "מההיכרות עם מתח נבין איך אנרגיה יכולה להיאגר בשדה חשמלי."
+    }
+  ],
+  [
+    "ZrMltpK6iAw",
+    {
+      "id": "-Rb9guSEeVE",
+      "title": "מהו פוטנציאל חשמלי? מתח כגובה של אנרגיה",
+      "en": "Electric Potential: Visualizing Voltage with 3D Animations",
+      "who": "Physics Videos by Eugene Khutoryansky · אנימציית תלת־ממד מקורית",
+      "phase": "🏔️ יסודות: פוטנציאל חשמלי",
+      "note": "אנימציית תלת־ממד המשווה פוטנציאל חשמלי לאנרגיה פוטנציאלית של גוף בגובה.",
+      "ease": 1,
+      "quiet": false,
+      "duration": "כ־8 דקות",
+      "bridge": "הדמיה מוחשית שתעזור לראות את ההבדל בין אנרגיה פוטנציאלית לבין מתח."
+    }
+  ],
+  [
+    "-Rb9guSEeVE",
+    {
+      "id": "HXOok3mfMLM",
+      "title": "איך זורם חשמל בתוך חוט?",
+      "en": "Electric Current: Crash Course Physics #28",
+      "who": "CrashCourse · סדרת Physics המקורית",
+      "phase": "⚡ יסודות: זרם ומעגל חשמלי",
+      "note": "זרם, חוק אוהם, סוללות ועוצמה עם אנימציות של מעגלים.",
+      "ease": 1,
+      "quiet": false,
+      "duration": "כ־8 דקות",
+      "bridge": "אחרי פוטנציאל חשמלי נראה כיצד נוצר זרם בפועל."
+    }
+  ],
+  [
+    "HXOok3mfMLM",
+    {
+      "id": "u4FpbaMW5sk",
+      "title": "סוללות, אנרגיה והספק · תלת־ממד קצר",
+      "en": "Battery Energy and Power",
+      "who": "Physics Videos by Eugene Khutoryansky · אנימציית תלת־ממד מקורית",
+      "phase": "🔋 יסודות: סוללות והספק",
+      "note": "הדמיה של אנרגיה, מתח וזרם כאשר מחברים סוללות בטור ובמקביל.",
+      "ease": 1,
+      "quiet": false,
+      "duration": "כ־6 דקות",
+      "bridge": "מזרם בחוט נעבור למקור שמחזיק את המתח במעגל."
+    }
+  ],
+  [
+    "u4FpbaMW5sk",
+    {
+      "id": "G3H5lKoWPpY",
+      "title": "נגדים וחוק אוהם · לראות התנגדות",
+      "en": "Resistors - Ohm's Law Is Not a Real Law",
+      "who": "Physics Videos by Eugene Khutoryansky · אנימציית תלת־ממד מקורית",
+      "phase": "⚡ יסודות: נגד והתנגדות",
+      "note": "הדמיית התנהגות זרם ומתח בנגדים, עם חוק אוהם.",
+      "ease": 1,
+      "quiet": false,
+      "duration": "כ־6 דקות",
+      "bridge": "ממתח הסוללה נראה כיצד הנגד מגביל את הזרם."
+    }
+  ],
+  [
+    "G3H5lKoWPpY",
+    {
+      "id": "m4jzgqZu-4s",
+      "title": "איך עובד מעגל חשמלי? חוקי המתח והזרם",
+      "en": "Electric Circuits: Basics of the Voltage and Current Laws",
+      "who": "Physics Videos by Eugene Khutoryansky · אנימציית תלת־ממד מקורית",
+      "phase": "🔌 יסודות: מעגלים וחוקי קירכהוף",
+      "note": "הדמיות תלת־ממד למעגלים, צמתים ולולאות, ודרך לחשב זרם ומתח.",
+      "ease": 2,
+      "quiet": false,
+      "duration": "כ־10 דקות",
+      "bridge": "מן הנגד הבודד נעבור למעגל שיש בו כמה דרכים לזרם."
+    }
+  ],
+  [
+    "m4jzgqZu-4s",
+    {
+      "id": "-w-VTw0tQlE",
+      "title": "מעגלים בטור ובמקביל · להבין ולחשב",
+      "en": "Circuit Analysis: Crash Course Physics #30",
+      "who": "CrashCourse · סדרת Physics המקורית",
+      "phase": "🔌 יסודות: חישוב מעגלים",
+      "note": "שימוש בנוסחאות פשוטות כדי להבין מעגלים, נורות וחיבורים בטור ובמקביל.",
+      "ease": 2,
+      "quiet": false,
+      "duration": "כ־11 דקות",
+      "bridge": "אחרי החוקים נפתור יחד מעגלים של נורות ונגדים."
+    }
+  ],
+  [
+    "-w-VTw0tQlE",
+    {
+      "id": "f_MZNsEqyQw",
+      "title": "מהו קבל? כיצד חשמל אוגר אנרגיה?",
+      "en": "Capacitors and Capacitance: Capacitor Physics and Circuit Operation",
+      "who": "Physics Videos by Eugene Khutoryansky · אנימציית תלת־ממד מקורית",
+      "phase": "🔋 יסודות: קבלים ואנרגיה חשמלית",
+      "note": "אנימציות של לוחות טעונים, שדות, זרם ואגירת אנרגיה בקבלים.",
+      "ease": 2,
+      "quiet": false,
+      "duration": "כ־10 דקות",
+      "bridge": "ממעגלים ונגדים נגיע לאגירת אנרגיה בשדה החשמלי."
+    }
+  ],
+  [
+    "f_MZNsEqyQw",
+    {
+      "id": "s94suB5uLWw",
+      "title": "מגנטיות: איך חשמל יוצר כוח מגנטי?",
+      "en": "Magnetism: Crash Course Physics #32",
+      "who": "CrashCourse · סדרת Physics המקורית",
+      "phase": "🧲 יסודות: שדה מגנטי",
+      "note": "ניסויים וחוקי מגנטיות בהסבר צבעוני, כולל הקשר לזרם.",
+      "ease": 1,
+      "quiet": false,
+      "duration": "כ־10 דקות",
+      "bridge": "מעולם השדות החשמליים נבין מדוע מופיעים גם שדות מגנטיים."
+    }
+  ],
+  [
+    "s94suB5uLWw",
+    {
+      "id": "9Tm2c6NJH4Y",
+      "title": "הקשר הגדול בין חשמל, מגנטיות ואור · סרט תלת־ממד",
+      "en": "Electromagnetism - Maxwell's Laws",
+      "who": "Physics Videos by Eugene Khutoryansky · אנימציית תלת־ממד מקורית",
+      "phase": "🧲 פיזיקה לעומק: חוקי מקסוול",
+      "note": "סרט ארוך על שדות, גלים, אינדוקציה ומנועים עם אנימציות צפופות ותלת־ממד.",
+      "ease": 2,
+      "quiet": false,
+      "duration": "כ־49 דקות",
+      "bridge": "מהכוח המגנטי נרחיב את התמונה לחוקים שמחברים אותו לאור."
+    }
+  ],
+  [
+    "9Tm2c6NJH4Y",
+    {
+      "id": "agujzHdvtjc",
+      "title": "איך שנאי הופך מתח נמוך לגבוה?",
+      "en": "Transformers - Electric Power Transmission",
+      "who": "Physics Videos by Eugene Khutoryansky · אנימציית תלת־ממד מקורית",
+      "phase": "⚡ יישום: חשמל ומתח משתנה",
+      "note": "איך ליפופי תיל ושדות משתנים מעבירים אנרגיה ומשנים מתח.",
+      "ease": 1,
+      "quiet": false,
+      "duration": "כ־10 דקות",
+      "bridge": "מחוקי מקסוול נראה מכונה חשמלית שמבוססת עליהם."
+    }
+  ],
+  [
+    "agujzHdvtjc",
+    {
+      "id": "I1j1aoELovk",
+      "title": "מנוע השראה תלת־ממדי: חשמל הופך לסיבוב",
+      "en": "Induction Motors - Why and How an Induction Motor Works",
+      "who": "Physics Videos by Eugene Khutoryansky · אנימציית תלת־ממד מקורית",
+      "phase": "⚙️ יישום: חשמל, מגנטיות ותנועה",
+      "note": "הדמיית מנוע חשמלי מסתובב שבה השדות המגנטיים יוצרים תנועה מכנית.",
+      "ease": 1,
+      "quiet": false,
+      "duration": "כ־11 דקות",
+      "bridge": "מן השנאי שמעביר אנרגיה לשדות שמסובבים מנוע."
+    }
+  ]
+];
+  additions.push(...physicsBasics20261015);
   const currentId=videos[current]?.id;
   // Allow films to refer to a preceding addition declared later in the file.
   // The bounded retry keeps every valid chain without risking an endless loop.
