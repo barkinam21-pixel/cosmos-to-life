@@ -1475,6 +1475,641 @@
   ]
 ];
   additions.push(...cinematicMathPhysics20261015);
+
+  // Adult, visual, slower physics and its history (Oct 2026): 35 official Caltech episodes and 7 original companion videos.
+  const slowPhysicsDiscovery20261016=[
+  [
+    "PUn2izowBkw",
+    {
+      "id": "F8UFGu2M2gM",
+      "title": "איך אפשר לגלות חוק טבע בלי מעבדה? · אדם סבאג׳",
+      "en": "How simple ideas lead to scientific discoveries",
+      "who": "TED-Ed · Adam Savage · רשמי",
+      "phase": "🧭 פיזיקה מוחשית ומושגית",
+      "note": "מדידת גודל הארץ ומהירות האור מדגימה איך תצפית, רעיון וניסוי הופכים לחוק.",
+      "ease": 1,
+      "quiet": false,
+      "duration": "כ־8 דקות",
+      "bridge": "הקשר לסרט הקודם: מדידת גודל הארץ ומהירות האור מדגימה איך תצפית, רעיון וניסוי הופכים לחוק."
+    }
+  ],
+  [
+    "F8UFGu2M2gM",
+    {
+      "id": "XtMmeAjQTXc",
+      "title": "מאסטרו, מאיפה בכלל באה הפיזיקה?",
+      "en": "Episode 1: Introduction - The Mechanical Universe",
+      "who": "Caltech · The Mechanical Universe · פרק 1 · רשמי",
+      "phase": "🎞️ פיזיקה, היסטוריה והדמיות",
+      "note": "מבט היסטורי על קופרניקוס וניוטון ועל הקשר בין מה שקרה בשמיים לבין העולם שעל הארץ.",
+      "ease": 1,
+      "quiet": false,
+      "duration": "כחצי שעה",
+      "bridge": "הקשר לסרט הקודם: מבט היסטורי על קופרניקוס וניוטון ועל הקשר בין מה שקרה בשמיים לבין העולם שעל הארץ."
+    }
+  ],
+  [
+    "JGO_zDWmkvk",
+    {
+      "id": "R8m9VJfwYrc",
+      "title": "איך מודדים מהירות? מכוניות במסלול מרוצים",
+      "en": "What Are Speed and Velocity? | Physics in Motion",
+      "who": "GPB Education · Physics in Motion · רשמי",
+      "phase": "🧭 פיזיקה מוחשית ומושגית",
+      "note": "דוגמאות ממסלול פורשה מבהירות את ההבדל בין מהירות, כיוון ומהירות ממוצעת.",
+      "ease": 1,
+      "quiet": false,
+      "duration": "כ־10 דקות",
+      "bridge": "הקשר לסרט הקודם: דוגמאות ממסלול פורשה מבהירות את ההבדל בין מהירות, כיוון ומהירות ממוצעת."
+    }
+  ],
+  [
+    "R8m9VJfwYrc",
+    {
+      "id": "livG1fp-q8s",
+      "title": "גלילאו שואל: למה דברים נופלים?",
+      "en": "Episode 2: The Law Of Falling Bodies - The Mechanical Universe",
+      "who": "Caltech · The Mechanical Universe · פרק 2 · רשמי",
+      "phase": "🎞️ פיזיקה, היסטוריה והדמיות",
+      "note": "סיפור גילוי תאוצת הנפילה דרך ניסויים ושאלות.",
+      "ease": 1,
+      "quiet": false,
+      "duration": "כחצי שעה",
+      "bridge": "הקשר לסרט הקודם: סיפור גילוי תאוצת הנפילה דרך ניסויים ושאלות."
+    }
+  ],
+  [
+    "livG1fp-q8s",
+    {
+      "id": "l2NtOYrLeFo",
+      "title": "אינרציה: למה משהו ממשיך לזוז בלי דחיפה?",
+      "en": "Episode 4: Inertia - The Mechanical Universe",
+      "who": "Caltech · The Mechanical Universe · פרק 4 · רשמי",
+      "phase": "🎞️ פיזיקה, היסטוריה והדמיות",
+      "note": "גלילאו משנה את ההנחה שכל תנועה דורשת כוח מתמשך.",
+      "ease": 1,
+      "quiet": false,
+      "duration": "כחצי שעה",
+      "bridge": "הקשר לסרט הקודם: גלילאו משנה את ההנחה שכל תנועה דורשת כוח מתמשך."
+    }
+  ],
+  [
+    "l2NtOYrLeFo",
+    {
+      "id": "MWrOozSSdW8",
+      "title": "גם לכוח יש כיוון · לומדים לראות וקטורים",
+      "en": "Episode 5: Vectors - The Mechanical Universe",
+      "who": "Caltech · The Mechanical Universe · פרק 5 · רשמי",
+      "phase": "🎞️ פיזיקה, היסטוריה והדמיות",
+      "note": "מספר לבדו אינו מתאר תנועה: צריך כיוון וגודל.",
+      "ease": 2,
+      "quiet": false,
+      "duration": "כחצי שעה",
+      "bridge": "הקשר לסרט הקודם: מספר לבדו אינו מתאר תנועה: צריך כיוון וגודל."
+    }
+  ],
+  [
+    "MWrOozSSdW8",
+    {
+      "id": "xMmFTA9AThw",
+      "title": "למה גוף נע או נעצר? שלושת חוקי ניוטון",
+      "en": "An Overview of Newton's Laws of Motion | Physics in Motion",
+      "who": "GPB Education · Physics in Motion · רשמי",
+      "phase": "🧭 פיזיקה מוחשית ומושגית",
+      "note": "דוגמאות והמחשות מצולמות של כוח, מסה, תאוצה ואינטראקציה.",
+      "ease": 1,
+      "quiet": false,
+      "duration": "כ־10 דקות",
+      "bridge": "הקשר לסרט הקודם: דוגמאות והמחשות מצולמות של כוח, מסה, תאוצה ואינטראקציה."
+    }
+  ],
+  [
+    "xMmFTA9AThw",
+    {
+      "id": "tsJMfy2GH0A",
+      "title": "איך ניוטון הפך תנועה לשלושה חוקים?",
+      "en": "Episode 6: Newton's Laws - The Mechanical Universe",
+      "who": "Caltech · The Mechanical Universe · פרק 6 · רשמי",
+      "phase": "🎞️ פיזיקה, היסטוריה והדמיות",
+      "note": "גילוי הקשר בין מסה, כוח ותאוצה, וסיפור המהפכה המדעית.",
+      "ease": 1,
+      "quiet": false,
+      "duration": "כחצי שעה",
+      "bridge": "הקשר לסרט הקודם: גילוי הקשר בין מסה, כוח ותאוצה, וסיפור המהפכה המדעית."
+    }
+  ],
+  [
+    "tsJMfy2GH0A",
+    {
+      "id": "f7MTOb8GUwk",
+      "title": "למה תפוח נופל והירח לא מתרסק?",
+      "en": "Episode 8: The Apple And The Moon - The Mechanical Universe",
+      "who": "Caltech · The Mechanical Universe · פרק 8 · רשמי",
+      "phase": "🎞️ פיזיקה, היסטוריה והדמיות",
+      "note": "כוח כבידה אחד מסביר גם תנועה ליד כדור הארץ וגם מסלולו של הירח.",
+      "ease": 1,
+      "quiet": false,
+      "duration": "כחצי שעה",
+      "bridge": "הקשר לסרט הקודם: כוח כבידה אחד מסביר גם תנועה ליד כדור הארץ וגם מסלולו של הירח."
+    }
+  ],
+  [
+    "f7MTOb8GUwk",
+    {
+      "id": "MSUkQXA5_bU",
+      "title": "מה גורם לכדור לפנות בסיבוב?",
+      "en": "Episode 9: Moving In Circles - The Mechanical Universe",
+      "who": "Caltech · The Mechanical Universe · פרק 9 · רשמי",
+      "phase": "🎞️ פיזיקה, היסטוריה והדמיות",
+      "note": "תנועה מעגלית, שינוי כיוון ותאוצה גם במהירות קבועה.",
+      "ease": 1,
+      "quiet": false,
+      "duration": "כחצי שעה",
+      "bridge": "הקשר לסרט הקודם: תנועה מעגלית, שינוי כיוון ותאוצה גם במהירות קבועה."
+    }
+  ],
+  [
+    "MSUkQXA5_bU",
+    {
+      "id": "QonjGa9EPNI",
+      "title": "כמה כוחות באמת פועלים בטבע?",
+      "en": "Episode 10: Fundamental Forces - The Mechanical Universe",
+      "who": "Caltech · The Mechanical Universe · פרק 10 · רשמי",
+      "phase": "🎞️ פיזיקה, היסטוריה והדמיות",
+      "note": "מן התופעות היומיומיות אל ארבעת הכוחות היסודיים בפיזיקה.",
+      "ease": 2,
+      "quiet": false,
+      "duration": "כחצי שעה",
+      "bridge": "הקשר לסרט הקודם: מן התופעות היומיומיות אל ארבעת הכוחות היסודיים בפיזיקה."
+    }
+  ],
+  [
+    "QonjGa9EPNI",
+    {
+      "id": "eRzqL9BAeYA",
+      "title": "כבידה, חשמל ומגנטיות: אותה צורת חשיבה?",
+      "en": "Episode 11: Gravity, Electricity, Magnetism - The Mechanical Universe",
+      "who": "Caltech · The Mechanical Universe · פרק 11 · רשמי",
+      "phase": "🎞️ פיזיקה, היסטוריה והדמיות",
+      "note": "כוחות שאינם במגע ישיר, והדרכים לייצג אותם באופן מתמטי.",
+      "ease": 2,
+      "quiet": false,
+      "duration": "כחצי שעה",
+      "bridge": "הקשר לסרט הקודם: כוחות שאינם במגע ישיר, והדרכים לייצג אותם באופן מתמטי."
+    }
+  ],
+  [
+    "lY3XV_GGV0M",
+    {
+      "id": "uJvOGp1wzTI",
+      "title": "איך קפלר הפך תצפיות למסלולי כוכבים?",
+      "en": "Episode 21: Kepler's Three Laws - The Mechanical Universe",
+      "who": "Caltech · The Mechanical Universe · פרק 21 · רשמי",
+      "phase": "🎞️ פיזיקה, היסטוריה והדמיות",
+      "note": "תצפיות מדויקות הובילו לשלושת חוקי התנועה הפלנטרית.",
+      "ease": 1,
+      "quiet": false,
+      "duration": "כחצי שעה",
+      "bridge": "הקשר לסרט הקודם: תצפיות מדויקות הובילו לשלושת חוקי התנועה הפלנטרית."
+    }
+  ],
+  [
+    "uJvOGp1wzTI",
+    {
+      "id": "gkFD9ZPM3Jg",
+      "title": "הדרך הארוכה מקפלר וניוטון לאיינשטיין",
+      "en": "Episode 25: From Kepler To Einstein - The Mechanical Universe",
+      "who": "Caltech · The Mechanical Universe · פרק 25 · רשמי",
+      "phase": "🎞️ פיזיקה, היסטוריה והדמיות",
+      "note": "כיצד גילויי המסלולים הובילו לשינוי בהבנת חוקי הטבע.",
+      "ease": 2,
+      "quiet": false,
+      "duration": "כחצי שעה",
+      "bridge": "הקשר לסרט הקודם: כיצד גילויי המסלולים הובילו לשינוי בהבנת חוקי הטבע."
+    }
+  ],
+  [
+    "dgqHFpP1w2k",
+    {
+      "id": "sUc13Q8CF3s",
+      "title": "איך יודעים מה המטען של אלקטרון?",
+      "en": "Episode 12: The Millikan Experiment - The Mechanical Universe",
+      "who": "Caltech · The Mechanical Universe · פרק 12 · רשמי",
+      "phase": "🎞️ פיזיקה, היסטוריה והדמיות",
+      "note": "שחזור ניסוי טיפת השמן של מיליקן: מדידה של משהו זעיר במיוחד.",
+      "ease": 1,
+      "quiet": false,
+      "duration": "כחצי שעה",
+      "bridge": "הקשר לסרט הקודם: שחזור ניסוי טיפת השמן של מיליקן: מדידה של משהו זעיר במיוחד."
+    }
+  ],
+  [
+    "wWerswH8w6g",
+    {
+      "id": "K-RtNL8abKk",
+      "title": "מה פירוש 'עבודה' בפיזיקה? לא מה שחשבנו",
+      "en": "What Is the Work-Energy Theorem? | Physics in Motion",
+      "who": "GPB Education · Physics in Motion · רשמי",
+      "phase": "🧭 פיזיקה מוחשית ומושגית",
+      "note": "סרטונים מצולמים עם דוגמאות לתנועה, כוח ומרחק: כיצד עבודה משנה אנרגיה.",
+      "ease": 1,
+      "quiet": false,
+      "duration": "כ־10 דקות",
+      "bridge": "הקשר לסרט הקודם: סרטונים מצולמים עם דוגמאות לתנועה, כוח ומרחק: כיצד עבודה משנה אנרגיה."
+    }
+  ],
+  [
+    "K-RtNL8abKk",
+    {
+      "id": "8BDHN2bY1bg",
+      "title": "למה האנרגיה לא נעלמת אף פעם?",
+      "en": "Episode 13: Conservation Of Energy - The Mechanical Universe",
+      "who": "Caltech · The Mechanical Universe · פרק 13 · רשמי",
+      "phase": "🎞️ פיזיקה, היסטוריה והדמיות",
+      "note": "שימור אנרגיה: האנרגיה מחליפה צורה אך אינה נוצרת יש מאין.",
+      "ease": 1,
+      "quiet": false,
+      "duration": "כחצי שעה",
+      "bridge": "הקשר לסרט הקודם: שימור אנרגיה: האנרגיה מחליפה צורה אך אינה נוצרת יש מאין."
+    }
+  ],
+  [
+    "8BDHN2bY1bg",
+    {
+      "id": "QZ4j0aUwBr8",
+      "title": "אנרגיה פוטנציאלית: מה פירוש אנרגיה אגורה?",
+      "en": "Episode 14: Potential Energy - The Mechanical Universe",
+      "who": "Caltech · The Mechanical Universe · פרק 14 · רשמי",
+      "phase": "🎞️ פיזיקה, היסטוריה והדמיות",
+      "note": "איך מיקום וכוח קשורים לאנרגיה שיכולה להשתחרר.",
+      "ease": 1,
+      "quiet": false,
+      "duration": "כחצי שעה",
+      "bridge": "הקשר לסרט הקודם: איך מיקום וכוח קשורים לאנרגיה שיכולה להשתחרר."
+    }
+  ],
+  [
+    "QZ4j0aUwBr8",
+    {
+      "id": "4lQrMzjARq8",
+      "title": "סכר מים אמיתי מסביר אנרגיית גובה ושימורה",
+      "en": "What Is the Conservation of Energy? | Physics in Motion",
+      "who": "GPB Education · Physics in Motion · רשמי",
+      "phase": "🧭 פיזיקה מוחשית ומושגית",
+      "note": "סיור בסכר הידרואלקטרי: אנרגיה פוטנציאלית הופכת לתנועה ולחשמל.",
+      "ease": 1,
+      "quiet": false,
+      "duration": "כ־10 דקות",
+      "bridge": "הקשר לסרט הקודם: סיור בסכר הידרואלקטרי: אנרגיה פוטנציאלית הופכת לתנועה ולחשמל."
+    }
+  ],
+  [
+    "4lQrMzjARq8",
+    {
+      "id": "B44InZz-_pE",
+      "title": "מה נשמר כששני גופים מתנגשים?",
+      "en": "Episode 15: Conservation Of Momentum - The Mechanical Universe",
+      "who": "Caltech · The Mechanical Universe · פרק 15 · רשמי",
+      "phase": "🎞️ פיזיקה, היסטוריה והדמיות",
+      "note": "שימור תנע מצטרף לשימור אנרגיה בהסבר התנגשויות.",
+      "ease": 2,
+      "quiet": false,
+      "duration": "כחצי שעה",
+      "bridge": "הקשר לסרט הקודם: שימור תנע מצטרף לשימור אנרגיה בהסבר התנגשויות."
+    }
+  ],
+  [
+    "1VPfZ_XzisU",
+    {
+      "id": "jvUcqZlMS8s",
+      "title": "למה עצמים מסתובבים שומרים על כיוון?",
+      "en": "Episode 19: Angular Momentum - The Mechanical Universe",
+      "who": "Caltech · The Mechanical Universe · פרק 19 · רשמי",
+      "phase": "🎞️ פיזיקה, היסטוריה והדמיות",
+      "note": "תנע זוויתי הוא רעיון שימור חדש שמסביר סיבוב.",
+      "ease": 2,
+      "quiet": false,
+      "duration": "כחצי שעה",
+      "bridge": "הקשר לסרט הקודם: תנע זוויתי הוא רעיון שימור חדש שמסביר סיבוב."
+    }
+  ],
+  [
+    "jvUcqZlMS8s",
+    {
+      "id": "r5YM96mA9pk",
+      "title": "סביבונים וגירוסקופים: הכוח שגורם לסיבוב",
+      "en": "Episode 20: Torques And Gyroscopes - The Mechanical Universe",
+      "who": "Caltech · The Mechanical Universe · פרק 20 · רשמי",
+      "phase": "🎞️ פיזיקה, היסטוריה והדמיות",
+      "note": "מומנט וגירוסקופים, ממשחק פשוט ועד סיבוב כדור הארץ.",
+      "ease": 1,
+      "quiet": false,
+      "duration": "כחצי שעה",
+      "bridge": "הקשר לסרט הקודם: מומנט וגירוסקופים, ממשחק פשוט ועד סיבוב כדור הארץ."
+    }
+  ],
+  [
+    "ibmubP26R9M",
+    {
+      "id": "eZdUKMDfJ_o",
+      "title": "מה זה חום, ומה עושה הטמפרטורה לגז?",
+      "en": "Episode 45: Temperature And The Gas Law - The Mechanical Universe",
+      "who": "Caltech · The Mechanical Universe · פרק 45 · רשמי",
+      "phase": "🎞️ פיזיקה, היסטוריה והדמיות",
+      "note": "לחץ, טמפרטורה וחום נקשרים להתנהגות הגז ולתגליות היסטוריות.",
+      "ease": 1,
+      "quiet": false,
+      "duration": "כחצי שעה",
+      "bridge": "הקשר לסרט הקודם: לחץ, טמפרטורה וחום נקשרים להתנהגות הגז ולתגליות היסטוריות."
+    }
+  ],
+  [
+    "eZdUKMDfJ_o",
+    {
+      "id": "d6eJ8mccvu0",
+      "title": "מנוע חום: איך טמפרטורה הופכת לעבודה?",
+      "en": "Episode 46: Engine Of Nature - The Mechanical Universe",
+      "who": "Caltech · The Mechanical Universe · פרק 46 · רשמי",
+      "phase": "🎞️ פיזיקה, היסטוריה והדמיות",
+      "note": "מנועי חום והפיכת חום לעבודה בהסבר תרמודינמי.",
+      "ease": 1,
+      "quiet": false,
+      "duration": "כחצי שעה",
+      "bridge": "הקשר לסרט הקודם: מנועי חום והפיכת חום לעבודה בהסבר תרמודינמי."
+    }
+  ],
+  [
+    "d6eJ8mccvu0",
+    {
+      "id": "ufI4TXaevlo",
+      "title": "אנטרופיה: למה חום וזמן זורמים בכיוון אחד?",
+      "en": "Episode 47: Entropy - The Mechanical Universe",
+      "who": "Caltech · The Mechanical Universe · פרק 47 · רשמי",
+      "phase": "🎞️ פיזיקה, היסטוריה והדמיות",
+      "note": "מנוע קרנו מוביל לעיקרון עמוק על שינוי, סדר וזרימת הזמן.",
+      "ease": 2,
+      "quiet": false,
+      "duration": "כחצי שעה",
+      "bridge": "הקשר לסרט הקודם: מנוע קרנו מוביל לעיקרון עמוק על שינוי, סדר וזרימת הזמן."
+    }
+  ],
+  [
+    "zZNbVb0Z_5A",
+    {
+      "id": "EqYnW67cp58",
+      "title": "קפיץ ומטוטלת: תנועה שחוזרת על עצמה",
+      "en": "Episode 16: Harmonic Motion - The Mechanical Universe",
+      "who": "Caltech · The Mechanical Universe · פרק 16 · רשמי",
+      "phase": "🎞️ פיזיקה, היסטוריה והדמיות",
+      "note": "תנועה הרמונית של עצמים מתנדנדים.",
+      "ease": 1,
+      "quiet": false,
+      "duration": "כחצי שעה",
+      "bridge": "הקשר לסרט הקודם: תנועה הרמונית של עצמים מתנדנדים."
+    }
+  ],
+  [
+    "EqYnW67cp58",
+    {
+      "id": "ODs4eyQTz5Y",
+      "title": "תהודה: למה דחיפה קטנה יכולה ליצור גל גדול?",
+      "en": "Episode 17: Resonance - The Mechanical Universe",
+      "who": "Caltech · The Mechanical Universe · פרק 17 · רשמי",
+      "phase": "🎞️ פיזיקה, היסטוריה והדמיות",
+      "note": "התאמת תדירות מאפשרת לתנודות להצטבר.",
+      "ease": 1,
+      "quiet": false,
+      "duration": "כחצי שעה",
+      "bridge": "הקשר לסרט הקודם: התאמת תדירות מאפשרת לתנודות להצטבר."
+    }
+  ],
+  [
+    "ODs4eyQTz5Y",
+    {
+      "id": "2OP0gp9v5XM",
+      "title": "איך תנודה הופכת לגל שעובר במרחב?",
+      "en": "Episode 18: Waves - The Mechanical Universe",
+      "who": "Caltech · The Mechanical Universe · פרק 18 · רשמי",
+      "phase": "🎞️ פיזיקה, היסטוריה והדמיות",
+      "note": "תנודות מתפשטות ויוצרות גלים המעבירים אנרגיה.",
+      "ease": 1,
+      "quiet": false,
+      "duration": "כחצי שעה",
+      "bridge": "הקשר לסרט הקודם: תנודות מתפשטות ויוצרות גלים המעבירים אנרגיה."
+    }
+  ],
+  [
+    "6xgBSQwqAuE",
+    {
+      "id": "a-Nc5BhjOEU",
+      "title": "אור כמו גל: החזרה, שבירה ועקיפה",
+      "en": "Episode 40: Optics - The Mechanical Universe",
+      "who": "Caltech · The Mechanical Universe · פרק 40 · רשמי",
+      "phase": "🎞️ פיזיקה, היסטוריה והדמיות",
+      "note": "התכונות הגליות של האור באופטיקה והמחשות היסטוריות.",
+      "ease": 1,
+      "quiet": false,
+      "duration": "כחצי שעה",
+      "bridge": "הקשר לסרט הקודם: התכונות הגליות של האור באופטיקה והמחשות היסטוריות."
+    }
+  ],
+  [
+    "yc2-363MIQs",
+    {
+      "id": "vvi0JtUzBrc",
+      "title": "מהפיזיקה המכנית לעולם החשמל והקוונטים",
+      "en": "Episode 27: Beyond The Mechanical Universe - The Mechanical Universe",
+      "who": "Caltech · The Mechanical Universe · פרק 27 · רשמי",
+      "phase": "🎞️ פיזיקה, היסטוריה והדמיות",
+      "note": "פתיחה לחצי השני של סדרת Caltech ולשינוי בתמונת הפיזיקה.",
+      "ease": 2,
+      "quiet": false,
+      "duration": "כחצי שעה",
+      "bridge": "הקשר לסרט הקודם: פתיחה לחצי השני של סדרת Caltech ולשינוי בתמונת הפיזיקה."
+    }
+  ],
+  [
+    "vvi0JtUzBrc",
+    {
+      "id": "pyMmRRIB5yw",
+      "title": "ניצוצות וכוח בלתי נראה: תולדות החשמל הסטטי",
+      "en": "Episode 28: Static Electricity - The Mechanical Universe",
+      "who": "Caltech · The Mechanical Universe · פרק 28 · רשמי",
+      "phase": "🎞️ פיזיקה, היסטוריה והדמיות",
+      "note": "הניסויים הקדומים במטענים חיוביים ושליליים.",
+      "ease": 1,
+      "quiet": false,
+      "duration": "כחצי שעה",
+      "bridge": "הקשר לסרט הקודם: הניסויים הקדומים במטענים חיוביים ושליליים."
+    }
+  ],
+  [
+    "pyMmRRIB5yw",
+    {
+      "id": "wq9TjQZDrAA",
+      "title": "פאראדיי מלמד לראות שדה חשמלי בלתי נראה",
+      "en": "Episode 29: The Electric Field - The Mechanical Universe",
+      "who": "Caltech · The Mechanical Universe · פרק 29 · רשמי",
+      "phase": "🎞️ פיזיקה, היסטוריה והדמיות",
+      "note": "קווי כוח ושדה חשמלי משנים את האופן שבו חושבים על חשמל.",
+      "ease": 1,
+      "quiet": false,
+      "duration": "כחצי שעה",
+      "bridge": "הקשר לסרט הקודם: קווי כוח ושדה חשמלי משנים את האופן שבו חושבים על חשמל."
+    }
+  ],
+  [
+    "wq9TjQZDrAA",
+    {
+      "id": "N72oYRZvFzA",
+      "title": "קבלים ופוטנציאל: איפה האנרגיה החשמלית נאגרת?",
+      "en": "Episode 30: Capacitance And Potential - The Mechanical Universe",
+      "who": "Caltech · The Mechanical Universe · פרק 30 · רשמי",
+      "phase": "🎞️ פיזיקה, היסטוריה והדמיות",
+      "note": "בנימין פרנקלין, קבלים ושדות חשמליים שמאחסנים אנרגיה.",
+      "ease": 2,
+      "quiet": false,
+      "duration": "כחצי שעה",
+      "bridge": "הקשר לסרט הקודם: בנימין פרנקלין, קבלים ושדות חשמליים שמאחסנים אנרגיה."
+    }
+  ],
+  [
+    "N72oYRZvFzA",
+    {
+      "id": "0Lx0c0TlzFI",
+      "title": "מתח, כוח ואנרגיה: למה חשמל מסוגל לעשות עבודה?",
+      "en": "Episode 31: Voltage, Energy And Force - The Mechanical Universe",
+      "who": "Caltech · The Mechanical Universe · פרק 31 · רשמי",
+      "phase": "🎞️ פיזיקה, היסטוריה והדמיות",
+      "note": "הקשר בין אנרגיית מטען, מתח וכוח.",
+      "ease": 2,
+      "quiet": false,
+      "duration": "כחצי שעה",
+      "bridge": "הקשר לסרט הקודם: הקשר בין אנרגיית מטען, מתח וכוח."
+    }
+  ],
+  [
+    "0Lx0c0TlzFI",
+    {
+      "id": "zq9_KBJMIEs",
+      "title": "איך הסוללה אפשרה חשמל זורם?",
+      "en": "Episode 32: The Electric Battery - The Mechanical Universe",
+      "who": "Caltech · The Mechanical Universe · פרק 32 · רשמי",
+      "phase": "🎞️ פיזיקה, היסטוריה והדמיות",
+      "note": "מהניסויים בחשמל סטטי למקור חשמלי רציף.",
+      "ease": 1,
+      "quiet": false,
+      "duration": "כחצי שעה",
+      "bridge": "הקשר לסרט הקודם: מהניסויים בחשמל סטטי למקור חשמלי רציף."
+    }
+  ],
+  [
+    "zq9_KBJMIEs",
+    {
+      "id": "YMNZ2oYu-qI",
+      "title": "איך זרם עובר במעגל חשמלי?",
+      "en": "Episode 33: Electric Circuits - The Mechanical Universe",
+      "who": "Caltech · The Mechanical Universe · פרק 33 · רשמי",
+      "phase": "🎞️ פיזיקה, היסטוריה והדמיות",
+      "note": "סוללות, חיבורים ומעגלים מאפשרים להעביר אנרגיה.",
+      "ease": 1,
+      "quiet": false,
+      "duration": "כחצי שעה",
+      "bridge": "הקשר לסרט הקודם: סוללות, חיבורים ומעגלים מאפשרים להעביר אנרגיה."
+    }
+  ],
+  [
+    "YMNZ2oYu-qI",
+    {
+      "id": "Xr6Z-pLqTPA",
+      "title": "המגנט: כוח שאי אפשר לראות אבל אפשר להרגיש",
+      "en": "Episode 34: Magnetism - The Mechanical Universe",
+      "who": "Caltech · The Mechanical Universe · פרק 34 · רשמי",
+      "phase": "🎞️ פיזיקה, היסטוריה והדמיות",
+      "note": "ההיסטוריה של המגנטיות והתופעות שהיא גורמת להן.",
+      "ease": 1,
+      "quiet": false,
+      "duration": "כחצי שעה",
+      "bridge": "הקשר לסרט הקודם: ההיסטוריה של המגנטיות והתופעות שהיא גורמת להן."
+    }
+  ],
+  [
+    "Xr6Z-pLqTPA",
+    {
+      "id": "mFca4UwZB4I",
+      "title": "איך שדה מגנטי מקיף חוט ומגנט?",
+      "en": "Episode 35: The Magnetic Field - The Mechanical Universe",
+      "who": "Caltech · The Mechanical Universe · פרק 35 · רשמי",
+      "phase": "🎞️ פיזיקה, היסטוריה והדמיות",
+      "note": "שדות מגנטיים מיוצגים בעזרת קווים וכיוונים.",
+      "ease": 2,
+      "quiet": false,
+      "duration": "כחצי שעה",
+      "bridge": "הקשר לסרט הקודם: שדות מגנטיים מיוצגים בעזרת קווים וכיוונים."
+    }
+  ],
+  [
+    "mFca4UwZB4I",
+    {
+      "id": "ygVZjQK5z-8",
+      "title": "פאראדיי: איך מגנט ותנועה מייצרים חשמל?",
+      "en": "Episode 37: Electromagnetic Induction - The Mechanical Universe",
+      "who": "Caltech · The Mechanical Universe · פרק 37 · רשמי",
+      "phase": "🎞️ פיזיקה, היסטוריה והדמיות",
+      "note": "גילוי ההשראה האלקטרומגנטית עומד בבסיס הגנרטור.",
+      "ease": 1,
+      "quiet": false,
+      "duration": "כחצי שעה",
+      "bridge": "הקשר לסרט הקודם: גילוי ההשראה האלקטרומגנטית עומד בבסיס הגנרטור."
+    }
+  ],
+  [
+    "ygVZjQK5z-8",
+    {
+      "id": "SS4tcajTsW8",
+      "title": "איך מקסוול חיבר חשמל, מגנטיות ואור?",
+      "en": "Episode 39: Maxwell's Equations - The Mechanical Universe",
+      "who": "Caltech · The Mechanical Universe · פרק 39 · רשמי",
+      "phase": "🎞️ פיזיקה, היסטוריה והדמיות",
+      "note": "חוקים מתמטיים מחברים גלים אלקטרומגנטיים ושדות; פרק מתקדם.",
+      "ease": 2,
+      "quiet": false,
+      "duration": "כחצי שעה",
+      "bridge": "הקשר לסרט הקודם: חוקים מתמטיים מחברים גלים אלקטרומגנטיים ושדות; פרק מתקדם."
+    }
+  ],
+  [
+    "PT38gaGciP4",
+    {
+      "id": "7J52mDjZzto",
+      "title": "איך מזגן מחמם את הבית גם כשהאוויר בחוץ קר?",
+      "en": "Heat Pumps: the Future of Home Heating",
+      "who": "Technology Connections · יוצר מקורי",
+      "phase": "🧭 פיזיקה מוחשית ומושגית",
+      "note": "הסבר מצולם ובוגר לאורך 35 דקות על משאבת חום, קירור והעברת אנרגיה.",
+      "ease": 1,
+      "quiet": false,
+      "duration": "כ־35 דקות",
+      "bridge": "הקשר לסרט הקודם: הסבר מצולם ובוגר לאורך 35 דקות על משאבת חום, קירור והעברת אנרגיה."
+    }
+  ],
+  [
+    "lcjdwSY2AzM",
+    {
+      "id": "2JsKwyRFiYY",
+      "title": "פילוסופיה של הפיזיקה: חוקי טבע, חוויה ומשמעות",
+      "en": "The Big Picture: From the Big Bang to the Meaning of Life - with Sean Carroll",
+      "who": "The Royal Institution · Sean Carroll · רשמי",
+      "phase": "🧭 פיזיקה מוחשית ומושגית",
+      "note": "הרצאה בוגרת בעיקר בדיבור: חוקי הטבע, אנטרופיה, תודעה והמשמעות של הסברים פיזיקליים.",
+      "ease": 2,
+      "quiet": false,
+      "duration": "כשעה",
+      "bridge": "הקשר לסרט הקודם: הרצאה בוגרת בעיקר בדיבור: חוקי הטבע, אנטרופיה, תודעה והמשמעות של הסברים פיזיקליים."
+    }
+  ]
+];
+  additions.push(...slowPhysicsDiscovery20261016);
   const currentId=videos[current]?.id;
   // Allow films to refer to a preceding addition declared later in the file.
   // The bounded retry keeps every valid chain without risking an endless loop.
