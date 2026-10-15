@@ -1410,6 +1410,71 @@
   ]
 ];
   additions.push(...physicsBasics20261015);
+
+  // Four videos verified against official 3Blue1Brown uploads on 2026-10-15.
+  const cinematicMathPhysics20261015=[
+  [
+    "PNHSIEO-KOQ",
+    {
+      "id": "HEfHFsfGXjs",
+      "title": "שתי קוביות מתנגשות, והסוד המפתיע של פאי · חלק 1",
+      "en": "The most unexpected answer to a counting puzzle",
+      "who": "3Blue1Brown · יוצר מקורי · 1/3",
+      "phase": "🎱 התנגשויות, תנע ותנועה · אנימציה",
+      "note": "חידה ויזואלית קצרה וצבעונית: כיצד שתי קוביות מתנגשות חושפות את ספרות π? סרט פתיחה מסקרן.",
+      "ease": 1,
+      "quiet": false,
+      "duration": "כ־5 דקות",
+      "bridge": "אחרי שימור התנע נתחיל חידה שמבוססת על התנגשויות — והפתרון יבוא מיד בפרק הבא."
+    }
+  ],
+  [
+    "HEfHFsfGXjs",
+    {
+      "id": "jsYwFizhncE",
+      "title": "איך התנגשויות מחשבות פאי? · ההסבר החזותי · חלק 2",
+      "en": "Why do colliding blocks compute pi?",
+      "who": "3Blue1Brown · יוצר מקורי · 2/3",
+      "phase": "🎱 שימור אנרגיה ותנע · גאומטריה",
+      "note": "הפרק השני מסביר בעזרת ציורים איך אנרגיה ותנע קובעים את מסלול הקוביות. כולל מתמטיקה למי שרוצה להעמיק.",
+      "ease": 2,
+      "quiet": false,
+      "duration": "כ־15 דקות",
+      "bridge": "מן החידה אל מפת התנועה והשימור שמסבירה מאין מגיעות ספרות פאי."
+    }
+  ],
+  [
+    "jsYwFizhncE",
+    {
+      "id": "brU5yLm9DZM",
+      "title": "מקוביות מתנגשות אל אור שמשתקף במראות · חלק 3",
+      "en": "How colliding blocks act like a beam of light...to compute pi.",
+      "who": "3Blue1Brown · יוצר מקורי · 3/3",
+      "phase": "🪞 כוח ותנועה פוגשים את הפיזיקה של האור",
+      "note": "הפרק השלישי והאחרון: המפתיע שבפתרונות הופך התנגשויות של קוביות לקרן אור הנעה בין מראות. חזותי אך מעמיק.",
+      "ease": 2,
+      "quiet": false,
+      "duration": "כ־15 דקות",
+      "bridge": "אחרי התנע וההתנגשויות נגיע לחיבור הלא־צפוי עם חוקי ההחזרה של האור."
+    }
+  ],
+  [
+    "KTzGBJPuJwM",
+    {
+      "id": "EmKQsSDlaa4",
+      "title": "איך הולוגרמה שומרת עולם תלת־ממדי בתוך תמונה?",
+      "en": "How are holograms possible?",
+      "who": "3Blue1Brown · סרט מקורי",
+      "phase": "🌈 קרני אור, התאבכות והולוגרמות",
+      "note": "כ־46 דקות של הולוגרמות אמיתיות וצילומים מרהיבים, לצד הדמיות צבעוניות שמסבירות איך אור יכול לשמר תמונה תלת־ממדית. מתקדם בחלקו האחרון.",
+      "ease": 2,
+      "quiet": false,
+      "duration": "כ־46 דקות",
+      "bridge": "אחרי שבירה, מנסרות והחזרים נגיע לשיא חזותי: הולוגרמה המקודדת אור תלת־ממדי על לוח שטוח."
+    }
+  ]
+];
+  additions.push(...cinematicMathPhysics20261015);
   const currentId=videos[current]?.id;
   // Allow films to refer to a preceding addition declared later in the file.
   // The bounded retry keeps every valid chain without risking an endless loop.
