@@ -2110,6 +2110,56 @@
   ]
 ];
   additions.push(...slowPhysicsDiscovery20261016);
+
+  // Caltech verified official uploads completing three documented conceptual links.
+  const caltechAuditAdditions20261016=[
+  [
+    "mFca4UwZB4I",
+    {
+      "id": "sB4C3YfSZyU",
+      "title": "איך שדות של כוח דומים לזרימת מים?",
+      "en": "Episode 36: Vector Fields And Hydrodynamics - The Mechanical Universe",
+      "who": "Caltech · The Mechanical Universe · פרק 36 · העלאה רשמית",
+      "phase": "📚 תולדות הפיזיקה · הדמיות מתקדמות",
+      "note": "כיצד אנימציות של נוזלים ושדות וקטוריים מלמדות אותנו לתאר כוח שמפוזר במרחב. הכנה לגנרטורים ולהשראה.",
+      "ease": 2,
+      "quiet": false,
+      "duration": "כחצי שעה",
+      "bridge": "כיצד אנימציות של נוזלים ושדות וקטוריים מלמדות אותנו לתאר כוח שמפוזר במרחב. הכנה לגנרטורים ולהשראה."
+    }
+  ],
+  [
+    "NqdOyxJZj0U",
+    {
+      "id": "P-uyKrPlH9Q",
+      "title": "למה בבתים משתמשים דווקא בזרם חילופין?",
+      "en": "Episode 38: Alternating Current - The Mechanical Universe",
+      "who": "Caltech · The Mechanical Universe · פרק 38 · העלאה רשמית",
+      "phase": "📚 תולדות הפיזיקה · הדמיות מתקדמות",
+      "note": "איך גנרטור יוצר חשמל שמשנה כיוון שוב ושוב, וכיצד שינוי המתח מאפשר רשת חשמל.",
+      "ease": 1,
+      "quiet": false,
+      "duration": "כחצי שעה",
+      "bridge": "איך גנרטור יוצר חשמל שמשנה כיוון שוב ושוב, וכיצד שינוי המתח מאפשר רשת חשמל."
+    }
+  ],
+  [
+    "gkFD9ZPM3Jg",
+    {
+      "id": "Ip_jdcA8fcw",
+      "title": "ניסוי ששינה את רעיון האור והזמן — מיכלסון־מורלי",
+      "en": "Episode 41: The Michelson Morley Experiment - The Mechanical Universe",
+      "who": "Caltech · The Mechanical Universe · פרק 41 · העלאה רשמית",
+      "phase": "📚 תולדות הפיזיקה · הדמיות מתקדמות",
+      "note": "שני מסלולי אור וניסוי היסטורי שבחן את רעיון האתר. כישלון מדידה ששינה את הדרך לתורת היחסות.",
+      "ease": 2,
+      "quiet": false,
+      "duration": "כחצי שעה",
+      "bridge": "שני מסלולי אור וניסוי היסטורי שבחן את רעיון האתר. כישלון מדידה ששינה את הדרך לתורת היחסות."
+    }
+  ]
+];
+  additions.push(...caltechAuditAdditions20261016);
   const currentId=videos[current]?.id;
   // Allow films to refer to a preceding addition declared later in the file.
   // The bounded retry keeps every valid chain without risking an endless loop.
