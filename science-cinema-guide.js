@@ -878,6 +878,20 @@ const paths = {
     ]
   }
 };
+// Original Slow Mo Guys, SmarterEveryDay and Steve Mould films. Video records live only in additions.js.
+const newSlowMotionChapters20261017=[{"id":"_dQJBBklpQQ","why":"מתנע ומסלול למזרקת חרוזים מפתיעה שכאילו קופצת מעצמה."},{"id":"Jh2cZKQZ1XA","why":"המצלמה מותחת שנייה לשעה; תנועה יומיומית הופכת לנוף מדעי."},{"id":"3BJU2drrtCM","why":"נראה בהילוך איטי כיצד המסך יוצר תמונה מנקודות אור."},{"id":"5WKU7gG_ApU","why":"מהאור למוזיקה: צבעים רגילים מתחילים לרקוד על רמקול."},{"id":"RkLn2gR7SyE","why":"אותו רמקול, אבל עם תערובת עמילן שהופכת לקשיחה ברטט."},{"id":"X3uKmTdgmQg","why":"מהרטט לתהודה בכוס זכוכית. אזהרה: צליל חזק וניפוץ."},{"id":"KJDEsAy9RyM","why":"מהרעידות נגלה טיפות מים שרוקדות בלי להתמזג גם בחלל."},{"id":"EVbdbVhzcM4","why":"ומהטיפות נמשיך לטבעות מערבולת צבעוניות שמתנגשות."}];
+paths.cinematic.chapters.splice(3,0,{name:"4 · כשהפיזיקה נראית בהילוך איטי",description:"שמונה סרטי ניסויים קולנועיים מתנועה וזמן, לאור וקול, ועד טיפות ומערבולות. ניפוץ הכוס כולל קול חזק.",items:newSlowMotionChapters20261017});
+paths.cinematic.chapters[4].name="5 · הארץ, החיים והעתיד";
+const addAfterPath20261017=(name,chapter,after,entries)=>{const arr=paths[name].chapters[chapter].items;const i=arr.findIndex(e=>e.id===after);if(i>=0)arr.splice(i+1,0,...entries);};
+addAfterPath20261017("calm",2,"j2_dJY_mIys",[
+{id:"Jh2cZKQZ1XA",why:"אחרי המים הצבעוניים נצפה בעולם שבו שנייה נמשכת שעה."},
+{id:"KJDEsAy9RyM",why:"מהצילום האיטי לטיפות שנעות לבדן אפילו בתנאי חלל."},
+{id:"EVbdbVhzcM4",why:"מהטיפות אל מפגש מערבולות צבעוני ונעים לצפייה."}]);
+addAfterPath20261017("earthlife",1,"R5-s6O8qyvE",[
+{id:"KJDEsAy9RyM",why:"מזרמי האוקיינוס נעבור למים בקנה מידה של טיפה."},
+{id:"EVbdbVhzcM4",why:"מהטיפות הקטנות נמשיך להתנגשות של מערבולות."}]);
+addAfterPath20261017("chemistry",2,"6xgBSQwqAuE",[
+{id:"3BJU2drrtCM",why:"מהפיזיקה של צבעים נלמד איך המסך מפיק אותם בתמונה."}]);
 const legacy = {
   "all": [
     "📚 הספרייה המלאה",
