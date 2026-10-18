@@ -17,6 +17,17 @@ main{padding-top:14px;padding-bottom:40px}.notice{font-size:13px;color:#d0e3f4;m
 @media(max-width:700px){.playlist{grid-template-columns:1fr}.item{min-height:101px}.item img{width:102px}header{padding-top:16px}main{padding-top:10px}.current h2{font-size:19px}.controls button{flex:1}}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
 
+/* Micro-concept cards: tiny prerequisite explanations, no extra player or images. */
+.concept-help{margin:12px 0;border:1px solid #36718b;border-radius:13px;background:#122c3d}
+.concept-help summary{padding:12px 13px;font-size:14px;font-weight:750;cursor:pointer;color:#edfff9}
+.concept-help summary span{font-weight:500;color:#bbdce6;font-size:12px}
+.concept-grid{padding:0 10px 12px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.concept-card{border:1px solid #32556a;background:#0c2435;border-radius:10px;padding:10px 11px}
+.concept-card strong{display:block;font-size:13px;color:#a9f5d0;margin-bottom:4px}
+.concept-card p{font-size:12px!important;line-height:1.58;margin:0!important;color:#d6e8f2}
+.concept-play{display:block;margin-top:7px;border:1px solid #547d91;background:#1a4454;color:#e9fff8;border-radius:8px;padding:7px 9px;font-size:12px;min-height:35px;cursor:pointer}
+.concept-play:focus-visible{outline:2px solid #b7fee5;outline-offset:2px}
+@media(max-width:700px){.concept-grid{grid-template-columns:1fr}.concept-card{padding:9px 10px}.concept-help summary{font-size:13px}}
 /* Revised 40-stage, mixed-language storyline; lightweight disclosure, no extra player. */
 .method-details{background:#102b3e;border:1px solid #3b5c71;border-radius:10px;margin:8px 0 12px}
 .method-details summary{padding:9px 12px;font-weight:600;cursor:pointer;font-size:13px}
@@ -110,7 +121,8 @@ main{padding-top:14px;padding-bottom:40px}.notice{font-size:13px;color:#d0e3f4;m
 <div class="route-top"><div><div class="eyebrow">⏳ תחנות 1–24: מה קרה בעולם · 🧭 תחנות 25–40: איך מבינים את החוקיות · 🇮🇱 עברית + 🌐 אנגלית</div><h2 id="journey-title"></h2></div><button type="button" id="restart-journey" class="route-mini">↩ מההתחלה</button></div>
 <p id="journey-description"></p><details class="method-details"><summary>למה לומדים כך ולא רק לפי תאריכים?</summary><p>כל חוקי הפיזיקה פעלו ביקום כבר מהתחלתו, אבל אי אפשר ללמוד הכול ברגע אחד. לכן המסע מתחיל בהיסטוריה של היקום, והסברים בסיסיים על חומר ואור נכנסים כשהם נחוצים. אחרי שמגיעים לחיים ולאדם, עוברים במפורש לסדר הלמידה המקובל: מדידה ותנועה, כוחות ואנרגיה, חום, גלים, אור, חשמל וקוונטים. סרטונים בעברית ובאנגלית משובצים יחד במקום המדויק; שיעור מתקדם אינו חובה.</p></details>
 <div id="now-chapter" class="now-chapter" hidden><div id="chapter-era" class="chapter-era"></div><h3 id="chapter-current-title"></h3><p id="chapter-current-description"></p><div class="chapter-controls"><button type="button" id="prev-chapter" class="route-mini">→ תחנה קודמת</button><button type="button" id="next-chapter" class="route-mini">תחנה הבאה ←</button></div></div>
-<div id="course-shelf" class="course-shelf" hidden><h3>🎓 בא לך ללמוד את כל הנושא?</h3><p>קורסים רשמיים וחינמיים להעמקה, בדיוק בשלב המתאים. הסרטונים במסע ממשיכים בתוך הנגן; קורסי הקמפוס והאוניברסיטאות נפתחים במקור הרשמי, ואינם מוצגים בטעות כסרטון מוטמע.</p><div id="course-links" class="course-links"></div></div>
+<details id="concept-help" class="concept-help" open hidden><summary>🧩 מה זה אומר? מושגים שכדאי להכיר <span id="concept-count"></span></summary><div id="concept-items" class="concept-grid"></div></details>
+<div id="course-shelf" class="course-shelf" hidden><h3>🎓 סדרות וקורסים מלאים להעמקה</h3><p>קורסי אוניברסיטאות ופלייליסטים ארוכים במקום המתאים ברצף. אלה חומרי העמקה לבחירה: שיעורי וידאו באתרי הלימוד נפתחים במקור הרשמי ולא מתחזים לסרטון בודד בנגן.</p><div id="course-links" class="course-links"></div></div>
 <details class="chapters-drawer" id="chapters-drawer"><summary>🗺️ פתח את מפת התחנות ובחר לאן להמשיך</summary><div class="chapter-links" id="chapter-links"></div></details>
 </section><div class="headrow"><h3>הפרקים במסלול</h3><span id="count"></span></div>
 <div class="playlist" id="playlist"></div>
@@ -173,6 +185,19 @@ function explanation(v){
   }
   return info?.entry.why||v.bridge||v.note||'';
 }
+function renderConceptHelp(step,indices){
+  const help=GUIDE.conceptHelp;
+  const keys=(step&&help?.groups?.[mode]?.[String(step.chapter+1)])||[];
+  const definitions=keys.map(key=>help?.dictionary?.[key]).filter(Boolean);
+  $('concept-help').hidden=definitions.length===0;
+  $('concept-count').textContent=definitions.length?'· '+definitions.length+' מושגים קצרים':'';
+  $('concept-items').innerHTML=definitions.map(item=>{
+    const clip=item[2]||'',idx=clip?videos.findIndex(v=>v.id===clip):-1;
+    const inRoute=idx>=0&&indices.includes(idx);
+    return '<div class="concept-card"><strong>'+esc(item[0])+'</strong><p>'+esc(item[1])+'</p>'+
+    (inRoute?'<button type="button" class="concept-play" data-play-concept="'+idx+'">▶ סרטון המחשה בנושא</button>':'')+'</div>';
+  }).join('');
+}
 function updateJourney(indices){
   document.querySelectorAll('button[data-mode]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mode===mode)));
   for(const p of document.querySelectorAll('[data-total]')){
@@ -183,6 +208,7 @@ function updateJourney(indices){
   $('journey-description').textContent=path?.description||GUIDE.legacy?.[mode]?.[1]||'הספרייה לפי הרצף הכללי; אפשר גם לבחור מסע מודרך למעלה.';
   const here=indices.indexOf(current),now=videos[current];
   const step=getStep(mode,now.id);
+  renderConceptHelp(step,indices);
   $('journey-progress').textContent=(step?'תחנה '+(step.chapter+1)+' מתוך '+chapters.length+' · ':'')+'סרט '+(here+1)+' מתוך '+indices.length;
   $('chapter-links').innerHTML=chapters.map((c,i)=>'<button type="button" class="chapter-link" data-start="'+esc(c.items[0]?.id||'')+'" aria-pressed="'+(step?.chapter===i)+'"><strong>'+esc(c.name)+'</strong><small>'+esc(c.description||'')+'</small></button>').join('');
   if(step)$('bridge').textContent='↪ למה הסרט כאן? '+step.entry.why;
@@ -198,7 +224,16 @@ function updateJourney(indices){
   $('restart-journey').disabled=!indices.length;
   const courses=Array.isArray(chapter?.courses)?chapter.courses:[];
   $('course-shelf').hidden=!courses.length;
-  const allowedCourse=url=>{try{const parsed=new URL(url);return parsed.protocol==='https:'&&['campus.gov.il','ocw.mit.edu','www.khanacademy.org','khanacademy.org'].includes(parsed.hostname)}catch(e){return false}};
+  const allowedCourse=url=>{try{
+    const parsed=new URL(url);
+    if(parsed.protocol!=='https:')return false;
+    if(['campus.gov.il','ocw.mit.edu','www.khanacademy.org','khanacademy.org'].includes(parsed.hostname))return true;
+    if(['youtube.com','www.youtube.com'].includes(parsed.hostname)&&parsed.pathname==='/playlist'){
+      const id=parsed.searchParams.get('list')||'';
+      return /^[A-Za-z0-9_-]{20,60}$/.test(id);
+    }
+    return false;
+  }catch(e){return false}};
   $('course-links').innerHTML=courses.filter(c=>allowedCourse(c.url)).slice(0,3).map(c=>'<a class="course-link" href="'+esc(c.url)+'" target="_blank" rel="noopener noreferrer"><strong>'+esc(c.title)+'</strong><small>'+esc(c.provider)+'</small><span>'+esc(c.note||'')+' ↗</span></a>').join('');
   $('chapters-drawer').querySelector('summary').textContent=chapter?'🗺️ מפת המסע · '+chapters.length+' תחנות · כעת '+(step.chapter+1):'🗺️ בחר תחנה ממפת המסע';
 }
@@ -255,6 +290,11 @@ $('restart-journey').addEventListener('click',()=>{const a=filtered();if(a.lengt
 function jumpChapter(delta){const chapters=getChapters(mode),a=filtered(),pos=a.indexOf(current),step=getStep(mode,videos[current].id);if(!step)return;const next=chapters[step.chapter+delta];if(!next)return;const idx=videos.findIndex(v=>v.id===next.items[0]?.id);if(idx>=0)navigate(idx,true);}
 $('prev-chapter').addEventListener('click',()=>jumpChapter(-1));
 $('next-chapter').addEventListener('click',()=>jumpChapter(1));
+$('concept-items').addEventListener('click',e=>{
+  const b=e.target.closest('button[data-play-concept]');if(!b)return;
+  const index=Number(b.dataset.playConcept);
+  if(Number.isInteger(index)&&filtered().includes(index))navigate(index,true);
+});
 $('chapter-links').addEventListener('click',e=>{const b=e.target.closest('button[data-start]');if(!b)return;const at=videos.findIndex(v=>v.id===b.dataset.start);if(at>=0)navigate(at,true);});
 $('p-prev').addEventListener('click',()=>{page--;render()});$('p-next').addEventListener('click',()=>{page++;render()});
 document.querySelectorAll('[data-mode]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mode===mode)));
