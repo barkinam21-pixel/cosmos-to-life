@@ -892,6 +892,32 @@ addAfterPath20261017("earthlife",1,"R5-s6O8qyvE",[
 {id:"EVbdbVhzcM4",why:"מהטיפות הקטנות נמשיך להתנגשות של מערבולות."}]);
 addAfterPath20261017("chemistry",2,"6xgBSQwqAuE",[
 {id:"3BJU2drrtCM",why:"מהפיזיקה של צבעים נלמד איך המסך מפיק אותם בתמונה."}]);
+
+/* Curated links to 2026-10-18 videos; no extra media players or video objects. */
+const guideInsert1018=(route,chapter,anchor,items)=>{
+ const list=paths[route]?.chapters[chapter]?.items;
+ if(!list)throw Error("Missing curated route "+route);
+ const i=list.findIndex(x=>x.id===anchor);
+ if(i<0)throw Error("Missing curated anchor "+anchor);
+ list.splice(i+1,0,...items);
+};
+guideInsert1018("calm",2,"j2_dJY_mIys",[
+{id:"gzkB574jivA",why:"מהמים הצבעוניים לדיו המתפשט בתנועות רכות בהילוך איטי."},
+{id:"YAfmZKX24Zs",why:"מהצבע למערבולות מים שיוצרות זרועות סיבוביות."},
+{id:"cT9OZtOgtjk",why:"מהמים למתכת נוזלית שמחזירה אורות צבעוניים."}]);
+guideInsert1018("earthlife",1,"EVbdbVhzcM4",[{id:"YAfmZKX24Zs",why:"ממערבולות מתנגשות לזרימת מים סיבובית."}]);
+guideInsert1018("earthlife",3,"0wtLrlIKvJE",[{id:"KLVfWKxtfow",why:"מהדיונון המסתווה לחשופית שמתגוננת בעזרת תאים של טרפה."}]);
+guideInsert1018("earthlife",3,"CJl_relCddQ",[{id:"r5cqJTU5D5I",why:"מהדג על היבשה לשממית המטפסת בכוחות מולקולריים."}]);
+guideInsert1018("cinematic",3,"3BJU2drrtCM",[{id:"7Ys_yKGNFRQ",why:"מן המסך היוצר אור לצילום תנועת האור עצמו."}]);
+guideInsert1018("cinematic",3,"X3uKmTdgmQg",[
+{id:"HDzVD-cqiWM",why:"מכוס שנשברה בתהודה לניצוצות במצלמה מהירה. הבזקים ורעש."},
+{id:"_5JpzUBXISY",why:"מהניצוצות לבועת ענק שהקרע שלה מתפשט כמו גל."}]);
+guideInsert1018("cinematic",3,"EVbdbVhzcM4",[
+{id:"YAfmZKX24Zs",why:"מטבעות מים למים מסתחררים כמו גלקסיה."},
+{id:"cT9OZtOgtjk",why:"מן המים הסיבוביים למערבולת של מתכת נוזלית וצבע."},
+{id:"gzkB574jivA",why:"מהמתכת המבריקה לזרמי דיו רכים וצבעוניים."}]);
+paths.cinematic.chapters[3].description="ניסויים קולנועיים בתנועה, אור, חשמל ומערבולות. יש הבזקים וצלילים חזקים בחלקם.";
+
 const legacy = {
   "all": [
     "📚 הספרייה המלאה",
