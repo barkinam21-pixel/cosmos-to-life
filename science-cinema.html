@@ -247,9 +247,10 @@ const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'
 function render(){
 const indices=filtered();
 if(!indices.length){$('heading').textContent='מכין את מסלול הסרטים…';$('about').textContent='טוען את רשימת סרטי הדוקו המלאים.';$('bridge').textContent='';$('playlist').textContent='';$('count').textContent='טוען';$('energy-hint').hidden=true;$('docu-hint').hidden=mode!=='docu';$('epic-hint').hidden=mode!=='epic';$('veritasium-hint').hidden=mode!=='veritasium';$('series-hint').hidden=mode!=='series';$('scienceclic-hint').hidden=mode!=='scienceclic';$('physics-hint').hidden=mode!=='physics';$('physics-equation').hidden=true;return;}
+if(!indices.includes(current)){current=indices[0];page=0;}
 const v=selected();$('phase').textContent=videoLanguageLabel(v)+' · '+v.phase+' · '+v.who;
 $('heading').textContent=v.title;$('about').textContent=v.note;$('physics-equation').hidden=mode!=='physics'||!physicsEquations[v.id];$('physics-equation').textContent=physicsEquations[v.id]?'📐 נוסחת מפתח (רשות): '+physicsEquations[v.id]:'';$('bridge').textContent='↪ הקשר ברצף: '+(getPath(mode)?explanation(v):mode==='physics'?(physicsBridges[v.id]||v.bridge):mode==='series'?(seriesBridges[v.id]||v.bridge):mode==='scienceclic'?(scienceclicBridges[v.id]||v.bridge):mode==='veritasium'?(veritasiumBridges[v.id]||v.bridge):mode==='epic'?(epicBridges[v.id]||v.bridge):mode==='docu'?(docuBridges[v.id]||v.bridge):mode==='energy'?(energyBridges[v.id]||v.bridge):v.bridge);$('energy-hint').hidden=mode!=='energy';$('docu-hint').hidden=mode!=='docu';$('epic-hint').hidden=mode!=='epic';$('veritasium-hint').hidden=mode!=='veritasium';$('series-hint').hidden=mode!=='series';$('scienceclic-hint').hidden=mode!=='scienceclic';$('physics-hint').hidden=mode!=='physics';
-if(!indices.includes(current)){current=indices[0]??0;return render();}
+
 const max=Math.max(0,Math.ceil(indices.length/PAGE_SIZE)-1);
 page=Math.min(max,Math.max(0,page));
 const items=indices.slice(page*PAGE_SIZE,(page+1)*PAGE_SIZE);
