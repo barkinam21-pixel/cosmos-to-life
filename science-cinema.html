@@ -147,7 +147,20 @@ const getPath=m=>GUIDE.paths?.[m]||null;
 const getChapters=m=>m==='physics'?physicsStages.map(s=>({name:s.label,description:s.description||'מהרעיון הפשוט לניסויים, הדמיות ויישומים.',items:s.items.map(r=>({id:r[0],why:r[1]}))})):getPath(m)?.chapters||[];
 const getStep=(m,id)=>{for(let k=0,cs=getChapters(m);k<cs.length;k++){const step=cs[k].items.find(s=>s.id===id);if(step)return {chapter:k,entry:step};}return null};
 const guidedIds=m=>getChapters(m).flatMap(s=>s.items.map(e=>e.id));
-const explanation=v=>getStep(mode,v.id)?.entry.why||v.bridge||v.note||'';
+const clipTitle=(x,max=48)=>String(x||'').replace(/\\s+/g,' ').slice(0,max);
+function explanation(v){
+  const info=getStep(mode,v.id);
+  if(info&&['journey','study','hebrew'].includes(mode)){
+    const ids=guidedIds(mode),pos=ids.indexOf(v.id);
+    const prev=pos>0?videos.find(x=>x.id===ids[pos-1]):null;
+    const next=pos>=0&&pos+1<ids.length?videos.find(x=>x.id===ids[pos+1]):null;
+    const chapter=getChapters(mode)[info.chapter],inside=chapter?.items?.some(x=>x.id===prev?.id);
+    const meaning=String(v.note||info.entry.why||chapter?.description||'').replace(/\\s+/g,' ').slice(0,105);
+    const opening=prev?(inside?'מ'+clipTitle(prev.title)+' נעבור אל '+clipTitle(v.title)+'. ':'כאן מתחיל שלב חדש: '+clipTitle(chapter.name)+'. אחרי '+clipTitle(prev.title)+', נגיע ל'+clipTitle(v.title)+'. '):'פותחים ב'+clipTitle(v.title)+'. ';
+    return opening+meaning+(next?' בהמשך: '+clipTitle(next.title)+'.':'');
+  }
+  return info?.entry.why||v.bridge||v.note||'';
+}
 function updateJourney(indices){
   document.querySelectorAll('button[data-mode]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mode===mode)));
   for(const p of document.querySelectorAll('[data-total]')){
@@ -162,7 +175,7 @@ function updateJourney(indices){
   $('chapter-links').innerHTML=chapters.map((c,i)=>'<button type="button" class="chapter-link" data-start="'+esc(c.items[0]?.id||'')+'" aria-pressed="'+(step?.chapter===i)+'"><strong>'+esc(c.name)+'</strong><small>'+esc(c.description||'')+'</small></button>').join('');
   if(step)$('bridge').textContent='↪ למה הסרט כאן? '+step.entry.why;
   const nextAt=indices[here+1],up=nextAt===undefined?null:videos[nextAt];
-  $('up-next').textContent=up?'⏭ הסרט הבא: '+up.title+' — '+explanation(up):'✨ זה סוף המסלול. אפשר לבחור תחנה אחרת או להתחיל מחדש.';
+  $('up-next').textContent=up?'⏭ הסרט הבא: '+up.title:'✨ זה סוף המסלול. אפשר לבחור תחנה אחרת או להתחיל מחדש.';
   const chapter=step?chapters[step.chapter]:null;
   $('now-chapter').hidden=!chapter;
   $('chapter-current-title').textContent=chapter?.name||'';
