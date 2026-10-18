@@ -159,7 +159,7 @@ const getPath=m=>GUIDE.paths?.[m]||null;
 const getChapters=m=>m==='physics'?physicsStages.map(s=>({name:s.label,description:s.description||'מהרעיון הפשוט לניסויים, הדמיות ויישומים.',items:s.items.map(r=>({id:r[0],why:r[1]}))})):getPath(m)?.chapters||[];
 const getStep=(m,id)=>{for(let k=0,cs=getChapters(m);k<cs.length;k++){const step=cs[k].items.find(s=>s.id===id);if(step)return {chapter:k,entry:step};}return null};
 const guidedIds=m=>getChapters(m).flatMap(s=>s.items.map(e=>e.id));
-const clipTitle=(x,max=48)=>String(x||'').replace(/\\s+/g,' ').slice(0,max);
+const clipTitle=(x,max=66)=>{const value=String(x||'').replace(/\s+/g,' ').trim();if(value.length<=max)return value;const cut=value.slice(0,max);return cut.replace(/\s+\S*$/,'')+'…';};
 function explanation(v){
   const info=getStep(mode,v.id);
   if(info&&['journey','study','hebrew'].includes(mode)){
@@ -187,7 +187,7 @@ function updateJourney(indices){
   $('chapter-links').innerHTML=chapters.map((c,i)=>'<button type="button" class="chapter-link" data-start="'+esc(c.items[0]?.id||'')+'" aria-pressed="'+(step?.chapter===i)+'"><strong>'+esc(c.name)+'</strong><small>'+esc(c.description||'')+'</small></button>').join('');
   if(step)$('bridge').textContent='↪ למה הסרט כאן? '+step.entry.why;
   const nextAt=indices[here+1],up=nextAt===undefined?null:videos[nextAt];
-  $('up-next').textContent=up?'⏭ הסרט הבא: '+up.title:'✨ זה סוף המסלול. אפשר לבחור תחנה אחרת או להתחיל מחדש.';
+  $('up-next').textContent=up?'⏭ הסרט הבא: '+videoLanguageLabel(up)+' · '+up.title:'✨ זה סוף המסלול. אפשר לבחור תחנה אחרת או להתחיל מחדש.';
   const chapter=step?chapters[step.chapter]:null;
   $('now-chapter').hidden=!chapter;
   $('chapter-current-title').textContent=chapter?.name||'';
