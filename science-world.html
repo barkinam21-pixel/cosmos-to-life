@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="theme-color" content="#061421">
+<meta name="description" content="מסע לימודי וקולנועי אחד: 40 תחנות, מעל 900 שיעורים, סרטים, אנימציות, ניסויים וקורסים בעברית ובאנגלית מהמפץ הגדול לחיים ולמדע.">
+<title>מסע הידע · היקום, החיים וכל מה שביניהם</title>
+<style>
+:root{color-scheme:dark;--bg:#061421;--surface:#102338;--card:#12283c;--line:#365369;--ink:#f3f8fe;--muted:#b9cbd9;--accent:#9de5d9;--gold:#ffd59e;--shadow:0 16px 52px #0005}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Arial,system-ui,sans-serif;min-height:100vh}
+button,input,select{font:inherit}button{cursor:pointer}button:disabled{opacity:.4;cursor:not-allowed}a{color:#b8f9ec}button:focus-visible,select:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid #ffe5b0;outline-offset:3px}
+button,.buttonLink{transition:border-color .14s,background .14s,transform .14s}button:not(:disabled):active{transform:scale(.985)}
+.wrap{max-width:1180px;margin:auto;padding:0 17px}
+.hero{overflow:hidden;position:relative;background:radial-gradient(ellipse at 18% -22%,#4d999b58,transparent 45%),radial-gradient(ellipse at 90% 8%,#4a548f62,transparent 45%),linear-gradient(165deg,#122641,#071523 79%);border-bottom:1px solid #304b60}
+.hero:after{content:"";position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(#d1faff8c .7px,transparent 1px);background-size:39px 42px;opacity:.14}
+.hero .wrap{position:relative;z-index:1;padding-top:28px;padding-bottom:30px}
+.brand{display:flex;align-items:center;gap:10px;color:#b9ede6;font-size:13px;font-weight:700;letter-spacing:.01em}
+.brand-mark{display:grid;place-items:center;width:30px;height:30px;border:1px solid #7cd1ce8b;border-radius:10px;background:#142f47;font-size:17px}
+.eyebrow{color:var(--accent);font-size:12px;letter-spacing:.06em;font-weight:700;margin:18px 0 6px}
+h1{font-size:clamp(32px,5.7vw,57px);line-height:1.15;letter-spacing:-.025em;margin:0 0 13px;max-width:780px}
+h1 span{color:#b0e9de;font-weight:600}
+.hero-copy{color:#d6e6f1;max-width:780px;line-height:1.72;margin:0 0 20px;font-size:clamp(14px,1.6vw,17px)}
+.hero-footer{display:flex;flex-wrap:wrap;align-items:center;gap:13px 24px}
+.metric{display:flex;align-items:baseline;gap:6px;color:#c4d5e5;font-size:13px}
+.metric strong{font-size:23px;color:white;font-variant-numeric:tabular-nums}
+.soft-pill{border:1px solid #46657b;color:#cbdbe6;border-radius:999px;padding:6px 11px;font-size:12px;background:#152c4088}
+main.wrap{padding-top:21px;padding-bottom:55px}
+.section-top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:10px}
+.section-top h2{font-size:20px;margin:0}
+.text-button{color:#d7ffed;border:1px solid #46617b;background:#1a374c;border-radius:10px;padding:9px 13px;font-size:13px;font-weight:700}
+.mode-panel{border:1px solid #304e64;border-radius:16px;padding:13px 15px;background:linear-gradient(100deg,#132a3f,#0b2031);margin-bottom:17px}
+.mode-line{display:flex;flex-wrap:wrap;align-items:center;gap:9px}
+.mode{min-height:42px;border:1px solid #4e7485;border-radius:12px;background:#1d3a4f;color:var(--ink);padding:9px 13px;font-weight:700;font-size:14px}
+.mode.active,.mode[aria-pressed="true"]{background:#a9eddb;color:#092b30;border-color:#a9eddb}
+.extras{min-width:170px;flex:1}
+.extras summary{font-size:13px;color:#dbf4f8;cursor:pointer;padding:9px 8px}
+.extra-modes{display:flex;flex-wrap:wrap;gap:7px;padding:8px 0}
+.mode-note{margin:9px 0 0;font-size:12px;color:#b8cddc}
+.stage-board{border:1px solid #3f6575;border-radius:18px;padding:17px 19px;margin:19px 0;background:radial-gradient(circle at 0 0,#2a696d51,transparent 44%),linear-gradient(135deg,#102b40,#122039);box-shadow:var(--shadow)}
+.stage-head{display:flex;justify-content:space-between;flex-wrap:wrap;gap:20px}
+.stage-kicker{color:#9be3ce;font-size:12px;font-weight:800;letter-spacing:.05em}
+.stage-board h2{margin:5px 0 8px;font-size:clamp(20px,3vw,28px);line-height:1.3}
+.stage-board p{margin:0;color:#deedf2;font-size:14px;line-height:1.7;max-width:790px}
+.stage-controls{min-width:195px}
+.stage-controls label{display:block;font-weight:700;color:#cce4ec;font-size:12px;margin-bottom:5px}
+.stage-controls select{display:block;width:100%;max-width:300px;min-height:46px;background:#17374f;color:white;border:1px solid #5e8795;border-radius:10px;padding:8px 10px}
+.stage-board small{color:#b5d0da;display:inline-block;margin-top:9px}
+.layout{display:grid;grid-template-columns:minmax(0,1.42fr) minmax(330px,.9fr);gap:17px;align-items:start}
+.viewer{min-width:0;overflow:hidden;background:#0d2132;border:1px solid #3b596c;border-radius:17px;box-shadow:var(--shadow)}
+.playerBox{background:#01080e;aspect-ratio:16/9;position:relative;width:100%;overflow:hidden}
+#playerHost{position:absolute;inset:0;width:100%;height:100%;display:grid;place-items:center}
+#playerHost>iframe,#playerHost>video,#playerHost>div:not(.preview){width:100%;height:100%;border:0}
+#playerHost>video{object-fit:contain;background:#02080b}
+.preview{width:100%;height:100%;display:grid;place-items:center;background:radial-gradient(ellipse at 50% 35%,#245773,#060d18 80%);background-size:cover;background-position:center}
+.bigPlay{background:#b1f3e4;color:#07252e;font-weight:800;border:2px solid #edfff8;border-radius:999px;min-width:165px;min-height:53px;padding:11px 24px;box-shadow:0 8px 32px #000a}
+.bigPlay:hover{background:#d2fff1}
+.viewer-body{padding:16px 16px 17px}
+.now-top{display:flex;gap:9px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.now-top small{color:#a6ddcf;font-weight:700}
+#nowProgress{font-size:12px;color:#b4c9da;direction:ltr;unicode-bidi:isolate}
+.viewer h3{margin:8px 0 5px;font-size:clamp(20px,2.2vw,25px);line-height:1.4}
+#byline{color:#bbd0de;font-size:12px;margin:0 0 11px}
+#note{color:#e8f3f8;font-size:14px;margin:9px 0;line-height:1.7}
+#bridge{border-right:3px solid #a9e4d6;background:#122f40;color:#c5efe0;padding:10px 12px;font-size:13px;border-radius:8px;line-height:1.65;margin:9px 0}
+#sourceInfo{color:#b0c4d2;font-size:12px;margin-top:8px}
+#questions{font-size:13px;color:#d8e9f3;background:#173246;border:1px solid #36586f;border-radius:10px;padding:10px;margin:12px 0}
+#questions summary{font-weight:700;cursor:pointer}#questions ul{margin:10px 0 0;padding-right:20px}
+#status{font-size:12px;color:#f6d7a2;min-height:24px;margin:12px 0 2px}
+.controls{display:flex;flex-wrap:wrap;gap:8px;margin-top:11px}
+.controls button,.buttonLink{display:inline-flex;justify-content:center;align-items:center;min-height:43px;gap:5px;background:#1c3c52;color:white;border:1px solid #5a7b91;border-radius:11px;padding:9px 12px;font-weight:700;font-size:13px;text-decoration:none}
+.controls button:hover,.buttonLink:hover{border-color:#b5eadd;background:#245269}
+.controls .primary{background:#a7e8d9;border-color:#a7e8d9;color:#092b32}
+.controls .primary:hover{background:#d4fff2}
+.controls .auto-btn[aria-pressed="false"]{color:#c5cdd5}
+.watch-help{font-size:12px;color:#b7cbda;margin:9px 0 0}
+.playlist-pane{border:1px solid #3b586e;border-radius:17px;background:#0e2235;padding:14px;min-width:0;box-shadow:var(--shadow)}
+.playlist-pane h2{margin:0;font-size:18px}
+.searchline{display:flex;flex-wrap:wrap;align-items:center;gap:9px;margin:10px 0}
+#search{width:100%;background:#0a1c2c;border:1px solid #507083;outline-offset:3px;border-radius:9px;color:white;padding:11px 12px;min-height:45px}
+#search::placeholder{color:#a4b8c8}
+.skip{display:flex;align-items:center;gap:8px;color:#d0e2ea;font-size:12px;padding:4px 0;cursor:pointer}
+.skip input{width:17px;height:17px;accent-color:#99e2cf}
+#routeCount{color:#aabfce;font-size:12px}
+#cards{display:grid;grid-template-columns:1fr;gap:8px;margin:12px 0}
+.clip{width:100%;min-height:93px;display:flex;align-items:flex-start;gap:10px;background:#132c41;color:var(--ink);border:1px solid #31556c;text-align:right;padding:9px;border-radius:12px}
+.clip:hover{border-color:#91d6cf;background:#1b3d50}
+.clip.selected{background:#21485a;border:2px solid #a2e5d7;padding:8px}
+.clip-thumb{flex:0 0 106px;height:62px;border-radius:8px;overflow:hidden;display:grid;place-items:center;background:linear-gradient(135deg,#345d70,#1c294d);margin-top:1px}
+.clip-thumb img{width:100%;height:100%;object-fit:cover}
+.no-thumb{font-size:25px}
+.clip-copy{flex:1;min-width:0;display:block}
+.clip-copy small{font-size:10px;color:#a5e4d0;display:block}
+.clip-copy strong{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;font-size:13px;line-height:1.35;margin:3px 0}
+.clip-copy em{font-style:normal;color:#a8c3d5;font-size:11px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.clip .number{color:#a9c5d2;font-size:10px;font-variant-numeric:tabular-nums}
+.pagination{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.pagination button{background:#1b3c51;border:1px solid #4a7589;border-radius:9px;padding:8px 12px;color:white;min-height:39px}
+#pageInfo{font-size:12px;color:#b4cbd9;font-variant-numeric:tabular-nums}
+.explain{margin:19px 0 0;background:#11283b;border:1px solid #315169;border-radius:14px;padding:13px 16px}
+.explain strong{font-size:14px}
+.explain p{margin:5px 0 0;color:#c2d8e4;font-size:13px;line-height:1.7}
+.footer{border-top:1px solid #27465b;text-align:center;color:#a5bac8;font-size:12px;padding:25px 15px 42px;line-height:1.8}
+[data-era="life"] .stage-board{background:radial-gradient(circle at 0 0,#28784b61,transparent 48%),linear-gradient(135deg,#103a3b,#122039)}
+[data-era="earth"] .stage-board{background:radial-gradient(circle at 0 0,#557c765e,transparent 48%),linear-gradient(135deg,#163b45,#122039)}
+[data-era="lab"] .stage-board{background:radial-gradient(circle at 0 0,#4e528c58,transparent 48%),linear-gradient(135deg,#203653,#122039)}
+@media(max-width:940px){.layout{grid-template-columns:1fr}.playlist-pane{padding:12px}#cards{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.hero .wrap{padding-top:20px;padding-bottom:24px}h1{font-size:34px}.wrap{padding-left:11px;padding-right:11px}.stage-board{padding:14px}.stage-controls{width:100%}.stage-controls select{max-width:100%}#cards{grid-template-columns:1fr}.clip-thumb{flex-basis:110px}.viewer-body{padding:13px}.controls button,.buttonLink{flex:1 1 45%}.metric strong{font-size:20px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}button,.buttonLink{transition:none}}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="wrap">
+    <div class="brand"><span class="brand-mark" aria-hidden="true">✦</span><span>מסע הידע · קולנוע ולימוד בעולם אחד</span></div>
+    <p class="eyebrow">המסע השלם · מהיקום הראשון ועד למחר</p>
+    <h1>היקום, החיים<br><span>וכל מה שביניהם.</span></h1>
+    <p class="hero-copy" id="subtitle">מסע קולנועי ולימודי משולב: מדע שאפשר לראות, להבין ולחוות. כל הסרטים והקורסים במקום אחד, בקצב שלך.</p>
+    <div class="hero-footer">
+      <div class="metric"><strong id="totalCount">—</strong><span>יחידות תוכן ללא כפילויות</span></div>
+      <div class="metric"><strong id="totalStages">40</strong><span>תחנות לימוד</span></div>
+      <span class="soft-pill">נגן אחד · שישה כרטיסים בכל פעם · שמירת התקדמות</span>
+    </div>
+  </div>
+</header>
+<main class="wrap" id="main">
+  <section class="mode-panel" aria-label="בחירת מסלול צפייה">
+    <div class="mode-line">
+      <button type="button" data-mode="journey" aria-pressed="true" class="mode active">✦ המסע המלא · הכול ביחד</button>
+      <details class="extras">
+        <summary>מסלולים נוחים במיוחד לרגעי כאב או ללמידה ממוקדת</summary>
+        <div class="extra-modes">
+          <button type="button" data-mode="core" class="mode" aria-pressed="false">ליבת המסע</button>
+          <button type="button" data-mode="calm" class="mode" aria-pressed="false">חזותי וקל</button>
+          <button type="button" data-mode="hebrew" class="mode" aria-pressed="false">סרטונים בעברית</button>
+          <button type="button" data-mode="sleep" class="mode" aria-pressed="false">האזנה רגועה</button>
+        </div>
+      </details>
+      <button type="button" class="text-button" id="resume" hidden>↶ חזור למקום שלי</button>
+    </div>
+    <p class="mode-note">המסע הראשי כולל גם חומרי העמקה ארוכים ומהירים המסומנים ״רשות״. כל התחנות והסרטונים משולבים ברצף אחד; המסלולים האחרים הם רק דרכי צפייה נוספות.</p>
+  </section>
+
+  <section class="stage-board" aria-labelledby="stageTitle">
+    <div class="stage-head">
+      <div>
+        <div id="stageEyebrow" class="stage-kicker">תחנה 01 / 40</div>
+        <h2 id="stageTitle">מן המפץ הגדול מתחילים</h2>
+        <p id="stageDescription">מה כבר היה, איך המדע יודע, ואיך הכול התחיל להתפתח.</p>
+        <small id="stageCount">טוען את תוכן התחנה…</small>
+      </div>
+      <div class="stage-controls">
+        <label for="stageSelect">קפיצה לתחנת לימוד</label>
+        <select id="stageSelect"><option value="1">01 · התחלה</option></select>
+      </div>
+    </div>
+  </section>
+
+  <div class="layout">
+    <section class="viewer" aria-label="הנגן ופרטי השיעור">
+      <div class="playerBox"><div id="playerHost" aria-label="נגן המדע"><div class="preview"><span>טוען את המסע…</span></div></div></div>
+      <div class="viewer-body">
+        <div class="now-top"><small id="nowLabel">הסרטון הנבחר</small><span id="nowProgress">1 / 909</span></div>
+        <h3 id="nowTitle">ברוכים הבאים למסע</h3>
+        <p id="byline"></p>
+        <p id="note"></p>
+        <p id="bridge" hidden></p>
+        <div id="sourceInfo"></div>
+        <details id="questions" hidden></details>
+        <div id="status" role="status" aria-live="polite">לחץ על הפעל כדי להתחיל.</div>
+        <div class="controls" role="group" aria-label="פקדי נגן">
+          <button id="play" class="primary" type="button">▶ הפעל / המשך</button>
+          <button id="pause" type="button">⏸ השהה</button>
+          <button id="navPrev" type="button">→ הקודם</button>
+          <button id="navNext" type="button">הבא ←</button>
+          <button id="auto" type="button" class="auto-btn" aria-pressed="true">רצף אוטומטי: פעיל</button>
+          <a id="watchAtSource" class="buttonLink" href="https://www.youtube.com" target="_blank" rel="noopener noreferrer">פתיחה ב־YouTube / דיבוב</a>
+        </div>
+        <p class="watch-help">לרוב הסרטונים נגן פנימי; בחלק ממקורות NASA, PBS ו־HHMI הצפייה היא באתר המקור. כפתור YouTube מאפשר גם שימוש בתוספי דיבוב בדפדפן.</p>
+      </div>
+    </section>
+
+    <aside class="playlist-pane" aria-labelledby="playlistTitle">
+      <div class="section-top"><h2 id="playlistTitle">רצף הלמידה</h2><span id="routeCount">מכין את המסלול…</span></div>
+      <div class="searchline">
+        <label for="search" style="position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)">חיפוש סרטונים ושיעורים</label>
+        <input id="search" type="search" autocomplete="off" placeholder="חיפוש סרטון, נושא או יוצר…">
+      </div>
+      <label class="skip"><input id="skipDeep" type="checkbox"> דלג זמנית על העמקות רשות במסע הראשי</label>
+      <div id="cards" aria-label="שישה הסרטונים בדף הנוכחי"><p>הספרייה נטענת…</p></div>
+      <div class="pagination">
+        <button id="prevPage" type="button">→ עמוד קודם</button>
+        <span id="pageInfo">1–6</span>
+        <button id="nextPage" type="button">עמוד הבא ←</button>
+      </div>
+    </aside>
+  </div>
+  <section class="explain" aria-label="המשך הסיפור">
+    <strong>איך הכול מתחבר?</strong>
+    <p id="nextExplain">כל סרטון מחבר אל התחנה הבאה. אנחנו מתחילים בתמונה הגדולה, עוברים דרך ההמחשות והמושגים, ורק אחר כך מעמיקים.</p>
+  </section>
+</main>
+<footer class="footer">מסע הידע · כל הסרטונים והשיעורים במקום אחד. נתוני הלימוד מופיעים לצורך ניווט; זכויות הסרטים נשארות בידי יוצריהם ומפרסמיהם.<br>המסע זוכר את הסרטון שנבחר בדפדפן שלך, ואינו טוען מאות נגנים במקביל.</footer>
+<script src="/science-cinema-guide.js" defer></script>
+<script src="/science-cinema-curriculum.js" defer></script>
+<script src="/science-world-base.js" defer></script>
+<script src="/science-cinema-additions.js" defer></script>
+<script src="/science-cinema-sleep.js" defer></script>
+<script src="/science-cinema-unified.js" defer></script>
+<script src="/science-world-course.js" defer></script>
+<script src="/science-world-app.js" defer></script>
+</body>
+</html>
