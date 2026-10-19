@@ -2222,6 +2222,31 @@
   if(cosmosStars&&!cosmosStars.some(x=>x.id==="px31h7ruU1Y")){const at=cosmosStars.findIndex(x=>x.id==="dEnHVL0FjhI");if(at>=0)cosmosStars.splice(at+1,0,{id:"px31h7ruU1Y",why:"אחרי לידת הכוכבים נבין את חייהם ואת סופם, לפני שנחקור את היסודות שנוצרו בתוכם."});}
   const journeyStars=window.scienceCinemaGuide?.paths?.journey?.chapters?.[7]?.items;
   if(journeyStars&&!journeyStars.some(x=>x.id==="px31h7ruU1Y")){const at=journeyStars.findIndex(x=>x.id==="2oVu8KKdiv8");if(at>=0)journeyStars.splice(at,0,{id:"px31h7ruU1Y",why:"לפני שנדון ביסודות שנוצרו בכוכבים, נכיר את מחזור החיים של כוכבים והגורמים למותם."});}
+
+  // 2026-10-19: original YouTube creators verified. Iframe playback not browser-verified.
+  additions.push(
+    ["Iu_7V2gaYZk",{"id":"n09iGowWdLY","title":"למה החץ מתהפך מאחורי כוס מים? · ניסוי בעברית","en":"ניסוי החץ המתהפך","who":"מכון דוידסון · מדע בבית 225 · יוצר רשמי","phase":"🌈 אור, עדשות ושבירה · עברית","note":"ניסוי קצר של ד״ר אבי סאייג עם כוס מים וחצים שמתהפכים. דרך נגישה להבין איך עדשה מרכזת משנה את מסלול קרני האור; אפשר רק לצפות, בלי הכנות.","ease":0,"quiet":true,"duration":"ניסוי עברי קצר","lang":"he","concept":"refraction","bridge":"אחרי שהקשית נראתה שבורה במים, נראה איך כוס מים יכולה להפוך חץ. מכאן נמשיך למראות צבעוניים של אור בטיפות מים."}],
+    ["Q3oItpVa9fs",{"id":"ABjRnSYw-4k","title":"גלי קול שמחזיקים חפצים באוויר · ניסוי בתהודה","en":"I built an acoustic LEVITATOR! Making liquid float on air","who":"Physics Girl · Dianna Cowern · ערוץ היוצרת הרשמי","phase":"🔊 גלי קול, תהודה וגל עומד · אנגלית","note":"ניסוי מצולם שבו גלי קול על־שמעיים יוצרים אזורים שמחזיקים פיסות חומר זעירות באוויר; מסבירים בעזרת קפיץ, הדהוד והדמיות מהו גל עומד. בחלק מהניסוי יש קולות חדים, לכן אינו מסומן כרגוע.","ease":1,"quiet":false,"duration":"8:27 דקות","lang":"en","concept":"standingwave","bridge":"אחרי שראינו קול מצייר צורות באש ובמים, ננסה להשתמש בגל עומד של קול כדי להשאיר עצם קטן באוויר; אחר כך נחזור לצילום תנועה איטית של גלים."}]
+  );
+  const cinemaGuide=window.scienceCinemaGuide;
+  const insertCurated=(route,chapter,after,id,why)=>{
+    const items=cinemaGuide?.paths?.[route]?.chapters?.[chapter]?.items;
+    if(!items||items.some(entry=>entry.id===id))return;
+    const at=items.findIndex(entry=>entry.id===after);
+    if(at>=0)items.splice(at+1,0,{id,why});
+  };
+  insertCurated('journey',33,'Iu_7V2gaYZk','n09iGowWdLY','אחרי ניסוי הקשית, מכון דוידסון ממחיש בעברית כיצד כוס מים משנה את כיוון קרני האור ויכולה להפוך חץ.');
+  insertCurated('journey',32,'Q3oItpVa9fs','ABjRnSYw-4k','מניסוי שממחיש קול ותדרים נתקדם לגל עומד: גלי קול שמאפשרים לרחף פיסה קטנה של חומר.');
+  insertCurated('study',3,'2OP0gp9v5XM','ABjRnSYw-4k','נכיר תהודה וגל עומד בניסוי חזותי שבו קול מחזיק עצם קטן באוויר.');
+  insertCurated('study',3,'5cEIrMPO6FI','n09iGowWdLY','אחרי אורכי הגל בספקטרום נראה בעברית איך עדשה משנה את כיוון האור.');
+  insertCurated('hebrew',4,'B9YcfuI1a5c','n09iGowWdLY','נעבור לתפיסה חזותית: חץ מתהפך מאחורי כוס מים בשל שבירת האור; מכאן נמשיך לאשליות של הראייה והמוח.');
+  if(cinemaGuide?.conceptHelp?.dictionary){
+    cinemaGuide.conceptHelp.dictionary.standingwave=['גל עומד','כשגל נע וגל מוחזר נפגשים, הם עשויים ליצור דפוס תנודה עם נקודות שכמעט אינן נעות. בניסוי משתמשים בדפוס כזה כדי להחזיק עצמים זעירים באוויר.','ABjRnSYw-4k'];
+    for(const [route,stage] of [['journey','33'],['study','4']]){
+      const concepts=cinemaGuide.conceptHelp.groups?.[route]?.[stage];
+      if(concepts&&!concepts.includes('standingwave'))concepts.push('standingwave');
+    }
+  }
   const pending=additions.slice();
   for(let pass=0;pass<additions.length&&pending.length;pass++){
     let addedOnPass=0;

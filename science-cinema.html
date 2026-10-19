@@ -289,7 +289,7 @@ $('play').addEventListener('click',()=>{
   }catch(e){$('status').textContent='הנגן לא הגיב כרגע. אפשר לנסות שוב.';}
 });
 $('auto').addEventListener('click',()=>{auto=!auto;$('auto').classList.toggle('on',auto);$('auto').setAttribute('aria-pressed',String(auto));$('auto').textContent=auto?'🔁 רצף אוטומטי פעיל':'⏸ רצף אוטומטי כבוי'});
-document.querySelector('.filters').addEventListener('click',e=>{const b=e.target.closest('button[data-mode]');if(!b)return;mode=b.dataset.mode;page=0;try{const u=new URL(location.href);u.searchParams.set('topic',mode);history.replaceState(null,'',u.pathname+u.search);}catch(e){}const arr=filtered();if(arr.length)navigate(arr[0],true);else render()});
+document.querySelector('.filters').addEventListener('click',e=>{const b=e.target.closest('button[data-mode]');if(!b)return;mode=b.dataset.mode;page=0;document.querySelectorAll('[data-mode]').forEach(option=>option.setAttribute('aria-pressed',String(option.dataset.mode===mode)));try{const u=new URL(location.href);u.searchParams.set('topic',mode);history.replaceState(null,'',u.pathname+u.search);}catch(e){}const arr=filtered();if(arr.length)navigate(arr[0],true);else render()});
 $('restart-journey').addEventListener('click',()=>{const a=filtered();if(a.length)navigate(a[0],true);});
 function jumpChapter(delta){const chapters=getChapters(mode),a=filtered(),pos=a.indexOf(current),step=getStep(mode,videos[current].id);if(!step)return;const next=chapters[step.chapter+delta];if(!next)return;const idx=videos.findIndex(v=>v.id===next.items[0]?.id);if(idx>=0)navigate(idx,true);}
 $('prev-chapter').addEventListener('click',()=>jumpChapter(-1));
