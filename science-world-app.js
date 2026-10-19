@@ -172,9 +172,9 @@ function showStage(item){
  const root=document.documentElement;
  root.dataset.era=item.stage<=6?'cosmos':item.stage<=12?'stars':item.stage<=16?'earth':item.stage<=24?'life':item.stage<=38?'lab':'future';
 }
-function renderCards(){
+function renderCards(keepPage){
  const route=filteredRoute(),pos=position(route);
- if(pos>=0)viewPage=Math.floor(pos/6);
+ if(!keepPage&&pos>=0)viewPage=Math.floor(pos/6);
  viewPage=Math.max(0,Math.min(viewPage,Math.max(0,Math.ceil(route.length/6)-1)));
  const start=viewPage*6,part=route.slice(start,start+6);
  $('cards').innerHTML=part.map((item,index)=>{
@@ -241,7 +241,7 @@ function refreshSelection(shouldPlay){
 }
 function pick(nextKey,shouldPlay){
  if(!itemByKey.has(nextKey))return;
- if(nextKey!==key)currentTime=0;
+ if(nextKey!==key){currentTime=0;clearPlayer();}
  key=nextKey;userPaused=!shouldPlay;
  refreshSelection(shouldPlay);
  if(mode==='journey'&&!query){const item=active();if(item)location.hash='stage-'+item.stage;}
@@ -306,7 +306,7 @@ function loadYoutube(){
        say('מושהה — לחץ על הפעל כדי להמשיך.');return;
      }
      if(event.data===1){errorStreak=0;say('מתנגן בתוך האתר.');}
-     if(event.data===2){if(!userPaused){userPaused=true;}writeProgress();say('מושהה — לחץ על הפעל כדי להמשיך.');}
+     if(event.data===2){writeProgress();say('הנגן מושהה — לחץ על הפעל כדי להמשיך.');}
      if(event.data===0)onEnded();
    },
    onError:(event)=>handleError('YouTube '+event.data)
@@ -374,12 +374,12 @@ function init(){
  $('subtitle').textContent='אנימציות, דוקומנטריים, ניסויים, קורסים בעברית ובאנגלית — '+MAIN.length+' יחידות בסדר אחד, בלי כפילויות.';
  document.querySelectorAll('[data-mode]').forEach(btn=>btn.addEventListener('click',()=>changeMode(btn.dataset.mode)));
  $('cards').addEventListener('click',e=>{const btn=e.target.closest('[data-key]');if(btn)pick(btn.dataset.key,false);});
- $('search').addEventListener('input',e=>{query=e.target.value;viewPage=0;renderCards();});
+ $('search').addEventListener('input',e=>{query=e.target.value;viewPage=0;renderCards(true);});
  $('skipDeep').addEventListener('change',e=>{omitDeep=e.target.checked;viewPage=0;renderCards();writeProgress();});
  $('navPrev').addEventListener('click',()=>step(-1,false));
  $('navNext').addEventListener('click',()=>step(1,false));
- $('prevPage').addEventListener('click',()=>{viewPage--;renderCards();});
- $('nextPage').addEventListener('click',()=>{viewPage++;renderCards();});
+ $('prevPage').addEventListener('click',()=>{viewPage--;renderCards(true);});
+ $('nextPage').addEventListener('click',()=>{viewPage++;renderCards(true);});
  $('stageSelect').addEventListener('change',e=>jumpStage(e.target.value));
  $('play').addEventListener('click',()=>play(true));
  $('pause').addEventListener('click',pause);
