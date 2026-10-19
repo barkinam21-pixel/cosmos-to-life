@@ -72,6 +72,18 @@ for(const item of pangeaScienceClips){
   chapter.items.splice(at+1,0,{id:item.id,why:'🎬 רשות · תיעוד PBS על פנגיאה: '+item.note});
   included.add(item.id);added++;
 }
+// Repair a confirmed 2014 Royal Institution chapter-order regression.
+// Editorial ordering only: 11 existing unique videos; no new video/player or other route changes.
+const technologyChapter=main.chapters[38];
+const technologySequence=[["W79s0PsHhDc","מתחילים מן הנורה החשמלית: כיצד החשמל הופך לאור שימושי?"],["Mllam3nKTv4","אחרי שהכרנו את הנורה, נראה כיצד התאורה החשמלית שינתה את חיי הלילה ואת הערים."],["yMAHqOBhw_o","Royal Institution, פרק 1 מתוך 3: מאור ונורות לגורד שחקים שהופך למשחק מואר. אחר כך האור יעביר גם מידע."],["fqweToh5wyw","פרק 2 מתוך 3: מן האור בבניין להולוגרמות, מסכים ותקשורת. בפרק הבא המכונות יתעוררו לחיים."],["VGjU1mzoTFg","פרק 3 מתוך 3: מנועים, רובוטים ומוזיקה. הסדרה מסתיימת ועכשיו נראה כיצד מסכים מציגים תמונה."],["3BJU2drrtCM","מן הרובוטים וההולוגרמות אל המסך הביתי: נצלול אל הפיקסלים ונראה כיצד התמונה נבנית."],["PN_ESIcQFpM","מן האור שמצייר תמונה לאור שמודד מרחקים: לייזרים חושפים יערות בתלת־ממד."],["MiUHjLxm3V0","מלייזרים למדידה נעבור ללייזרים ולמראות המדויקים שמייצרים את שבבי המחשב. השבבים יאפשרו את הפרק הבא."],["Abbli3B8phw","סדרת הבינה המלאכותית, חלק 1 מתוך 3: מהשבבים למחשבים שלומדים לזהות דפוסים."],["p5vLTHXyTn8","חלק 2 מתוך 3: אחרי יסודות הלמידה נראה כיצד הבינה המלאכותית כבר פועלת בחיינו."],["B3IeRplsYXw","חלק 3 מתוך 3: מן הלמידה לרובוטים ולתחבורה שמקבלים החלטות בעולם האמיתי; מכאן נביט אל העתיד."]];
+if(technologyChapter){
+ const items=technologyChapter.items;
+ const originals=new Map(items.map(item=>[item.id,item]));
+ if(items.length===technologySequence.length&&technologySequence.every(([id])=>originals.has(id))){
+  const ordered=technologySequence.map(([id,why])=>({...originals.get(id),why}));
+  items.splice(0,items.length,...ordered);
+ }else console.warn('Technology chapter inventory changed; editorial order requires review');
+}
 const left=videos.filter(v=>!included.has(v.id));
 if(left.length)console.warn('Unassigned cinema videos require editorial review',left.map(v=>v.id));
 main.title='🌌 המסע המשולב המלא · כל המדע בסדר אחד';
