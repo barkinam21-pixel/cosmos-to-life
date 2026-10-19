@@ -390,7 +390,7 @@ function init(){
  });
  $('playerHost').addEventListener('dblclick',()=>{if(userPaused)play();else pause();});
  const hash=location.hash.match(/^#stage-(\d{1,2})$/);
- if(hash&&mode==='journey'){const si=Number(hash[1])-1; if(STAGES[si]?.length){key=STAGES[si][0].key;currentTime=0;}}
+ if(hash&&mode==='journey'&&(!saved||!itemByKey.has(saved.key))){const si=Number(hash[1])-1; if(STAGES[si]?.length){key=STAGES[si][0].key;currentTime=0;}}
  if(!filteredRoute().some(x=>x.key===key)){key=filteredRoute()[0]?.key||MAIN[0]?.key;}
  refreshSelection(false);
  $('resume').hidden=!saved;
