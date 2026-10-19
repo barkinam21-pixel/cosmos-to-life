@@ -6,6 +6,18 @@
 const guide=window.scienceCinemaGuide;
 if(!guide?.paths?.journey?.chapters||!Array.isArray(videos))return;
 const main=guide.paths.journey;
+// Five creator-verified MinutePhysics explainers: optional fast-paced bridges only.
+// Insert into the video array first, and into exact curriculum positions below.
+const preciseScienceClips=[{"anchor":"WzC92VJJnvg","stage":6,"after":"WzC92VJJnvg","id":"Af0_vWDfJwQ","title":"מהו חומר אפל? · MinutePhysics (העמקת רשות)","en":"Minute Physics: What is Dark Matter?","note":"המחשת לוח קצרה של הראיות לחומר אפל והשאלות שנותרו פתוחות. מומלצת אחרי הסרט החזותי על החומר האפל, לא במקומו.","bridge":"מהגלקסיות שאיננו רואים את מלוא המסה שלהן, נבחן כיצד מדענים מסיקים על קיום חומר אפל מתוך תנועות וכבידה. אחר כך נמשיך להיווצרות הכוכבים.","phase":"🌌 החומר האפל והראיות לו · הסבר מהיר","concept":"dark"},{"anchor":"px31h7ruU1Y","stage":8,"after":"px31h7ruU1Y","id":"gS1dpowPlE8","title":"איך השמש מפיקה אנרגיה? · היתוך ומנהור קוונטי (רשות)","en":"How the Sun works: Fusion and Quantum Tunneling","note":"הסבר לוח קצר ומהיר על ההיתוך הגרעיני בליבת כוכבים ועל תפקיד המנהור הקוונטי בהסתברות לתגובות. העמקה אופציונלית לאחר היכרות עם חיי הכוכב.","bridge":"אחרי שראינו כיצד כוכב חי ומתפתח, נציץ לתהליך ההיתוך שמזין אותו. מכאן ממשיכים לשאריות הכוכבים ולהיווצרות היסודות.","phase":"☀️ כוכבים · היתוך, אנרגיה ומנהור קוונטי · רשות","concept":"fusion"},{"anchor":"n09iGowWdLY","stage":34,"after":"n09iGowWdLY","id":"FAivtXJOsiI","title":"למה אור נע לאט יותר בזכוכית? · MinutePhysics (רשות)","en":"The Speed of Light in Glass","note":"הסבר מהיר ומאויר למהירות התקדמות האור בחומר ולקשר בין האור לזכוכית. מגיע אחרי הדגמות שבירת האור במים.","bridge":"אחרי הקשית והחץ הנשברים בכוס, נסביר למה התפשטות האור בזכוכית שונה מהתפשטותו בריק. משם נעבור לטיפות וקשת בענן.","phase":"🌈 אור, זכוכית ושבירה · הסבר מהיר","concept":"refraction"},{"anchor":"lW4Uq_2VPhE","stage":34,"after":"lW4Uq_2VPhE","id":"y3SBSbsdiYg","title":"איך לייזר עובד מבחינה פיזיקלית? · MinutePhysics (רשות)","en":"How lasers work (in theory)","note":"המחשת לוח קצרה ומהירה של הרעיון הפיזיקלי מאחורי לייזר, בהמשך לניסוי החזותי על אור ולייזרים.","bridge":"אחרי שראינו לייזר בניסוי אמיתי, נבין בקצרה מה מאפשר יצירת אור לייזר ממוקד ומתואם. אחר כך נמשיך לצילום אור ואוויר.","phase":"🔦 אור, לייזר ופליטה מאולצת · רשות","concept":"photon"},{"anchor":"DjcS1kRkc6M","stage":38,"after":"DjcS1kRkc6M","id":"YHS9g72npqA","title":"גלי כבידה בהמחשת דמויות מקל · MinutePhysics (רשות)","en":"Gravitational Waves Explained Using Stick Figures","note":"המחשת לוח קצרה לגלי כבידה, אחרי הביקור במתקן LIGO ובטרם הדמיות מרחב־הזמן. קצר ומהיר ולכן בגדר העמקה.","bridge":"אחרי סיפור הניסוי ב־LIGO, נמחיש באמצעות ציורי מקל כיצד גלי כבידה משנים מעט את המרחקים. מכאן נעבור למרחב־זמן בתלת־ממד.","phase":"〰️ גלי כבידה, זמן ומרחב־זמן · רשות","concept":"wave"}];
+const activeVideoId=videos[current]?.id;
+for(const item of preciseScienceClips){
+  if(videos.some(v=>v.id===item.id))continue;
+  const at=videos.findIndex(v=>v.id===item.anchor);
+  if(at<0){console.warn('MinutePhysics anchor missing',item.id,item.anchor);continue;}
+  const {stage,anchor,after,...meta}=item;
+  videos.splice(at+1,0,{...meta,who:'MinutePhysics · Henry Reich · ערוץ היוצר הרשמי',duration:'סרטון קצר · קצב מהיר',lang:'en',ease:2,quiet:false});
+}
+if(activeVideoId){const at=videos.findIndex(v=>v.id===activeVideoId);if(at>=0)current=at;}
 if(!guide.paths.core)guide.paths.core={
   title:'🌱 המסע הממוקד · בלי כל ההרחבות',
   short:'40 תחנות · סרטי יסוד והמחשות נבחרות',
@@ -28,6 +40,16 @@ for(const [stage,ids] of Object.entries(stageIds)){
     chapter.items.push({id,why:intro(video)+' · '+String(video.note||video.bridge||video.title).slice(0,170)});
     included.add(id);added++;
   }
+}
+// Place these clips INSIDE their teaching stations after their prerequisite,
+// not at a stage's end. Their neighbors remain unchanged.
+for(const item of preciseScienceClips){
+  const chapter=main.chapters[item.stage-1],clip=byId.get(item.id);
+  if(!chapter||!clip||included.has(item.id))continue;
+  const at=chapter.items.findIndex(x=>x.id===item.after);
+  if(at<0){console.warn('MinutePhysics curriculum prerequisite missing',item.id,item.after);continue;}
+  chapter.items.splice(at+1,0,{id:item.id,why:'🧠 רשות · המחשת לוח קצרה ומהירה: '+item.note});
+  included.add(item.id);added++;
 }
 const left=videos.filter(v=>!included.has(v.id));
 if(left.length)console.warn('Unassigned cinema videos require editorial review',left.map(v=>v.id));
