@@ -214,7 +214,7 @@ function showCurrent(){
  $('watchAtSource').textContent=item.id?'פתיחה ב־YouTube / דיבוב':'פתיחה באתר המקור';
  $('nowProgress').textContent=(filteredRoute().findIndex(x=>x.key===item.key)+1)+' / '+filteredRoute().length;
  const idx=filteredRoute().findIndex(x=>x.key===key),next=filteredRoute()[idx+1];
- $('nextExplain').textContent=next?'בהמשך: '+next.title+(next.note?' — '+next.note.slice(0,120):''):'סיימנו את המסלול הנבחר.';
+ $('nextExplain').textContent=next?(next.stage!==item.stage?'עוברים לתחנה הבאה — ':'מכאן נמשיך אל ')+next.title+'. '+(next.note||next.why||'').slice(0,240):'סיימנו את המסלול הנבחר. אפשר לחזור לתחנה או לבחור מסלול נוסף.';
  renderCards();
 }
 function clearPlayer(){
@@ -321,7 +321,7 @@ function directPlay(item){
  el.src=item.link;el.setAttribute('aria-label',item.title);
  $('playerHost').appendChild(el);mediaElement=el;
  el.addEventListener('playing',()=>{errorStreak=0;say('מתנגן.');});
- el.addEventListener('pause',()=>{if(!el.ended&&!userPaused){userPaused=true;say('מושהה.');}writeProgress();});
+ el.addEventListener('pause',()=>{if(mediaElement!==el)return;if(!el.ended&&!userPaused){userPaused=true;say('מושהה.');}writeProgress();});
  el.addEventListener('ended',onEnded);
  el.addEventListener('error',()=>handleError('וידאו לא נטען'));
  el.addEventListener('timeupdate',()=>{if(Date.now()-lastSaved>14000)writeProgress();});
