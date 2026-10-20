@@ -345,7 +345,7 @@ $('play').addEventListener('click',()=>{
   if(!ready||!player){pendingStart=!pendingStart;userPaused=!pendingStart;awaitingPauseAck=false;syncPlayButton(pendingStart?PLAYER_STATES.BUFFERING:PLAYER_STATES.CUED);$('status').textContent=pendingStart?'ההפעלה נשמרה. אנסה להפעיל כשהנגן יהיה מוכן.':'ביטלתי את בקשת ההפעלה הממתינה.';return;}
   try{
     const state=player.getPlayerState();
-    if(state===PLAYER_STATES.PLAYING||state===PLAYER_STATES.BUFFERING){
+    if(!userPaused&&(state===PLAYER_STATES.PLAYING||state===PLAYER_STATES.BUFFERING)){
       userPaused=true;awaitingPauseAck=true;pendingResumeAfterPause=0;pendingStart=false;
       if(pendingErrorSkip){clearTimeout(pendingErrorSkip);pendingErrorSkip=0;}
       player.pauseVideo();
