@@ -352,7 +352,7 @@ $('play').addEventListener('click',()=>{
       syncPlayButton(PLAYER_STATES.PAUSED);
       $('status').textContent='מושהה — לחץ על הפעל כדי להמשיך מאותו מקום.';
     }else{
-      pendingResumeAfterPause=awaitingPauseAck?Date.now()+2500:0;
+      pendingResumeAfterPause=Date.now()+2500;
       userPaused=false;awaitingPauseAck=false;pendingStart=false;
       player.playVideo();
       syncPlayButton(PLAYER_STATES.PLAYING);
