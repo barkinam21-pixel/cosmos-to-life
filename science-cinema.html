@@ -148,7 +148,7 @@ let mode=CINEMA_MODES.includes(urlMode)?urlMode:cinemaProgress.mode,
 page=0,current=0,player=null,auto=cinemaProgress.auto,ready=false,loading=false,failed=0,userPaused=false,pendingErrorSkip=0;
 // Use fixed YouTube state values even before the remote iframe API becomes available.
 const PLAYER_STATES={UNSTARTED:-1,ENDED:0,PLAYING:1,PAUSED:2,BUFFERING:3,CUED:5};
-let pendingStart=false,awaitingPauseAck=false;
+let pendingStart=false,awaitingPauseAck=false,pendingResumeAfterPause=0;
 const $=id=>document.getElementById(id);
 // Small per-route bookmark keyed by the stable YouTube ID, not the array index.
 function cinemaEntry(route=mode){
@@ -321,7 +321,7 @@ function navigate(i,play=true,useSaved=true,saveBefore=true){
  const arr=filtered();if(!arr.length)return;const idx=arr.indexOf(i);if(idx<0)return;
  if(saveBefore)saveCinemaProgress();
  if(pendingErrorSkip){clearTimeout(pendingErrorSkip);pendingErrorSkip=0;}
- userPaused=!play;awaitingPauseAck=false;pendingStart=play&&!ready;
+ userPaused=!play;awaitingPauseAck=false;pendingResumeAfterPause=0;pendingStart=play&&!ready;
  current=i;page=Math.floor(idx/PAGE_SIZE);
  const startSeconds=useSaved?cinemaSeconds(selected().id):0;
  rememberCinemaSelection(selected().id,startSeconds);
@@ -346,12 +346,13 @@ $('play').addEventListener('click',()=>{
   try{
     const state=player.getPlayerState();
     if(state===PLAYER_STATES.PLAYING||state===PLAYER_STATES.BUFFERING){
-      userPaused=true;awaitingPauseAck=true;pendingStart=false;
+      userPaused=true;awaitingPauseAck=true;pendingResumeAfterPause=0;pendingStart=false;
       if(pendingErrorSkip){clearTimeout(pendingErrorSkip);pendingErrorSkip=0;}
       player.pauseVideo();
       syncPlayButton(PLAYER_STATES.PAUSED);
       $('status').textContent='מושהה — לחץ על הפעל כדי להמשיך מאותו מקום.';
     }else{
+      pendingResumeAfterPause=awaitingPauseAck?Date.now()+2500:0;
       userPaused=false;awaitingPauseAck=false;pendingStart=false;
       player.playVideo();
       syncPlayButton(PLAYER_STATES.PLAYING);
@@ -389,7 +390,7 @@ $('extension-dub').addEventListener('click',()=>{
  if(ready&&player)try{player.pauseVideo();syncPlayButton(PLAYER_STATES.PAUSED)}catch(e){}
 });
 document.querySelectorAll('[data-mode]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mode===mode)));
-window.onYouTubeIframeAPIReady=function(){try{player=new YT.Player('youtube-player',{width:'100%',height:'100%',videoId:selected().id,playerVars:{playsinline:1,rel:0,origin:location.origin,cc_load_policy:1},events:{onReady:e=>{ready=true;$('loading')?.remove();if(filtered().length){if(!filtered().includes(current))current=filtered()[0];render();if(!pendingStart||userPaused){try{e.target.cueVideoById({videoId:selected().id,startSeconds:cinemaSeconds(selected().id)})}catch(x){}}}syncPlayButton(PLAYER_STATES.CUED);if(pendingStart&&!userPaused){pendingStart=false;try{e.target.loadVideoById({videoId:selected().id,startSeconds:cinemaSeconds(selected().id)});syncPlayButton(PLAYER_STATES.BUFFERING);$('status').textContent='הנגן מוכן — מנסה להתחיל את הסרט.';}catch(err){$('status').textContent='הנגן מוכן, אך ייתכן שהדפדפן חוסם הפעלה אוטומטית.';}}else $('status').textContent=cinemaSeconds(selected().id)?'מוכן לצפייה · נקודת הצפייה נשמרה.':'מוכן לצפייה';},onStateChange:e=>{if(userPaused&&(e.data===PLAYER_STATES.BUFFERING||e.data===PLAYER_STATES.PLAYING)){try{e.target.pauseVideo()}catch(err){}syncPlayButton(PLAYER_STATES.PAUSED);$('status').textContent='מושהה — ההשהיה נשמרה.';return;}syncPlayButton(e.data);if(e.data===PLAYER_STATES.PLAYING){if(userPaused){try{e.target.pauseVideo()}catch(err){}syncPlayButton(PLAYER_STATES.PAUSED);$('status').textContent='מושהה — ההשהיה נשמרה.';return;}failed=0;userPaused=false;$('status').textContent='מתנגן בתוך האתר';}if(e.data===PLAYER_STATES.PAUSED){awaitingPauseAck=false;userPaused=true;saveCinemaProgress();$('status').textContent='מושהה — לחץ על הפעל כדי להמשיך.';}if(e.data===PLAYER_STATES.ENDED){rememberCinemaSelection(selected().id,0);if(auto&&!userPaused)step(1)}},onError:e=>{failed++;const n=e.data;const stop=failed>=Math.min(3,filtered().length);if(stop){auto=false;$('auto').classList.remove('on');$('auto').setAttribute('aria-pressed','false');$('auto').textContent='⏸ רצף אוטומטי כבוי';saveCinemaProgress();}const canSkip=!stop&&auto&&!userPaused;$('status').textContent=stop?'הנגן חסום כרגע. הרצף הופסק כדי להימנע מניסיונות חוזרים.':canSkip?'הסרטון אינו זמין לניגון כאן (קוד '+n+'). עובר לסרט הבא.':'הסרטון אינו זמין לניגון כאן (קוד '+n+'). אפשר לבחור סרטון אחר.';if(canSkip){if(pendingErrorSkip)clearTimeout(pendingErrorSkip);pendingErrorSkip=window.setTimeout(()=>{pendingErrorSkip=0;if(auto&&!userPaused)step(1)},1200)}}}});}catch(e){$('status').textContent='הנגן לא נטען כרגע; אפשר לנסות לרענן את הדף.'}};
+window.onYouTubeIframeAPIReady=function(){try{player=new YT.Player('youtube-player',{width:'100%',height:'100%',videoId:selected().id,playerVars:{playsinline:1,rel:0,origin:location.origin,cc_load_policy:1},events:{onReady:e=>{ready=true;$('loading')?.remove();if(filtered().length){if(!filtered().includes(current))current=filtered()[0];render();if(!pendingStart||userPaused){try{e.target.cueVideoById({videoId:selected().id,startSeconds:cinemaSeconds(selected().id)})}catch(x){}}}syncPlayButton(PLAYER_STATES.CUED);if(pendingStart&&!userPaused){pendingStart=false;try{e.target.loadVideoById({videoId:selected().id,startSeconds:cinemaSeconds(selected().id)});syncPlayButton(PLAYER_STATES.BUFFERING);$('status').textContent='הנגן מוכן — מנסה להתחיל את הסרט.';}catch(err){$('status').textContent='הנגן מוכן, אך ייתכן שהדפדפן חוסם הפעלה אוטומטית.';}}else $('status').textContent=cinemaSeconds(selected().id)?'מוכן לצפייה · נקודת הצפייה נשמרה.':'מוכן לצפייה';},onStateChange:e=>{if(userPaused&&(e.data===PLAYER_STATES.BUFFERING||e.data===PLAYER_STATES.PLAYING)){try{e.target.pauseVideo()}catch(err){}syncPlayButton(PLAYER_STATES.PAUSED);$('status').textContent='מושהה — ההשהיה נשמרה.';return;}syncPlayButton(e.data);if(e.data===PLAYER_STATES.PLAYING){if(userPaused){try{e.target.pauseVideo()}catch(err){}syncPlayButton(PLAYER_STATES.PAUSED);$('status').textContent='מושהה — ההשהיה נשמרה.';return;}failed=0;userPaused=false;$('status').textContent='מתנגן בתוך האתר';}if(e.data===PLAYER_STATES.PAUSED){if(!userPaused&&pendingResumeAfterPause>Date.now()){pendingResumeAfterPause=0;try{e.target.playVideo();syncPlayButton(PLAYER_STATES.PLAYING);$('status').textContent='ממשיך מהנקודה שבה עצרת.';}catch(err){userPaused=true;syncPlayButton(PLAYER_STATES.PAUSED);$('status').textContent='ההפעלה לא התחדשה. אפשר ללחוץ שוב על הפעל.';}return;}pendingResumeAfterPause=0;awaitingPauseAck=false;userPaused=true;saveCinemaProgress();$('status').textContent='מושהה — לחץ על הפעל כדי להמשיך.';}if(e.data===PLAYER_STATES.ENDED){rememberCinemaSelection(selected().id,0);if(auto&&!userPaused)step(1)}},onError:e=>{failed++;const n=e.data;const stop=failed>=Math.min(3,filtered().length);if(stop){auto=false;$('auto').classList.remove('on');$('auto').setAttribute('aria-pressed','false');$('auto').textContent='⏸ רצף אוטומטי כבוי';saveCinemaProgress();}const canSkip=!stop&&auto&&!userPaused;$('status').textContent=stop?'הנגן חסום כרגע. הרצף הופסק כדי להימנע מניסיונות חוזרים.':canSkip?'הסרטון אינו זמין לניגון כאן (קוד '+n+'). עובר לסרט הבא.':'הסרטון אינו זמין לניגון כאן (קוד '+n+'). אפשר לבחור סרטון אחר.';if(canSkip){if(pendingErrorSkip)clearTimeout(pendingErrorSkip);pendingErrorSkip=window.setTimeout(()=>{pendingErrorSkip=0;if(auto&&!userPaused)step(1)},1200)}}}});}catch(e){$('status').textContent='הנגן לא נטען כרגע; אפשר לנסות לרענן את הדף.'}};
 render();
 </script>
 <script src="/science-cinema-additions.js"></script>
