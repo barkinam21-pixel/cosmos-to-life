@@ -12,6 +12,9 @@ const preciseScienceClips=[{"anchor":"WzC92VJJnvg","stage":6,"after":"WzC92VJJnv
 
 // Two verified official PBS Eons clips fill the 287–252 Ma Pangea gap before dinosaurs.
 const pangeaScienceClips=[{"anchor":"sj8pFX9SOXE","stage":19,"after":"sj8pFX9SOXE","id":"yTTyI_Rscss","title":"דימטרודון: טורף־העל שלפני הדינוזאורים · תיעוד PBS (רשות)","en":"Earth's First Apex Predator on Land Wasn't a Dinosaur | Eons: Life and Death on Pangea","who":"PBS · Eons: Life and Death on Pangea · 2026","duration":"קטע תיעודי · רשות","lang":"en","ease":1,"quiet":false,"note":"צילומי שטח ממיטת מאובנים בטקסס עם מגישי PBS Eons והמחשות של פנגיאה ושל דימטרודון לפני כ־287 מיליון שנה. קטע מהסדרה, לא פרק מלא.","bridge":"לאחר שהכרנו את המעבר מהים ליבשה, נקפוץ ליבשת פנגיאה ונפגוש טורף קדום שחי הרבה לפני הדינוזאורים.","phase":"🌍 פנגיאה · החיים ביבשה לפני הדינוזאורים"},{"anchor":"yTTyI_Rscss","stage":19,"after":"yTTyI_Rscss","id":"S_eJeFIFs7g","title":"ההכחדה הגדולה מכולן: אסון סוף הפרם · תיעוד PBS (רשות)","en":"The Worst Mass Extinction Ever | Eons: Life and Death on Pangea","who":"PBS · Eons: Life and Death on Pangea · 2026","duration":"קטע תיעודי · רשות","lang":"en","ease":1,"quiet":false,"note":"תיעוד שטח ומפגש עם מומחים על משבר סוף הפרם לפני כ־252 מיליון שנה; התפרצויות געשיות ושינויים קיצוניים בסביבה. קטע מסדרה בת שישה חלקים, לא פרק מלא.","bridge":"מהחיים ששגשגו בפנגיאה נעבור להכחדת סוף הפרם; לאחר שהעולם התאושש, נגיע לתקופת הדינוזאורים בתחנה הבאה.","phase":"🌋 סוף הפרם · ההכחדה הגדולה והתאוששות החיים"}];
+
+// Short, publisher-embedded physics lab demonstrations, with exact prerequisite placements.
+const waveScienceClips=[{"id":"_2HE4AlSE_s","stage":33,"anchor":"2OP0gp9v5XM","after":"2OP0gp9v5XM","title":"שני סוגי גלים בקפיץ · גל רוחבי מול גל אורכי (רשות)","en":"The Difference Between Transverse & Longitudinal Waves","who":"Saint Mary's University · Physics Demos","phase":"🌊 יסודות הגלים · רוחבי ואורכי","note":"ניסוי אמיתי עם קפיץ סלינקי שמראה מה ההבדל בין גל רוחבי וגל אורכי: תנועה לצדדים לעומת דחיסות והתרווחויות לאורך הקפיץ. מקור: ספריית ההדגמות הרשמית של Saint Mary's University.","bridge":"אחרי שהכרנו גלים, נביט בקפיץ: החלקיקים יכולים לנוע לרוחב הגל או לאורך התקדמותו. עכשיו נוכל להבין טוב יותר מדוע קול נע כגל אורכי באוויר.","ease":0,"quiet":false,"duration":"הדגמת מעבדה קצרה · רשות","lang":"en"},{"id":"1UNeNCp5Gns","stage":33,"anchor":"Q3oItpVa9fs","after":"Q3oItpVa9fs","title":"גל עומד על קפיץ · צמתים ותהודה בהדגמה (רשות)","en":"Standing Waves on a Spring","who":"Saint Mary's University · Physics Demos","phase":"🔊 גל עומד, צמתים ותהודה","note":"הדגמת מעבדה: כשקפיץ מתנדנד בתדירות המתאימה מופיעים אזורים כמעט נייחים (צמתים) לצד אזורים שרוטטים בחוזקה. מסבירה ויזואלית את הרעיון של גל עומד לפני ניסויי תהודה עם קול.","bridge":"אחרי שראינו שצליל יכול לצייר צורות, נבחן איך גלים המוחזרים לאורך קפיץ יוצרים צמתים ודפוסים יציבים. מכאן נעבור לגלי קול עומדים שיכולים להחזיק חפצים באוויר.","ease":0,"quiet":false,"duration":"הדגמת מעבדה קצרה · רשות","lang":"en"}];
 const activeVideoId=videos[current]?.id;
 for(const item of preciseScienceClips){
   if(videos.some(v=>v.id===item.id))continue;
@@ -25,6 +28,13 @@ for(const item of pangeaScienceClips){
   if(videos.some(v=>v.id===item.id))continue;
   const at=videos.findIndex(v=>v.id===item.anchor);
   if(at<0){console.warn('PBS Pangea source anchor missing',item.id,item.anchor);continue;}
+  const {stage,anchor,after,...meta}=item;
+  videos.splice(at+1,0,meta);
+}
+for(const item of waveScienceClips){
+  if(videos.some(v=>v.id===item.id))continue;
+  const at=videos.findIndex(v=>v.id===item.anchor);
+  if(at<0){console.warn('Wave lab prerequisite video missing',item.id,item.anchor);continue;}
   const {stage,anchor,after,...meta}=item;
   videos.splice(at+1,0,meta);
 }
@@ -70,6 +80,15 @@ for(const item of pangeaScienceClips){
   const at=chapter.items.findIndex(x=>x.id===item.after);
   if(at<0){console.warn('PBS Pangea journey prerequisite missing',item.id,item.after);continue;}
   chapter.items.splice(at+1,0,{id:item.id,why:'🎬 רשות · תיעוד PBS על פנגיאה: '+item.note});
+  included.add(item.id);added++;
+}
+// Required prerequisites first: put university wave demos next to the concept they illustrate.
+for(const item of waveScienceClips){
+  const chapter=main.chapters[item.stage-1],clip=byId.get(item.id);
+  if(!chapter||!clip||included.has(item.id))continue;
+  const at=chapter.items.findIndex(entry=>entry.id===item.after);
+  if(at<0){console.warn('Wave lab journey prerequisite missing',item.id,item.after);continue;}
+  chapter.items.splice(at+1,0,{id:item.id,why:'🎬 רשות · ניסוי אוניברסיטאי קצר: '+item.bridge});
   included.add(item.id);added++;
 }
 // Repair a confirmed 2014 Royal Institution chapter-order regression.
