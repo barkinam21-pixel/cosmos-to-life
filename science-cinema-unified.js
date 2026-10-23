@@ -216,6 +216,20 @@ if(technologyChapter){
   items.splice(0,items.length,...ordered);
  }else console.warn('Technology chapter inventory changed; editorial order requires review');
 }
+
+// 2026-10-23: verified official publisher video IDs for two visual fluid-pressure bridges.
+// Placement requires an existing exact prerequisite: never append blindly to the stage.
+const fluidPressureVisuals20261023=[{"after":"WU1RKUx18mo","video":{"id":"Hk21cI45pRU","title":"בקבוק בּוּם · לחץ אוויר מועך בקבוק (ניסוי בעברית)","en":"בקבוק בּום — ניסוי מדע בבית","who":"מכון דוידסון לחינוך מדעי · סרטון יוצר רשמי","phase":"🌬️ לחץ אוויר · ניסוי בעברית","note":"ניסוי קצר וחזותי: שינויי טמפרטורה ולחץ אוויר גורמים לבקבוק להימעך בבת אחת. המשך טבעי לניסוי הכוס ההפוכה שמדגים לחץ אטמוספרי.","bridge":"אחרי שכוס המים נשארה הפוכה בזכות לחץ האוויר, נראה מה קורה כאשר הפרש הלחצים גדול כל כך שהבקבוק נמחץ. מכאן נמשיך אל האוויר סביב כנפי המטוס.","ease":0,"quiet":false,"lang":"he","duration":"קצר"}},{"after":"7tjf8HWiR3Y","video":{"id":"BickMFHAZR0","title":"איך עצים מצליחים להרים מים לגובה עצום? · Veritasium (רשות)","en":"How Trees Bend the Laws of Physics","who":"Veritasium · Derek Muller · סרטון יוצר רשמי","phase":"🌳 לחץ שלילי, מים ועצים · העמקת רשות","note":"חקירת תעלומה בעולם החי: כיצד מים עולים בעצים גבוהים מאוד, ומה תפקידם של דיות, לכידות מולקולות המים ומתח הפנים? משלב ניסויים וצילומים עם הסבר מאתגר מעט יותר.","bridge":"אחרי שראינו כיצד מים משנים את צורת זרימתם, נגלה איך מתיחות בתוך עמודת מים מאפשרת לעצים להוביל מים כלפי מעלה. בהמשך נחזור לניסויים חזותיים במים ובחומרים.","ease":1,"quiet":false,"lang":"en","duration":"כ־10 דקות"}}];
+for(const item of fluidPressureVisuals20261023){
+ const chapter=main.chapters[30];
+ const at=chapter?.items?.findIndex(entry=>entry.id===item.after)??-1;
+ if(at<0){console.warn('Fluid pressure prerequisite missing; clip NOT added',item.video.id,item.after);continue;}
+ if(videos.some(video=>video.id===item.video.id))continue;
+ videos.push(item.video);
+ chapter.items.splice(at+1,0,{id:item.video.id,why:'🎬 רשות · '+item.video.bridge});
+ included.add(item.video.id);
+ added++;
+}
 const left=videos.filter(v=>!included.has(v.id));
 if(left.length)console.warn('Unassigned cinema videos require editorial review',left.map(v=>v.id));
 main.title='🌌 המסע המשולב המלא · כל המדע בסדר אחד';
