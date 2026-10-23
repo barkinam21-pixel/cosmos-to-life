@@ -230,6 +230,31 @@ for(const item of fluidPressureVisuals20261023){
  included.add(item.video.id);
  added++;
 }
+// 2026-10-23: official Veritasium video, confirmed by its YouTube channel and creator site.
+// A tangible steering/balance experiment belongs beside the existing bicycle experiment.
+// This is a journey-only optional enrichment; never change the 282-film core route.
+{
+  const stage=27,after='MFzDaBzBlL0';
+  const video={
+    id:'9cNmUNHSBac',
+    title:'למה אופניים נשארים יציבים? · ניסויי Veritasium (רשות)',
+    en:"Most People Don't Know How Bikes Work",
+    who:'Veritasium · Derek Muller · הערוץ הרשמי',
+    phase:'🚲 תנועה, היגוי ושיווי משקל',
+    note:'ניסויים מצולמים עם אופניים מיוחדים מראים מדוע היגוי ושיווי משקל קשורים, ולמה ההסבר הפשוט של אפקט הגירוסקופ אינו מספיק. העמקה חזותית אחרי ניסוי האופניים ההפוכים.',
+    bridge:'אחרי ניסוי האופניים ההפוכים נבין בניסויים אמיתיים כיצד היגוי מאפשר לשמור על שיווי משקל בסיבוב ובנסיעה. אחר כך נחזור להדגמות של אינרציה וכוח.',
+    ease:1,quiet:false,lang:'en',duration:'כ־11 דקות'
+  };
+  const chapter=main.chapters[stage-1];
+  const at=chapter?.items?.findIndex(entry=>entry.id===after)??-1;
+  if(at<0)console.warn('Bicycle stability prerequisite missing: clip NOT added',video.id,after);
+  else if(!videos.some(existing=>existing.id===video.id)){
+    videos.push(video);
+    chapter.items.splice(at+1,0,{id:video.id,why:'🎬 רשות · '+video.bridge});
+    included.add(video.id);
+    added++;
+  }
+}
 const left=videos.filter(v=>!included.has(v.id));
 if(left.length)console.warn('Unassigned cinema videos require editorial review',left.map(v=>v.id));
 main.title='🌌 המסע המשולב המלא · כל המדע בסדר אחד';
