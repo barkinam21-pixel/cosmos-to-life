@@ -24,6 +24,56 @@ const geologyScienceClips=[
 // NOAA/NASA Space Place: beginner-friendly tide animation before NASA's advanced global model.
 const tideIntroClip={id:'tcGEjzt_4is',stage:15,anchor:'xx-0pMlleTM',before:'PSJRymZ5bJs',title:'למה יש גאות ושפל? הירח והים · הסבר מאויר (רשות)',en:'What Causes Tides?',who:'NOAA NESDIS · NASA Space Place / JPL-Caltech',phase:'🌊 גאות ושפל · הכבידה של הירח',note:'סרטון מבוא מאויר על משיכת הירח, שני אזורי הגאות ומחזור הגאות והשפל. מסביר את הבסיס לפני הדמיית NASA המורכבת של גאות בכל האוקיינוסים.',bridge:'אחרי העננים והאוויר נרד אל הים ונראה כיצד הירח מושך את המים. כעת נוכל להבין את מפת הגאות העולמית המורכבת שמופיעה מיד אחריו.',ease:0,quiet:false,duration:'אנימציית מבוא קצרה · רשות',lang:'en'};
 
+// Official Met Office three-part visual series: sunlight -> circulation cells -> Coriolis winds.
+// Publisher listed the episodes in this order; all are optional, after cloud/aerosol basics.
+const metOfficeCirculationClips=[
+  {
+    "id": "7fd03fBRsuU",
+    "stage": 15,
+    "after": "xx-0pMlleTM",
+    "title": "למה העולם אינו מתחמם באופן שווה? · רוחות, חלק 1 (רשות)",
+    "en": "What is global circulation? | Part One | Differential heating",
+    "who": "Met Office · Learn About Weather · הערוץ הרשמי",
+    "phase": "🌤️ אוויר, שמש והבדלי חימום",
+    "note": "פרק 1 מתוך 3: אנימציות ומפות מסבירות למה קרינת השמש מחממת אחרת את קו המשווה ואת הקטבים. מבוא קל לפני תנועת האוויר סביב העולם.",
+    "bridge": "אחרי שראינו עננים ואבק באוויר, נבין למה השמש מחממת אזורים שונים בעוצמות שונות. ההפרשים האלה מניעים את הרוחות שנראה מיד.",
+    "duration": "2:15 · פרק 1/3 · רשות",
+    "ease": 0,
+    "quiet": false,
+    "lang": "en"
+  },
+  {
+    "id": "xqM83_og1Fc",
+    "stage": 15,
+    "after": "7fd03fBRsuU",
+    "title": "איך האוויר נע סביב העולם? · רוחות, חלק 2 (רשות)",
+    "en": "What is global circulation? | Part Two | The three cells",
+    "who": "Met Office · Learn About Weather · הערוץ הרשמי",
+    "phase": "🌍 תאי זרימה באטמוספרה · מפות ואנימציות",
+    "note": "פרק 2 מתוך 3: זרמי האוויר מתחלקים לתאי האדלי, פרל והקוטב. הסבר מאויר מדוע יש חגורות של יערות גשם ומדבריות.",
+    "bridge": "כבר הבנו שהשמש מחממת את קו המשווה יותר מן הקטבים. כעת נראה כיצד האוויר החם עולה והקר שוקע ויוצר אזורי זרימה גדולים.",
+    "duration": "3:35 · פרק 2/3 · רשות",
+    "ease": 1,
+    "quiet": false,
+    "lang": "en"
+  },
+  {
+    "id": "PDEcAxfSYaI",
+    "stage": 15,
+    "after": "xqM83_og1Fc",
+    "title": "למה הרוחות מתעקמות? · קוריוליס, חלק 3 (רשות)",
+    "en": "What is global circulation? | Part Three | The Coriolis effect & winds",
+    "who": "Met Office · Learn About Weather · הערוץ הרשמי",
+    "phase": "🌪️ סיבוב כדור הארץ · רוחות וזרמי סילון",
+    "note": "פרק 3 מתוך 3: אנימציות על ההשפעה של סיבוב כדור הארץ על מסלולי הרוח, זרמי סילון וכיווני רוח קבועים. העמקה לבחירה.",
+    "bridge": "אחרי שלמדנו על שלושת תאי הזרימה, נוסיף את סיבוב כדור הארץ ונראה מדוע הרוח סוטה הצדה. מכאן עוברים מן האטמוספרה אל תנועת הים.",
+    "duration": "6:18 · פרק 3/3 · רשות",
+    "ease": 2,
+    "quiet": false,
+    "lang": "en"
+  }
+];
+
 const activeVideoId=videos[current]?.id;
 for(const item of preciseScienceClips){
   if(videos.some(v=>v.id===item.id))continue;
@@ -60,6 +110,15 @@ if(!videos.some(v=>v.id===tideIntroClip.id)){
  const at=videos.findIndex(v=>v.id===tideIntroClip.anchor);
  if(at<0)console.warn('NOAA tide video anchor missing',tideIntroClip.anchor);
  else {const {stage,anchor,before,...meta}=tideIntroClip;videos.splice(at+1,0,meta);}
+}
+
+// Keep one video record per ID and preserve the active selection when inserting this series.
+for(const item of metOfficeCirculationClips){
+ if(videos.some(v=>v.id===item.id))continue;
+ const at=videos.findIndex(v=>v.id===item.after);
+ if(at<0){console.warn('Met Office video prerequisite missing',item.id,item.after);continue;}
+ const {stage,after,...meta}=item;
+ videos.splice(at+1,0,meta);
 }
 
 if(activeVideoId){const at=videos.findIndex(v=>v.id===activeVideoId);if(at>=0)current=at;}
@@ -133,6 +192,16 @@ for(const item of geologyScienceClips){
   if(at<0)console.warn('NOAA tide route neighbor missing',tideIntroClip.before);
   else {ch.items.splice(at,0,{id:tideIntroClip.id,why:'🎬 מבוא חזותי קצר (רשות) · '+tideIntroClip.bridge});included.add(tideIntroClip.id);added++;}
  }
+}
+
+// Same precise sequence inside the MAIN journey, before lunar tides and ocean simulations.
+for(const item of metOfficeCirculationClips){
+ const ch=main.chapters[item.stage-1],clip=byId.get(item.id);
+ if(!ch||!clip||included.has(item.id))continue;
+ const at=ch.items.findIndex(x=>x.id===item.after);
+ if(at<0){console.warn('Met Office route prerequisite missing',item.id,item.after);continue;}
+ ch.items.splice(at+1,0,{id:item.id,why:'🎬 רשות · '+item.bridge});
+ included.add(item.id);added++;
 }
 
 // Repair a confirmed 2014 Royal Institution chapter-order regression.
