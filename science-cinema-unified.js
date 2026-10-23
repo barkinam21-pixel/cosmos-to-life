@@ -297,6 +297,26 @@ for(const item of fluidPressureVisuals20261023){
   }
 }
 
+
+/* GPB Physics in Motion: real-world demonstrations complete the motion prerequisites.
+   Publisher and YouTube title/IDs verified 2026-10-23. Optional; preserve core route. */
+const motionPrerequisites=[
+ {before:'R8m9VJfwYrc',id:'9z-EIcdJ9VY',title:'מרחק לעומת העתק · הסבר עם הדגמות (רשות)',en:'What Are Distance and Displacement? | Physics in Motion',duration:'5:52 · רשות',note:'הדגמות פשוטות של ההבדל בין המרחק הכולל שעוברים ובין ההעתק מנקודת ההתחלה אל הסיום, כולל כיוון התנועה.',bridge:'לפני שנחשב מהירות, נפריד בין אורך הדרך שעברנו לבין ההעתק. משם נמשיך לניסוי המכוניות שמבדיל בין מהירות ובין מהירות עם כיוון.'},
+ {after:'R8m9VJfwYrc',id:'iNTIsl8T5R4',title:'מהי תאוצה? · בלימה ומסלול ניסויים (רשות)',en:'Acceleration and Kinematic Equations | Physics in Motion',duration:'10:23 · רשות',note:'ניסויים במסלול מבחן של פורשה: שינוי מהירות ביחידת זמן, תאוצה בבלימה ומשוואות תנועה. החלק האחרון כולל חישובים שאפשר לדלג עליהם.',bridge:'אחרי שהכרנו מהירות וכיוון, נראה כיצד המהירות משתנה בזמן: זו תאוצה. ניעזר בבלימה ובתנועה של מכונית לפני שנראה זאת בגרף.'},
+ {after:'iNTIsl8T5R4',id:'ZoC1L96Jgis',title:'איך קוראים גרף של תנועה? · דוגמה יומיומית (רשות)',en:'How Do You Graph Motion? | Physics in Motion',duration:'7:34 · רשות',note:'ליד דוכן אוכל לומדים לקרוא גרפים של מיקום, מהירות ותאוצה לאורך זמן: איך התנועה נראית כשמציירים אותה?',bridge:'כעת, אחרי מהירות ותאוצה, נתרגם תנועה לקווים פשוטים על גרף. משם נתקדם אל וקטורים, תנועה בשני ממדים ותנועה יחסית.'},
+ {after:'w3BhzYI6zXU',id:'xBS01yzd0yI',title:'מהירות יחסית · ניסוי בסירה (רשות)',en:'What Is Relative Velocity? | Physics in Motion',duration:'6:12 · רשות',note:'ניסוי על סירה שממחיש כיצד כיוון ומהירות נראים שונים לצופה בסירה ולצופה מבחוץ. המשך שימושי ללימוד וקטורים.',bridge:'אחרי שלמדנו וקטורים ותנועה בשני ממדים, נצא לסירה ונבין מדוע מהירות תמיד נמדדת ביחס לנקודת ייחוס.'}
+];
+for(const spec of motionPrerequisites){
+ const chapter=main.chapters[25],anchor=spec.after||spec.before;
+ const pos=chapter.items.findIndex(x=>x.id===anchor);
+ if(pos<0){console.warn('Motion video anchor missing; skip',spec.id,anchor);continue;}
+ if(included.has(spec.id))continue;
+ const {after,before,...meta}=spec;
+ if(!videos.some(v=>v.id===meta.id))videos.push({...meta,who:'GPB Education · Physics in Motion',phase:'📏 תנועה, מהירות ותאוצה · יסודות',ease:1,quiet:false,lang:'en'});
+ chapter.items.splice(pos+(after?1:0),0,{id:spec.id,why:'🎬 רשות · '+spec.bridge});
+ included.add(spec.id);added++;
+}
+
 const left=videos.filter(v=>!included.has(v.id));
 if(left.length)console.warn('Unassigned cinema videos require editorial review',left.map(v=>v.id));
 main.title='🌌 המסע המשולב המלא · כל המדע בסדר אחד';
