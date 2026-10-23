@@ -20,6 +20,10 @@ const geologyScienceClips=[
 {id:'Wq9kLzm36h0',stage:14,anchor:'ujBi9Ba8hqs',before:'VNGUdObDoLk',title:'היבשות בתנועה: לוחות טקטוניים ופנגיאה · רשות',en:'Continental Drift 101 | National Geographic',who:'National Geographic · הערוץ הרשמי',phase:'🌍 נדידת יבשות · פנגיאה',note:'סרטון מצולם ומונפש שממחיש את תנועת היבשות לאורך מיליוני שנים כהכנה להרי געש ולרעידות אדמה.',bridge:'מתחילים ממפת העולם המשתנה: תנועת הלוחות יוצרת ומפרידה יבשות. משם נבין כיצד אותם כוחות מעצבים הרי געש.',ease:1,quiet:false,duration:'סרטון קצר · רשות',lang:'en'},
 {id:'VSgB1IWr6O4',stage:14,anchor:'VNGUdObDoLk',after:'VNGUdObDoLk',title:'מה גורם לרעידות אדמה? · נשיונל ג׳יאוגרפיק (רשות)',en:'Earthquakes 101 | National Geographic',who:'National Geographic · הערוץ הרשמי',phase:'🌋 רעידות אדמה · תנועת לוחות',note:'מבוא חזותי לשברים גאולוגיים, תנועת הלוחות ושחרור אנרגיה ברעידת אדמה. ייתכנו צילומי נזק.',bridge:'אחרי הרי הגעש נבין כיצד תנועה פתאומית לאורך שבר גורמת לרעידת אדמה; ההסבר מכין אותנו לסרט על טבעת האש.',ease:1,quiet:false,duration:'סרטון קצר · רשות',lang:'en'}
 ];
+
+// NOAA/NASA Space Place: beginner-friendly tide animation before NASA's advanced global model.
+const tideIntroClip={id:'tcGEjzt_4is',stage:15,anchor:'xx-0pMlleTM',before:'PSJRymZ5bJs',title:'למה יש גאות ושפל? הירח והים · הסבר מאויר (רשות)',en:'What Causes Tides?',who:'NOAA NESDIS · NASA Space Place / JPL-Caltech',phase:'🌊 גאות ושפל · הכבידה של הירח',note:'סרטון מבוא מאויר על משיכת הירח, שני אזורי הגאות ומחזור הגאות והשפל. מסביר את הבסיס לפני הדמיית NASA המורכבת של גאות בכל האוקיינוסים.',bridge:'אחרי העננים והאוויר נרד אל הים ונראה כיצד הירח מושך את המים. כעת נוכל להבין את מפת הגאות העולמית המורכבת שמופיעה מיד אחריו.',ease:0,quiet:false,duration:'אנימציית מבוא קצרה · רשות',lang:'en'};
+
 const activeVideoId=videos[current]?.id;
 for(const item of preciseScienceClips){
   if(videos.some(v=>v.id===item.id))continue;
@@ -50,6 +54,14 @@ for(const item of geologyScienceClips){
  const {stage,anchor,before,after,...meta}=item;
  videos.splice(at+1,0,meta);
 }
+
+// Only add when the verified source anchor exists, preserving the active video.
+if(!videos.some(v=>v.id===tideIntroClip.id)){
+ const at=videos.findIndex(v=>v.id===tideIntroClip.anchor);
+ if(at<0)console.warn('NOAA tide video anchor missing',tideIntroClip.anchor);
+ else {const {stage,anchor,before,...meta}=tideIntroClip;videos.splice(at+1,0,meta);}
+}
+
 if(activeVideoId){const at=videos.findIndex(v=>v.id===activeVideoId);if(at>=0)current=at;}
 if(!guide.paths.core)guide.paths.core={
   title:'🌱 המסע הממוקד · בלי כל ההרחבות',
@@ -112,6 +124,17 @@ for(const item of geologyScienceClips){
  chapter.items.splice(at+(item.before?0:1),0,{id:item.id,why:'🎬 רשות · '+item.bridge});
  included.add(item.id);added++;
 }
+
+// Explain lunar tides before the detailed visualization, within the same teaching station.
+{
+ const ch=main.chapters[tideIntroClip.stage-1];
+ if(ch&&byId.has(tideIntroClip.id)&&!included.has(tideIntroClip.id)){
+  const at=ch.items.findIndex(e=>e.id===tideIntroClip.before);
+  if(at<0)console.warn('NOAA tide route neighbor missing',tideIntroClip.before);
+  else {ch.items.splice(at,0,{id:tideIntroClip.id,why:'🎬 מבוא חזותי קצר (רשות) · '+tideIntroClip.bridge});included.add(tideIntroClip.id);added++;}
+ }
+}
+
 // Repair a confirmed 2014 Royal Institution chapter-order regression.
 // Editorial ordering only: 11 existing unique videos; no new video/player or other route changes.
 const technologyChapter=main.chapters[38];
