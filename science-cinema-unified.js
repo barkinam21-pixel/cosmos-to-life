@@ -273,6 +273,30 @@ for(const item of fluidPressureVisuals20261023){
  }
 }
 
+// PBS Eons official Cenozoic timeline: exact bridge after dinosaurs and before the 3-part family-tree series.
+// YouTube ID and title checked against PBS Eons and university course listings on 2026-10-23.
+{
+  const chapter=main.chapters[20],before='bBgnqVLQm5s';
+  const video={
+    id:'yR8cR75iKGU',
+    title:'מהכחדת הדינוזאורים לעליית היונקים והאדם · תיעוד PBS (רשות)',
+    en:'From the Fall of Dinos to the Rise of Humans',
+    who:'PBS Eons · הערוץ הרשמי',
+    phase:'🦣 עידן היונקים · מהכחדת הדינוזאורים להופעת האדם',
+    note:'סיפור מאויר ומצולם של 66 מיליון השנים האחרונות: התאוששות החיים, שינויי אקלים, התפשטות היונקים, ראשית הפרימטים ואבות האדם. סקירה כרונולוגית לפני סדרת עץ החיים.',
+    bridge:'אחרי ההכחדה שהכרנו בתחנה הקודמת נבין כיצד היונקים התפשטו והסתעפו לאורך עידן הקנוזואיקון. אחר כך נעבור להסבר על עץ החיים, גנים ומוצא משותף בשלושה פרקים ברצף.',
+    ease:1,quiet:false,lang:'en',duration:'12:34 · רשות'
+  };
+  const at=chapter?.items?.findIndex(entry=>entry.id===before)??-1;
+  if(at<0)console.warn('Cenozoic PBS prerequisite missing; clip NOT added',video.id,before);
+  else if(!videos.some(v=>v.id===video.id)){
+    videos.push(video);
+    chapter.items.splice(at,0,{id:video.id,why:'🎬 רשות · '+video.bridge});
+    included.add(video.id);
+    added++;
+  }
+}
+
 const left=videos.filter(v=>!included.has(v.id));
 if(left.length)console.warn('Unassigned cinema videos require editorial review',left.map(v=>v.id));
 main.title='🌌 המסע המשולב המלא · כל המדע בסדר אחד';
