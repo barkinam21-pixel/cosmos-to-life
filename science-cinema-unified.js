@@ -337,6 +337,25 @@ for(const spec of motionPrerequisites){
  }
 }
 
+/* NASA ScienceCasts 2018, creator-verified YouTube ID. Embedding not browser-verified.
+   Optional visual connection between taught field fundamentals and the solar wind. */
+{
+ const chapter=main.chapters[34],after='XoVW7CRR5JY',id='o4FSg-90XlA';
+ const video={id,title:'המגן המגנטי של כדור הארץ · רוח השמש (רשות)',
+ en:"NASA ScienceCasts: Earth's Magnetosphere",who:'NASA Science · ScienceCasts · הערוץ הרשמי',
+ phase:'🧲 שדות מגנטיים · המגן של כדור הארץ',
+ note:'אנימציות NASA המסבירות כיצד השדה המגנטי של כדור הארץ מסיט חלקיקי רוח שמש ועוזר להגן על האטמוספרה; השוואה למאדים והיכרות עם משימת MMS. כשלוש וחצי דקות.',
+ bridge:'אחרי שהכרנו שדות חשמליים ומגנטיים בתלת־ממד נראה יישום עצום שלהם סביב כדור הארץ: המגנטוספרה. כך נחבר בין השדות שלמדנו ובין רוח השמש, ונמשיך לניסויי חשמל וניצוצות.',
+ duration:'כ־3:30 · סרט NASA חזותי · רשות',lang:'en',ease:1,quiet:false};
+ const at=chapter?.items?.findIndex(item=>item.id===after)??-1;
+ if(at<0)console.warn('NASA magnetosphere lesson anchor missing; not inserted',id,after);
+ else if(!included.has(id)){
+  if(!videos.some(v=>v.id===id))videos.push(video);
+  chapter.items.splice(at+1,0,{id,why:'🎬 רשות · '+video.bridge});
+  included.add(id);added++;
+ }
+}
+
 const left=videos.filter(v=>!included.has(v.id));
 if(left.length)console.warn('Unassigned cinema videos require editorial review',left.map(v=>v.id));
 main.title='🌌 המסע המשולב המלא · כל המדע בסדר אחד';
