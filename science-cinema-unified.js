@@ -15,6 +15,11 @@ const pangeaScienceClips=[{"anchor":"sj8pFX9SOXE","stage":19,"after":"sj8pFX9SOX
 
 // Short, publisher-embedded physics lab demonstrations, with exact prerequisite placements.
 const waveScienceClips=[{"id":"_2HE4AlSE_s","stage":33,"anchor":"2OP0gp9v5XM","after":"2OP0gp9v5XM","title":"שני סוגי גלים בקפיץ · גל רוחבי מול גל אורכי (רשות)","en":"The Difference Between Transverse & Longitudinal Waves","who":"Saint Mary's University · Physics Demos","phase":"🌊 יסודות הגלים · רוחבי ואורכי","note":"ניסוי אמיתי עם קפיץ סלינקי שמראה מה ההבדל בין גל רוחבי וגל אורכי: תנועה לצדדים לעומת דחיסות והתרווחויות לאורך הקפיץ. מקור: ספריית ההדגמות הרשמית של Saint Mary's University.","bridge":"אחרי שהכרנו גלים, נביט בקפיץ: החלקיקים יכולים לנוע לרוחב הגל או לאורך התקדמותו. עכשיו נוכל להבין טוב יותר מדוע קול נע כגל אורכי באוויר.","ease":0,"quiet":false,"duration":"הדגמת מעבדה קצרה · רשות","lang":"en"},{"id":"1UNeNCp5Gns","stage":33,"anchor":"Q3oItpVa9fs","after":"Q3oItpVa9fs","title":"גל עומד על קפיץ · צמתים ותהודה בהדגמה (רשות)","en":"Standing Waves on a Spring","who":"Saint Mary's University · Physics Demos","phase":"🔊 גל עומד, צמתים ותהודה","note":"הדגמת מעבדה: כשקפיץ מתנדנד בתדירות המתאימה מופיעים אזורים כמעט נייחים (צמתים) לצד אזורים שרוטטים בחוזקה. מסבירה ויזואלית את הרעיון של גל עומד לפני ניסויי תהודה עם קול.","bridge":"אחרי שראינו שצליל יכול לצייר צורות, נבחן איך גלים המוחזרים לאורך קפיץ יוצרים צמתים ודפוסים יציבים. מכאן נעבור לגלי קול עומדים שיכולים להחזיק חפצים באוויר.","ease":0,"quiet":false,"duration":"הדגמת מעבדה קצרה · רשות","lang":"en"}];
+// Official National Geographic visual introductions inserted before deeper geology.
+const geologyScienceClips=[
+{id:'Wq9kLzm36h0',stage:14,anchor:'ujBi9Ba8hqs',before:'VNGUdObDoLk',title:'היבשות בתנועה: לוחות טקטוניים ופנגיאה · רשות',en:'Continental Drift 101 | National Geographic',who:'National Geographic · הערוץ הרשמי',phase:'🌍 נדידת יבשות · פנגיאה',note:'סרטון מצולם ומונפש שממחיש את תנועת היבשות לאורך מיליוני שנים כהכנה להרי געש ולרעידות אדמה.',bridge:'מתחילים ממפת העולם המשתנה: תנועת הלוחות יוצרת ומפרידה יבשות. משם נבין כיצד אותם כוחות מעצבים הרי געש.',ease:1,quiet:false,duration:'סרטון קצר · רשות',lang:'en'},
+{id:'VSgB1IWr6O4',stage:14,anchor:'VNGUdObDoLk',after:'VNGUdObDoLk',title:'מה גורם לרעידות אדמה? · נשיונל ג׳יאוגרפיק (רשות)',en:'Earthquakes 101 | National Geographic',who:'National Geographic · הערוץ הרשמי',phase:'🌋 רעידות אדמה · תנועת לוחות',note:'מבוא חזותי לשברים גאולוגיים, תנועת הלוחות ושחרור אנרגיה ברעידת אדמה. ייתכנו צילומי נזק.',bridge:'אחרי הרי הגעש נבין כיצד תנועה פתאומית לאורך שבר גורמת לרעידת אדמה; ההסבר מכין אותנו לסרט על טבעת האש.',ease:1,quiet:false,duration:'סרטון קצר · רשות',lang:'en'}
+];
 const activeVideoId=videos[current]?.id;
 for(const item of preciseScienceClips){
   if(videos.some(v=>v.id===item.id))continue;
@@ -37,6 +42,13 @@ for(const item of waveScienceClips){
   if(at<0){console.warn('Wave lab prerequisite video missing',item.id,item.anchor);continue;}
   const {stage,anchor,after,...meta}=item;
   videos.splice(at+1,0,meta);
+}
+for(const item of geologyScienceClips){
+ if(videos.some(v=>v.id===item.id))continue;
+ const at=videos.findIndex(v=>v.id===item.anchor);
+ if(at<0){console.warn('Geology video anchor missing',item.id,item.anchor);continue;}
+ const {stage,anchor,before,after,...meta}=item;
+ videos.splice(at+1,0,meta);
 }
 if(activeVideoId){const at=videos.findIndex(v=>v.id===activeVideoId);if(at>=0)current=at;}
 if(!guide.paths.core)guide.paths.core={
@@ -90,6 +102,15 @@ for(const item of waveScienceClips){
   if(at<0){console.warn('Wave lab journey prerequisite missing',item.id,item.after);continue;}
   chapter.items.splice(at+1,0,{id:item.id,why:'🎬 רשות · ניסוי אוניברסיטאי קצר: '+item.bridge});
   included.add(item.id);added++;
+}
+// New geology introductions sit next to the exact prerequisite, not at the end.
+for(const item of geologyScienceClips){
+ const chapter=main.chapters[item.stage-1],clip=byId.get(item.id);
+ if(!chapter||!clip||included.has(item.id))continue;
+ const at=chapter.items.findIndex(x=>x.id===(item.before||item.after));
+ if(at<0){console.warn('Geology curriculum neighbor missing',item.id);continue;}
+ chapter.items.splice(at+(item.before?0:1),0,{id:item.id,why:'🎬 רשות · '+item.bridge});
+ included.add(item.id);added++;
 }
 // Repair a confirmed 2014 Royal Institution chapter-order regression.
 // Editorial ordering only: 11 existing unique videos; no new video/player or other route changes.
