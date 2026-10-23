@@ -255,6 +255,24 @@ for(const item of fluidPressureVisuals20261023){
     added++;
   }
 }
+
+// Optional official PBS Eons Triassic bridge, verified 2026-10-23.
+{
+ const ch=main.chapters[19],before='fVPclPzRJk4',at=ch?.items?.findIndex(x=>x.id===before)??-1;
+ const video={
+  id:'QsmV34Co32c',title:'מי שלט בעולם לפני הדינוזאורים? · זוחלי הטריאס (רשות)',
+  en:'When Dinosaur Look-Alikes Ruled the Earth',who:'PBS Eons · ערוץ היוצר הרשמי',
+  phase:'🦖 טריאס · דינוזאורים וזוחלים דמויי תנינאים',
+  note:'איורים ושחזורים ממחישים כיצד זוחלים דמויי תנינאים שגשגו בטריאס, כשדינוזאורים היו עדיין קבוצה קטנה. הכנה חזותית לסיפור השתלטות הדינוזאורים על היבשה.',
+  bridge:'מהתאוששות החיים אחרי הכחדת הפרם נעבור לזוחלים ששלטו בטריאס. נכיר את המתחרים של הדינוזאורים, ואז נראה כיצד הדינוזאורים נעשו דומיננטיים.',
+  ease:1,quiet:false,lang:'en',duration:'כ־7 דקות · רשות'
+ };
+ if(at<0)console.warn('Triassic PBS prerequisite missing; clip NOT added',video.id,before);
+ else if(!videos.some(v=>v.id===video.id)){
+  videos.push(video);ch.items.splice(at,0,{id:video.id,why:'🎬 רשות · '+video.bridge});included.add(video.id);added++;
+ }
+}
+
 const left=videos.filter(v=>!included.has(v.id));
 if(left.length)console.warn('Unassigned cinema videos require editorial review',left.map(v=>v.id));
 main.title='🌌 המסע המשולב המלא · כל המדע בסדר אחד';
