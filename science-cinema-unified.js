@@ -438,6 +438,31 @@ for(const spec of motionPrerequisites){
  }
 }
 
+
+/* 2026-10-23: PBS/KQED Deep Look macrophotography of echinoderm movement.
+   Precisely after its sea-urchin relative; optional journey only.
+   Publisher/video identity checked; iframe and regional availability untested. */
+{
+ const chapter=main.chapters[22],after='ak2xqH5h0YY';
+ const video={
+  id:'9rxf_2EgwfE',
+  title:'איך כוכב ים דוהר בלי מוח? מאות רגלי מים בתנועה · PBS (רשות)',
+  en:'Ever Seen a Starfish Gallop? | Deep Look',
+  who:'KQED Deep Look / PBS · הערוץ הרשמי',
+  phase:'🌊 החיים בים · תנועה הידראולית ותיאום בלי מוח מרכזי',
+  note:'צילומי מאקרו מרהיבים של כוכב ים צד טרף באמצעות מאות רגלי צינור המונעות בלחץ מי ים. סרט קצר וברור הממחיש דפוס תנועה מתואם בלי מוח מרכזי. מבית PBS/KQED.',
+  bridge:'אחרי קיפוד הים נפגוש קרוב משפחה שלו: כוכב הים. נראה כיצד רגליים זעירות המלאות במים דוחפות ומושכות אותו יחד, ואז נמשיך אל יצורים ימיים נוספים.',
+  duration:'4:33 דקות · תיעוד מאקרו · רשות',lang:'en',ease:0,quiet:false
+ };
+ const at=chapter?.items?.findIndex(item=>item.id===after)??-1;
+ if(at<0)console.warn('PBS sea-star journey prerequisite missing; clip not added',video.id,after);
+ else if(!included.has(video.id)){
+  if(!videos.some(existing=>existing.id===video.id))videos.push(video);
+  chapter.items.splice(at+1,0,{id:video.id,why:'🎬 רשות · '+video.bridge});
+  included.add(video.id);added++;
+ }
+}
+
 const left=videos.filter(v=>!included.has(v.id));
 if(left.length)console.warn('Unassigned cinema videos require editorial review',left.map(v=>v.id));
 main.title='🌌 המסע המשולב המלא · כל המדע בסדר אחד';
