@@ -240,7 +240,7 @@ function explanation(v){
     const prev=pos>0?videos.find(x=>x.id===ids[pos-1]):null;
     const next=pos>=0&&pos+1<ids.length?videos.find(x=>x.id===ids[pos+1]):null;
     const chapter=getChapters(mode)[info.chapter],inside=chapter?.items?.some(x=>x.id===prev?.id);
-    const meaning=String(v.note||info.entry.why||chapter?.description||'').replace(/\\s+/g,' ').slice(0,105);
+    const meaning=String(v.note||info.entry.why||chapter?.description||'').replace(/\s+/g,' ').slice(0,105);
     const opening=prev?(inside?'מ'+clipTitle(prev.title)+' נעבור אל '+clipTitle(v.title)+'. ':'כאן מתחיל שלב חדש: '+clipTitle(chapter.name)+'. אחרי '+clipTitle(prev.title)+', נגיע ל'+clipTitle(v.title)+'. '):'פותחים ב'+clipTitle(v.title)+'. ';
     return opening+meaning+(next?' בהמשך: '+clipTitle(next.title)+'.':'');
   }
@@ -272,7 +272,7 @@ function updateJourney(indices){
   renderConceptHelp(step,indices);
   $('journey-progress').textContent=(step?'תחנה '+(step.chapter+1)+' מתוך '+chapters.length+' · ':'')+'סרט '+(here+1)+' מתוך '+indices.length;
   $('chapter-links').innerHTML=chapters.map((c,i)=>'<button type="button" class="chapter-link" data-start="'+esc(c.items[0]?.id||'')+'" aria-pressed="'+(step?.chapter===i)+'"><strong>'+esc(c.name)+'</strong><small>'+esc(c.description||'')+'</small></button>').join('');
-  if(step)$('bridge').textContent='↪ למה הסרט כאן? '+step.entry.why;
+  if(step)$('bridge').textContent='↪ הקשר ברצף: '+explanation(now);
   const nextAt=indices[here+1],up=nextAt===undefined?null:videos[nextAt];
   $('up-next').textContent=up?'⏭ הסרט הבא: '+videoLanguageLabel(up)+' · '+up.title:'✨ זה סוף המסלול. אפשר לבחור תחנה אחרת או להתחיל מחדש.';
   const chapter=step?chapters[step.chapter]:null;
