@@ -317,6 +317,26 @@ for(const spec of motionPrerequisites){
  included.add(spec.id);added++;
 }
 
+/* NOVA/PBS visual bridge: dark matter is not dark energy. Placed directly after the dark-matter explainer. */
+{
+ const id='clA9WRZA8K8',chapter=main.chapters[5];
+ const after=chapter?.items.findIndex(item=>item.id==='Af0_vWDfJwQ')??-1;
+ if(after<0){console.warn('Dark-energy lesson anchor missing; not inserted',id);}
+ else if(!included.has(id)){
+  if(!videos.some(v=>v.id===id))videos.push({
+   id,title:'מהי אנרגיה אפלה? · למה התפשטות היקום מאיצה (רשות)',
+   en:'What Is Dark Energy?',
+   who:'What The Physics?! · יוצרי NOVA / PBS',
+   phase:'🌌 חומר אפל לעומת אנרגיה אפלה · מבוא חזותי',
+   note:'אנימציות והסבר מצולם על התפשטות היקום המואצת ועל התעלומה שנקראת אנרגיה אפלה. חשוב: זה אינו חומר אפל, והמנגנון עדיין אינו ידוע.',
+   bridge:'חומר אפל מסייע להסביר כבידה בגלקסיות; אנרגיה אפלה היא שם לתעלומת האצת ההתפשטות של היקום כולו. אחרי ההבחנה נמשיך לראות איך נולדים כוכבים.',
+   duration:'סרטון קצר · רשות',lang:'en',ease:1,quiet:false
+  });
+  chapter.items.splice(after+1,0,{id,why:'🎬 רשות · מבדילים בין חומר אפל, שמתגלה דרך כבידה, לבין אנרגיה אפלה הקשורה להתפשטות היקום. ההסבר חזותי וקצר לפני שחוזרים להיווצרות הכוכבים.'});
+  included.add(id);added++;
+ }
+}
+
 const left=videos.filter(v=>!included.has(v.id));
 if(left.length)console.warn('Unassigned cinema videos require editorial review',left.map(v=>v.id));
 main.title='🌌 המסע המשולב המלא · כל המדע בסדר אחד';
