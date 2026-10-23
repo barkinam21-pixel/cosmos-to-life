@@ -373,6 +373,32 @@ for(const spec of motionPrerequisites){
  }
 }
 
+
+/* NASA Goddard / NASA My NASA Data: official YouTube ID checked on 2026-10-23.
+   GEOS-5 atmospheric simulation of 2006, not present-day CO2 measurements.
+   Precise sequence: NASA vegetation/carbon -> modeled winds/CO2 -> ocean carbon. */
+{
+ const stage=15,after='aWqjqLFmQnA';
+ const video={
+  id:'x1SgmFa0r04',
+  title:'איך פחמן דו־חמצני נע סביב כדור הארץ? · NASA (רשות)',
+  en:"A Year in the Life of Earth's CO2",
+  who:'NASA Goddard Space Flight Center · ערוץ רשמי',
+  phase:'🌍 רוחות, מחזור הפחמן ואטמוספרה',
+  note:'הדמיית NASA מרהיבה של תנועת פחמן דו־חמצני סביב העולם: רוחות מסיעות את הגז, והעונות משנות את דפוסי הריכוז. מבוססת על מודל GEOS-5 המדמה את שנת 2006; זו סימולציה, לא צילום ישיר או נתון מהשנה הנוכחית.',
+  bridge:'אחרי שראינו את הקשר בין צמחייה לבין פחמן באטמוספרה נעקוב אחר הדרך שבה רוחות מובילות פחמן דו־חמצני ברחבי העולם. אחר כך נבחן כיצד האוקיינוס קולט חום ופחמן.',
+  lang:'en',ease:1,quiet:false,duration:'סימולציית NASA חזותית קצרה · רשות'
+ };
+ const chapter=main.chapters[stage-1];
+ const at=chapter?.items?.findIndex(item=>item.id===after)??-1;
+ if(at<0)console.warn('NASA CO2 prerequisite missing; clip not added',video.id,after);
+ else if(!included.has(video.id)){
+  if(!videos.some(v=>v.id===video.id))videos.push(video);
+  chapter.items.splice(at+1,0,{id:video.id,why:'🎬 רשות · '+video.bridge});
+  included.add(video.id);added++;
+ }
+}
+
 const left=videos.filter(v=>!included.has(v.id));
 if(left.length)console.warn('Unassigned cinema videos require editorial review',left.map(v=>v.id));
 main.title='🌌 המסע המשולב המלא · כל המדע בסדר אחד';
