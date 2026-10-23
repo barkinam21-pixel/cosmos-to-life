@@ -399,6 +399,45 @@ for(const spec of motionPrerequisites){
  }
 }
 
+/* Curated 2026-10-23: official TED-Ed explainer and creator-identified Branch Education
+   3D factory tour. Prerequisite order: chips in five minutes -> slow 3D factory
+   -> existing Veritasium EUV photolithography documentary. Optional only. */
+{
+ const chapter=main.chapters[38];
+ const clips=[
+  {
+   id:'IkRXpFIRUl4',
+   title:'איך מייצרים שבבים? · אנימציית TED-Ed (רשות)',
+   en:'How are microchips made? - George Zaidan and Sajan Saini',
+   who:'TED-Ed · Kozmonot Animation Studio · מקור רשמי',
+   phase:'💻 טרנזיסטורים, סיליקון ופוטוליתוגרפיה · היכרות',
+   note:'אנימציה קצרה ובהירה: כיצד מייצרים מיליארדי מתגים זעירים על פרוסת סיליקון בעזרת אור, שכבות וחומרים מיוחדים, ומה המחיר הסביבתי של התהליך. מכינה לצפייה בסיור המפורט במפעל.',
+   bridge:'אחרי שראינו כיצד טכנולוגיה מבוססת על אור וחשמל, ניכנס אל השבבים שמפעילים מכשירים מודרניים: איך בונים מעגלים זעירים שכבה אחר שכבה? בהמשך נראה מפעל אמיתי בהמחשת תלת־ממד.',
+   duration:'5:15 דקות · אנימציה · רשות',ease:1,quiet:false,lang:'en'
+  },
+  {
+   id:'dX9CGRZwD-w',
+   title:'איך מייצרים מעבד? · סיור תלת־ממדי במפעל שבבים (רשות)',
+   en:'How are Microchips Made? CPU Manufacturing Process Steps',
+   who:'Branch Education · ערוץ היוצר הרשמי',
+   phase:'🏭 הנדסת שבבים · ייצור, מכונות ופוטוליתוגרפיה',
+   note:'מסע תלת־ממדי מרשים וארוך בתוך מפעל שבבים: פרוסות סיליקון, טרנזיסטורים, חשיפה באור, חריטה, שקיעה ובקרת איכות. מומלץ להעמקה חזותית אחרי הסבר היסוד הקצר, ובקצב נוח.',
+   bridge:'כבר הכרנו באנימציה את רעיון השבב. כעת נצא לסיור חזותי ארוך במפעל ובמכונות שמדפיסות מיליארדי רכיבים זעירים; משם נמשיך לסיפור מכונות האור האולטרה־סגול המתקדמות של Veritasium.',
+   duration:'27:48 דקות · תלת־ממד · העמקת רשות',ease:2,quiet:false,lang:'en'
+  }
+ ];
+ let after='PN_ESIcQFpM';
+ for(const video of clips){
+  if(included.has(video.id)){after=video.id;continue;}
+  const at=chapter?.items?.findIndex(item=>item.id===after)??-1;
+  if(at<0){console.warn('Microchip sequence prerequisite missing; not inserting',video.id,after);break;}
+  if(!videos.some(v=>v.id===video.id))videos.push(video);
+  chapter.items.splice(at+1,0,{id:video.id,why:'🎬 רשות · '+video.bridge});
+  included.add(video.id);added++;
+  after=video.id;
+ }
+}
+
 const left=videos.filter(v=>!included.has(v.id));
 if(left.length)console.warn('Unassigned cinema videos require editorial review',left.map(v=>v.id));
 main.title='🌌 המסע המשולב המלא · כל המדע בסדר אחד';
