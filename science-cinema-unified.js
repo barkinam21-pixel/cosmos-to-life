@@ -356,6 +356,23 @@ for(const spec of motionPrerequisites){
  }
 }
 
+/* XVIVO / Harvard BioVisions: two publisher-uploaded cinematic 3D molecular animations.
+   Optional, original series order: Inner Life first, then Powering the Cell.
+   Both inserted after the mitochondria origin primer and before microscopy. */
+{
+ const chapter=main.chapters[17];
+ const clips=[{"id":"wJyUtbn0O5Y","after":"0obYR-nf45I","title":"מסע תלת־ממדי אל החיים בתוך התא · Harvard/XVIVO (רשות)","en":"The Inner Life of the Cell Animation","who":"XVIVO Scientific Animation · Harvard BioVisions · סרט היוצר הרשמי","phase":"🧬 התא החי · מנועים מולקולריים והובלה בתוכו","note":"אנימציה מדעית קולנועית של XVIVO ואוניברסיטת הרווארד: מסע בתוך תא דם לבן, תנועה של חלבונים והעברת מטענים בתוך התא. זו הדמיה אמנותית המבוססת על מחקר, ולא צילום מיקרוסקופי ישיר.","bridge":"אחרי שהכרנו את המיטוכונדריה ואת מקורה ניכנס לתוך תא חי ונראה כיצד מולקולות וחלבונים נעים ופועלים יחד. בסרט הבא נתקרב במיוחד לייצור האנרגיה במיטוכונדריה.","duration":"כ־3 דקות · תלת־ממד קולנועי · רשות","ease":0,"quiet":true,"lang":"en"},{"id":"RrS2uROUjK4","after":"wJyUtbn0O5Y","title":"בתוך המיטוכונדריה: כיצד התא יוצר ATP? · Harvard/XVIVO (רשות)","en":"Powering the Cell: Mitochondria Animation","who":"XVIVO Scientific Animation · Harvard BioVisions · סרט היוצר הרשמי","phase":"⚡ ביולוגיה של אנרגיה · ATP ומיטוכונדריה","note":"אנימציית תלת־ממד מרהיבה מבית XVIVO והרווארד שממחישה ייצור ATP במיטוכונדריה מן האנרגיה שבמזון. ההדמיה ממחישה מבנים ומנגנונים מורכבים ואינה מחליפה הסבר בסיסי לנשימה תאית.","bridge":"אחרי המסע בין מכונות מולקולריות נתמקד בתחנת הכוח של התא: המיטוכונדריה ויצירת ATP. מכאן נמשיך אל תקריבים ומיקרוסקופים כדי לראות כיצד חוקרים את עולם התאים במעבדה.","duration":"אנימציה קולנועית קצרה · רשות","ease":1,"quiet":true,"lang":"en"}];
+ for(const spec of clips){
+  const at=chapter?.items?.findIndex(item=>item.id===spec.after)??-1;
+  if(at<0){console.warn('BioVisions cinematic insertion anchor missing',spec.id,spec.after);continue;}
+  if(included.has(spec.id))continue;
+  const {after,...video}=spec;
+  if(!videos.some(v=>v.id===spec.id))videos.push(video);
+  chapter.items.splice(at+1,0,{id:spec.id,why:'🎬 רשות · '+video.bridge});
+  included.add(spec.id);added++;
+ }
+}
+
 const left=videos.filter(v=>!included.has(v.id));
 if(left.length)console.warn('Unassigned cinema videos require editorial review',left.map(v=>v.id));
 main.title='🌌 המסע המשולב המלא · כל המדע בסדר אחד';
